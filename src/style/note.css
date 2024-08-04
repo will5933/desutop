@@ -1,0 +1,26 @@
+.contenteditable {
+    font-family: 'MiSans VF', 'MiSans', 'HarmonyOS Sans', Helvetica, Arial, sans-serif;
+
+    color: inherit;
+    font-size: inherit;
+    white-space: wrap;
+
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    outline: 0;
+    border: 0;
+    background-color: transparent;
+    /* backdrop-filter: brightness(112%); */
+
+    width: 100%;
+    height: fit-content;
+}
+
+.contenteditable::selection {
+    background-color: var(--bg-color-text-selection);
+}
+
+.nowrap {
+    white-space: nowrap !important;
+}

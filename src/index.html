@@ -1,41 +1,96 @@
-<!doctype html>
-<html lang="en">
-  <head>
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="styles.css" />
+    <!-- css -->
+    <link rel="stylesheet" href="style/style.css" />
+    <link rel="stylesheet" href="style/steam.css" />
+    <link rel="stylesheet" href="style/note.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tauri App</title>
-    <script type="module" src="/main.js" defer></script>
-  </head>
+    <!-- js -->
+    <script type="module" src="script/onload.js" defer></script>
+    <!-- widgets -->
+    <script type="module" src="widgets/container.js" defer></script>
+</head>
 
-  <body>
-    <div class="container">
-      <h1>Welcome to Tauri!</h1>
+<body>
+    <!-- template -->
+    <template id="container_template">
+        <link rel="stylesheet" href="widgets/container.css" />
+        <div id="label">
+            <slot name="label"></slot>
+        </div>
+        <div id="content">
+            <slot name="content"></slot>
+        </div>
+    </template>
 
-      <div class="row">
-        <a href="https://tauri.app" target="_blank">
-          <img src="/assets/tauri.svg" class="logo tauri" alt="Tauri logo" />
-        </a>
-        <a
-          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"
-          target="_blank"
-        >
-          <img
-            src="/assets/javascript.svg"
-            class="logo vanilla"
-            alt="JavaScript logo"
-          />
-        </a>
-      </div>
+    <div id="screen">
+        <div id="screen_center_layer" class="layer">
+            <div id="datetime-wrapper" class="background_blur">
+                <span id="date" class="datetime"></span>
+                <span id="time" class="datetime"></span>
+            </div>
+        </div>
 
-      <p>Click on the Tauri logo to learn more about the framework</p>
-
-      <form class="row" id="greet-form">
-        <input id="greet-input" placeholder="Enter a name..." />
-        <button type="submit">Greet</button>
-      </form>
-
-      <p id="greet-msg"></p>
+        <div id="container_layer" class="layer">
+            <widget-container widget-id="steamgame">
+                <div slot="label">Steam Games</div>
+                <div slot="content">
+                    <div class="steamgameitem" data-appid="${steamgame.appid}">
+                        <span class="steamgame_name">steamgame.name</span>
+                        <span class="steamgame_state">steamgame.state_flags
+                            <span class="steamgame_appid"> steamgame.appid</span>
+                        </span>
+                    </div>
+                    <div class="steamgameitem" data-appid="${steamgame.appid}">
+                        <span class="steamgame_name">steamgame.name</span>
+                        <span class="steamgame_state">steamgame.state_flags
+                            <span class="steamgame_appid"> steamgame.appid</span>
+                        </span>
+                    </div>
+                    <div class="steamgameitem" data-appid="${steamgame.appid}">
+                        <span class="steamgame_name">steamgame.name</span>
+                        <span class="steamgame_state">steamgame.state_flags
+                            <span class="steamgame_appid"> steamgame.appid</span>
+                        </span>
+                    </div>
+                    <div class="steamgameitem" data-appid="${steamgame.appid}">
+                        <span class="steamgame_name">steamgame.name</span>
+                        <span class="steamgame_state">steamgame.state_flags
+                            <span class="steamgame_appid"> steamgame.appid</span>
+                        </span>
+                    </div>
+                    <div class="steamgameitem" data-appid="${steamgame.appid}">
+                        <span class="steamgame_name">steamgame.name</span>
+                        <span class="steamgame_state">steamgame.state_flags
+                            <span class="steamgame_appid"> steamgame.appid</span>
+                        </span>
+                    </div>
+                    <div class="steamgameitem" data-appid="${steamgame.appid}">
+                        <span class="steamgame_name">steamgame.name</span>
+                        <span class="steamgame_state">steamgame.state_flags
+                            <span class="steamgame_appid"> steamgame.appid</span>
+                        </span>
+                    </div>
+                    <div class="steamgameitem" data-appid="${steamgame.appid}">
+                        <span class="steamgame_name">steamgame.name</span>
+                        <span class="steamgame_state">steamgame.state_flags
+                            <span class="steamgame_appid"> steamgame.appid</span>
+                        </span>
+                    </div>
+                </div>
+            </widget-container>
+            <widget-container widget-id="note1">
+                <div slot="label"><p contenteditable="true" class="contenteditable nowrap" placeholder="hahaha">Hello!</p></div>
+                <div slot="content">
+                    <p contenteditable="true" class="contenteditable" placeholder="hahaha">wallpaper-tauri 0.2.1</p>
+                </div>
+            </widget-container>
+        </div>
     </div>
-  </body>
+</body>
+
 </html>

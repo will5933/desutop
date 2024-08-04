@@ -1,0 +1,40 @@
+.steamgameitem {
+    background-color: #ffffff20;
+    backdrop-filter: brightness(112%);
+    position: relative;
+
+    padding: 0.2em 0.6em;
+    box-sizing: border-box;
+
+    height: 3.4em;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: center;
+
+    transition: background-color 0.2s ease-out;
+}
+
+.steamgameitem:hover {
+    background-color: #ffffff80;
+}
+
+.steamgame_name,
+.steamgame_appid,
+.steamgame_state {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.steamgame_name {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1em;
+}
+
+.steamgame_state {
+    font-size: 0.8em;
+}

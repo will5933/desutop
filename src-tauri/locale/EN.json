@@ -1,0 +1,19 @@
+{
+    "WEEKDAYS": [
+        "Sun.",
+        "Mon.",
+        "Tue.",
+        "Wed.",
+        "Thu.",
+        "Fri.",
+        "Sat."
+    ],
+    "STEAM_CONTAINER_LABEL": "Steam Games",
+    "STEAM_GAME_STATE": {
+        "4": "Ready",
+        "6": "Pending",
+        "518": "Unscheduled",
+        "UNKNOWN": "Unknown"
+    },
+    "QUIT": "quit"
+}

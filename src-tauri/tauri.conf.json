@@ -1,42 +1,48 @@
 {
+  "productName": "Desutop",
+  "version": "0.1.0",
+  "identifier": "com.desutop.tauri",
   "build": {
-    "devPath": "../src",
-    "distDir": "../src",
-    "withGlobalTauri": true
+    "frontendDist": "../src"
   },
-  "package": {
-    "productName": "desutop",
-    "version": "0.0.0"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": true
-      }
-    },
+  "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
-        "title": "desutop",
-        "width": 800,
-        "height": 600
+        "title": "Desutop",
+        "label": "main",
+        "decorations": false,
+        "fullscreen": true,
+        "transparent": true,
+        "resizable": false,
+        "dragDropEnabled": false,
+        "visible": false
       }
     ],
     "security": {
-      "csp": null
-    },
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "com.tauri.dev",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ]
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "$RESOURCE/**"
+        ]
+      }
     }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.png",
+      "icons/icon.ico"
+    ],
+    "resources": [
+      "icons/icon.ico",
+      "pic/wp.jpg",
+      "locale/*"
+    ]
   }
 }
