@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "Desutop"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "dirs 5.0.1",
  "lazy_static",
@@ -17,7 +17,6 @@ dependencies = [
  "tauri-plugin-shell",
  "tauri-plugin-store",
  "windows 0.58.0",
- "winreg 0.52.0",
 ]
 
 [[package]]

@@ -17,7 +17,7 @@
 
     color: var(--font-color);
     background-color: var(--bg-color-with-alpha);
-    backdrop-filter: blur(60px) brightness(116%);
+    backdrop-filter: blur(60px) brightness(120%);
     border: 1px solid var(--border-color);
     box-shadow: 0 0 10px var(--shadow-color);
     /* js */
@@ -39,7 +39,6 @@
     text-align: center;
     height: 2em;
     line-height: 2em;
-    /* padding-left: 0.1em; */
     white-space: nowrap;
     overflow: hidden;
 
@@ -68,14 +67,6 @@
     max-height: 20em;
 
     border-radius: 6px;
-}
-
-#content.list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    flex-flow: row wrap;
 }
 
 ::-webkit-scrollbar {

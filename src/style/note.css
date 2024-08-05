@@ -4,6 +4,7 @@
     color: inherit;
     font-size: inherit;
     white-space: wrap;
+    word-break: break-all;
 
     padding: 0;
     margin: 0;
@@ -15,6 +16,9 @@
 
     width: 100%;
     height: fit-content;
+
+    -webkit-user-modify: read-write-plaintext-only;
+    -moz-user-modify: read-write-plaintext-only;
 }
 
 .contenteditable::selection {

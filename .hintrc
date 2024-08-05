@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "development"
+  ],
+  "hints": {
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "backdrop-filter",
+          "user-select",
+          "height: fit-content",
+          "-webkit-text-size-adjust",
+          "font-synthesis"
+        ]
+      }
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 [package]
 name = "Desutop"
-version = "0.1.0"
+version = "0.1.1"
 description = "Desutop A Tauri App"
 authors = ["fanin"]
 edition = "2021"
@@ -19,7 +19,6 @@ tauri-plugin-shell = "2.0.0-rc"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dirs = "5.0.1"
-winreg = "0.52.0"
 regex = "1.10.5"
 lazy_static = "1.5.0"
 tauri-plugin-store = "2.0.0-rc.0"

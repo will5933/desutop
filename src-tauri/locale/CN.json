@@ -15,5 +15,9 @@
         "518": "未安排下载",
         "UNKNOWN": "未知状态"
     },
-    "QUIT": "退出"
+    "QUIT": "退出",
+    "NOTE": {
+        "UNTITLED": "未命名",
+        "UNTITLED_CONTENT": "开始编辑"
+    }
 }

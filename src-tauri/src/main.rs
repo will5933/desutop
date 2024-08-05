@@ -108,14 +108,12 @@ fn setup_set_system_tray(app: &mut tauri::App, lang_json: Value) -> () {
 fn setup_set_windows(app: &mut tauri::App) -> () {
     if let Some(ww) = app.get_webview_window("main") {
         //  Set ignore cursor events
-        ww.set_ignore_cursor_events(true).unwrap();
+        // ww.set_ignore_cursor_events(true).unwrap();
 
         // Get HWND
         if let Ok(hwnd) = ww.hwnd() {
             // set_wallpaper()
-            if !set_wallpaper(hwnd.0) {
-                panic!("[CODE03] Background setting failed");
-            }
+            set_wallpaper(hwnd.0);
 
             // Waiting for fn set_wallpaper()
             ww.show().unwrap();

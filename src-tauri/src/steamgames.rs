@@ -1,11 +1,8 @@
-use dirs::desktop_dir;
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::fs::File;
 use std::io::Read;
-use std::{fs, io, path::Path};
-use winreg::enums::*;
-use winreg::RegKey;
+use std::{fs, path::Path};
 
 use serde::Serialize;
 
@@ -62,26 +59,8 @@ pub fn start_steam_game(appid: &str) -> () {
     }
 }
 
-// 获取桌面图标
-pub fn _get_desktop_contents() -> Result<Vec<String>, io::Error> {
-    if let Some(desktop_path) = desktop_dir() {
-        let entries = fs::read_dir(desktop_path)?
-            .filter_map(Result::ok) // Filters out any errors from read_dir.
-            .filter_map(|entry| entry.file_name().into_string().ok()) // Filters out non-UTF-8 filenames.
-            .filter(|name| *name != "desktop.ini")
-            .collect();
-
-        Ok(entries)
-    } else {
-        Err(io::Error::new(
-            io::ErrorKind::NotFound,
-            "Desktop directory not found",
-        ))
-    }
-}
-
 // 扫描文件夹
-fn dir_scan(path: &Path) -> Vec<String> {
+pub fn dir_scan(path: &Path) -> Vec<String> {
     let entries = fs::read_dir(path).unwrap();
     let mut contents: Vec<String> = Vec::with_capacity(30);
     for entry in entries {
@@ -97,17 +76,20 @@ fn dir_scan(path: &Path) -> Vec<String> {
 
 // 获取steam安装路径
 fn get_steam_install_path() -> Option<String> {
-    let hklm = RegKey::predef(HKEY_CURRENT_USER);
+    let ps_command: &str = r#"
+        (Get-ItemProperty -Path 'HKLM:\SOFTWARE\WOW6432Node\Valve\Steam' -Name 'InstallPath').InstallPath
+    "#;
 
-    let key = match hklm.open_subkey(r"Software\Valve\Steam") {
-        Ok(key) => key,
-        Err(_) => return None,
-    };
+    let output: std::process::Output = Command::new("powershell")
+        .arg("-NoProfile")
+        .arg("-Command")
+        .arg(ps_command)
+        .output()
+        .expect("Failed to execute PowerShell command");
 
-    match key.get_value::<String, _>("SteamPath") {
-        Ok(steam_path) => Some(steam_path),
-        Err(_) => return None,
-    }
+    let install_path: String = String::from_utf8_lossy(&output.stdout).trim().to_string();
+
+    Some(install_path)
 }
 
 // lazy_static

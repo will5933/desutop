@@ -15,5 +15,9 @@
         "518": "Unscheduled",
         "UNKNOWN": "Unknown"
     },
-    "QUIT": "quit"
+    "QUIT": "quit",
+    "NOTE": {
+        "UNTITLED": "Untitled",
+        "UNTITLED_CONTENT": "TO EDIT"
+    }
 }

@@ -1,4 +1,4 @@
-let widgetStore = new window.__TAURI_PLUGIN_STORE__.Store('widget.bin');
+let widgetStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets_position.bin');
 
 class Container extends HTMLElement {
     constructor() {
@@ -123,9 +123,9 @@ class Container extends HTMLElement {
             this.style.top = posArr[1];
             this.style.borderRadius = posArr[2];
         } else {
-            this.style.left = `${(parentRect.width - this.offsetWidth) / 2}px`;
-            this.style.top = `${(parentRect.height - this.offsetHeight) / 2}px`;
-            this.style.borderRadius = '20px'; // 初始边框圆角
+            this.style.left = '80px';
+            this.style.top =  '40px';
+            this.style.borderRadius = '20px';
         }
 
     }
