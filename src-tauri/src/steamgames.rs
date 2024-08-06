@@ -80,16 +80,21 @@ fn get_steam_install_path() -> Option<String> {
         (Get-ItemProperty -Path 'HKLM:\SOFTWARE\WOW6432Node\Valve\Steam' -Name 'InstallPath').InstallPath
     "#;
 
-    let output: std::process::Output = Command::new("powershell")
+    let output = Command::new("powershell")
         .arg("-NoProfile")
         .arg("-Command")
         .arg(ps_command)
+        .creation_flags(0x08000000)
         .output()
-        .expect("Failed to execute PowerShell command");
+        .ok()?;
 
-    let install_path: String = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    let install_path = String::from_utf8_lossy(&output.stdout).trim().to_string();
 
-    Some(install_path)
+    if install_path.is_empty() {
+        None
+    } else {
+        Some(install_path)
+    }
 }
 
 // lazy_static

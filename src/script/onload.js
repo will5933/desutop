@@ -34,7 +34,7 @@ window.onload = async () => {
         randerStoredWidgets();
 
         // Get Steam Games
-        getSteamGames();
+        makeSteamGamesWidget();
     })
 };
 // 
@@ -58,9 +58,9 @@ function showCurrentDateTime() {
 }
 
 // fn randerStoredWidgets()
-async function randerStoredWidgets(widgetsArr) {
+async function randerStoredWidgets() {
     // widgets > data[] > {type, id, (a), (b)}
-    if (!widgetsArr) widgetsArr = await storedWidgets.get('data');
+    const widgetsArr = await storedWidgets.get('data');
 
     if (widgetsArr) {
         const widgetHtmlArr = [];
@@ -70,22 +70,25 @@ async function randerStoredWidgets(widgetsArr) {
             let { type, id, a, b } = widget;
             switch (type) {
                 case WIDGET_TYPE.note:
-                    widgetHtmlArr.push(`<widget-container widget-id="${id}"><div slot="label"><p contenteditable="true" class="contenteditable padding_nowarp" spellcheck="false" widget-id="${id}" data-key="a">${a ?? ''}</p></div><div slot="content"><p contenteditable="true" class="contenteditable" spellcheck="false" widget-id="${id}" data-key="b">${b ?? ''}</p></div></widget-container>`);
+                    widgetHtmlArr.push(makeNoteWidget(id, a, b));
                     break;
                 case WIDGET_TYPE.steamGames:
-                    widgetHtmlArr.push(await getSteamGames(id));
+                    widgetHtmlArr.push(await makeSteamGamesWidget(id));
                     break;
             }
         }
-
         document.querySelector('#widget_layer').innerHTML = widgetHtmlArr.join('');
-
         bindEventListener();
     }
 }
 
-// fn getSteamGames() -> String
-async function getSteamGames(id) {
+// fn makeNoteWidget() -> String
+function makeNoteWidget(id, a, b) {
+    return `<widget-container widget-id="${id}"><div slot="label"><p contenteditable="true" class="contenteditable padding_nowarp" spellcheck="false" widget-id="${id}" data-key="a">${a ?? ''}</p></div><div slot="content"><p contenteditable="true" class="contenteditable" spellcheck="false" widget-id="${id}" data-key="b">${b ?? ''}</p></div></widget-container>`;
+}
+
+// async fn makeSteamGamesWidget() -> String
+async function makeSteamGamesWidget(id) {
     if (!window.res_arr) {
         window.res_arr = await invoke('get_steam_games');
     }
@@ -111,6 +114,7 @@ async function getSteamGames(id) {
     return htmlArr.join('');
 }
 
+// bindEventListener
 function bindEventListener() {
     // type: steamgames > Run game
     for (const item of document.querySelectorAll('.steamgameitem')) {
@@ -143,22 +147,24 @@ function bindEventListener() {
 }
 
 async function createSteamGamesWidget() {
+    const id = make_widgetID();
     let arr = await storedWidgets.get('data');
     if (!arr) arr = [];
-    arr.push({ type: WIDGET_TYPE.steamGames, id: guid() });
+    arr.push({ type: WIDGET_TYPE.steamGames, id: id });
+    document.querySelector('#widget_layer').innerHTML += await makeSteamGamesWidget(id);
     storedWidgets.set('data', arr);
-    randerStoredWidgets(arr);
 }
 
 async function createNoteWidget() {
+    const id = make_widgetID();
     let arr = await storedWidgets.get('data');
     if (!arr) arr = [];
-    arr.push({ type: WIDGET_TYPE.note, id: guid(), a: window.LANG.NOTE.UNTITLED, b: window.LANG.NOTE.UNTITLED_CONTENT });
+    arr.push({ type: WIDGET_TYPE.note, id: id, a: window.LANG.NOTE.UNTITLED, b: window.LANG.NOTE.UNTITLED_CONTENT });
+    document.querySelector('#widget_layer').innerHTML += makeNoteWidget(id, window.LANG.NOTE.UNTITLED, window.LANG.NOTE.UNTITLED_CONTENT);
     storedWidgets.set('data', arr);
-    randerStoredWidgets(arr);
 }
 
-function guid() {
+function make_widgetID() {
     let res = 'xxxx.'.replace(/x/g, () => (Math.random() * 36 | 0).toString(36));
     return res + Date.now().toString(36)
 }
