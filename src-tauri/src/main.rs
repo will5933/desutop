@@ -43,9 +43,8 @@ fn main() {
         // setup
         //
         .setup(|app: &mut tauri::App| {
-            // setup: autostart
-            let autostart_manager = app.autolaunch();
-            autostart_manager.enable().unwrap();
+            // setup: fn set_windows
+            setup_set_windows(app);
 
             // setup: get locale path
             let lang_json_file_path: std::path::PathBuf = app
@@ -56,12 +55,16 @@ fn main() {
             // setup: fn set_system_tray
             setup_set_system_tray(app, lang_json);
 
-            // setup: fn set_windows
-            setup_set_windows(app);
-
             // if let Ok(vec) = get_desktop_contents() {
             //     println!("{:?} length: {}", vec, vec.len());
             // };
+
+            // setup: autostart
+            let autostart_manager: tauri::State<tauri_plugin_autostart::AutoLaunchManager> =
+                app.autolaunch();
+            if !autostart_manager.is_enabled().unwrap() {
+                autostart_manager.enable().unwrap();
+            }
             Ok(())
         })
         .run(tauri::generate_context!())
@@ -73,7 +76,9 @@ fn main() {
 //
 fn setup_set_system_tray(app: &mut tauri::App, lang_json: Value) -> () {
     let lang_quit = lang_json["QUIT"].as_str().unwrap();
-    let quit = MenuItemBuilder::with_id("quit", lang_quit).build(app).unwrap();
+    let quit = MenuItemBuilder::with_id("quit", lang_quit)
+        .build(app)
+        .unwrap();
     let menu = MenuBuilder::new(app).items(&[&quit]).build().unwrap();
     let _tray = TrayIconBuilder::new()
         .icon(Image::from_path("icons/icon.ico").unwrap())

@@ -1,6 +1,5 @@
 .contenteditable {
-    font-family: 'MiSans VF', 'MiSans', 'HarmonyOS Sans', Helvetica, Arial, sans-serif;
-
+    font-family: inherit;
     color: inherit;
     font-size: inherit;
     white-space: wrap;
@@ -25,6 +24,7 @@
     background-color: var(--bg-color-text-selection);
 }
 
-.nowrap {
+.padding_nowarp {
     white-space: nowrap !important;
+    padding: 0 0.4em !important;
 }

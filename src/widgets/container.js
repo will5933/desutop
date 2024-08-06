@@ -1,4 +1,5 @@
-let widgetStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets_position.bin');
+const widgets = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
+const widgetStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets_styles.bin');
 
 class Container extends HTMLElement {
     constructor() {
@@ -10,68 +11,72 @@ class Container extends HTMLElement {
         const content = template.content.cloneNode(true);
         shadow.appendChild(content);
 
+        // handle z-index
+        shadow.addEventListener('mousedown', () => {
+            const oldIndex = this.style.zIndex;
+            this.style.zIndex = 999;
+            const allContainers = Array.from(this.parentElement.querySelectorAll('widget-container'));
+            const zIndexArr = allContainers.map(c => c.style.zIndex);
+            if (oldIndex >= Math.max(...zIndexArr)) return;
+
+            zIndexArr.sort((a, b) => a - b);
+            allContainers.forEach(c => c.style.zIndex = zIndexArr.indexOf(c.style.zIndex) + 1);
+        });
+        
+        // destory self
+        shadow.getElementById('destory').addEventListener('click', async () => {
+            widgets.set('data', (await widgets.get('data')).filter(obj => obj['id'] !== this.getAttribute('widget-id')));
+            this.remove();
+            this.saveWidgetsStyles();
+        });
+
         // drug event
-        const label = shadow.getElementById('label');
         let offsetX, offsetY, isDragging = false;
 
-        label.addEventListener('mousedown', (event) => {
-            this.style.zIndex = 2;
+        shadow.getElementById('move').addEventListener('mousedown', (event) => {
+            // 获取其他组件
+            const allContainers = Array.from(this.parentElement.querySelectorAll('widget-container')).filter(c => c !== this);
 
-            isDragging = true;
             offsetX = event.clientX - this.offsetLeft;
             offsetY = event.clientY - this.offsetTop;
 
+            // 确定接触边缘
+            const margin = 10;
+            isDragging = true;
             const onMouseMove = (event) => {
                 if (!isDragging) return;
 
-                // 获取父元素
-                const parent = this.parentElement;
-                const parentRect = parent.getBoundingClientRect();
+                // 父元素
+                const parentRect = this.parentElement.getBoundingClientRect();
 
                 // 计算新的位置
-                let newLeft = Math.min(Math.max(0, event.clientX - offsetX - parentRect.left), parentRect.width - this.offsetWidth);
-                let newTop = Math.min(Math.max(0, event.clientY - offsetY - parentRect.top), parentRect.height - this.offsetHeight);
-
-                // 获取其他组件
-                const allContainers = Array.from(parent.querySelectorAll('widget-container')).filter(c => c !== this);
+                let newLeft = Math.min(Math.max(0, event.clientX - offsetX), parentRect.width - this.offsetWidth);
+                let newTop = Math.min(Math.max(0, event.clientY - offsetY), parentRect.height - this.offsetHeight);
 
                 let isBesideRightAngle;
 
                 allContainers.forEach(container => {
-                    container.style.zIndex = 1;
                     const containerRect = container.getBoundingClientRect();
                     const newRect = {
-                        left: newLeft + parentRect.left,
-                        top: newTop + parentRect.top,
-                        right: newLeft + parentRect.left + this.offsetWidth,
-                        bottom: newTop + parentRect.top + this.offsetHeight
+                        leftX: newLeft,
+                        topY: newTop,
+                        rightX: newLeft + this.offsetWidth,
+                        bottomY: newTop + this.offsetHeight
                     };
 
-                    const overlap = (
-                        newRect.left < containerRect.right &&
-                        newRect.right > containerRect.left &&
-                        newRect.top < containerRect.bottom &&
-                        newRect.bottom > containerRect.top
-                    );
-
-                    if (overlap) {
-                        if (container.style.borderRadius == '0px') {
-                            isBesideRightAngle = true;
-                        }
-
-                        // 确定接触边缘
-                        const margin = 30;
+                    if (
+                        (newRect.leftX - containerRect.right) < margin &&
+                        (containerRect.left - newRect.rightX) < margin &&
+                        (newRect.topY - containerRect.bottom) < margin &&
+                        (containerRect.top - newRect.bottomY) < margin
+                    ) {
+                        isBesideRightAngle = container.style.borderRadius == '0px';
 
                         // 计算水平和垂直对齐
-                        const alignLeft = Math.abs(newRect.left - containerRect.right) < margin;
-                        const alignRight = Math.abs(newRect.right - containerRect.left) < margin;
-                        const alignTop = Math.abs(newRect.top - containerRect.bottom) < margin;
-                        const alignBottom = Math.abs(newRect.bottom - containerRect.top) < margin;
-
-                        if (alignLeft) newLeft = containerRect.right - parentRect.left;
-                        if (alignRight) newLeft = containerRect.left - parentRect.left - this.offsetWidth;
-                        if (alignTop) newTop = containerRect.bottom - parentRect.top;
-                        if (alignBottom) newTop = containerRect.top - parentRect.top - this.offsetHeight;
+                        newLeft = Math.abs(newRect.leftX - containerRect.right) < margin ? containerRect.right : newLeft;
+                        newLeft = Math.abs(newRect.rightX - containerRect.left) < margin ? containerRect.left - this.offsetWidth : newLeft;
+                        newTop = Math.abs(newRect.topY - containerRect.bottom) < margin ? containerRect.bottom : newTop;
+                        newTop = Math.abs(newRect.bottomY - containerRect.top) < margin ? containerRect.top - this.offsetHeight : newTop;
                     }
                 });
 
@@ -87,7 +92,8 @@ class Container extends HTMLElement {
                 const bottom = parentRect.bottom - elemRect.bottom;
 
                 const isNearEdge = Math.min(left, top, right, bottom) < 10;
-                this.style.borderRadius = isNearEdge || isBesideRightAngle ? '0px' : '20px';
+
+                this.style.borderRadius = (isNearEdge || isBesideRightAngle) ? '0px' : '20px';
 
                 if (isNearEdge) {
                     // 自动吸附到边缘
@@ -103,11 +109,8 @@ class Container extends HTMLElement {
                 document.removeEventListener('mousemove', onMouseMove);
                 document.removeEventListener('mouseup', onMouseUp);
 
-                await widgetStore.set(
-                    this.getAttribute('widget-id'),
-                    [this.style.left, this.style.top, this.style.borderRadius],
-                );
-                await widgetStore.save();
+                // Save Widgets Styles
+                this.saveWidgetsStyles();
             };
 
             document.addEventListener('mousemove', onMouseMove);
@@ -116,18 +119,30 @@ class Container extends HTMLElement {
     }
 
     async connectedCallback() {
-        const posArr = await widgetStore.get(this.getAttribute('widget-id'));
+        this.style.left = '160px';
+        this.style.top = '80px';
+        this.style.borderRadius = '20px';
+        this.style.borderRadius = 1;
 
-        if (posArr) {
-            this.style.left = posArr[0];
-            this.style.top = posArr[1];
-            this.style.borderRadius = posArr[2];
-        } else {
-            this.style.left = '80px';
-            this.style.top =  '40px';
-            this.style.borderRadius = '20px';
+        const widgetsObj = await widgetStore.get('data');
+        if (widgetsObj) {
+            const styleArr = widgetsObj[this.getAttribute('widget-id')];
+            if (styleArr) {
+                this.style.left = styleArr[0];
+                this.style.top = styleArr[1];
+                this.style.borderRadius = styleArr[2];
+                this.style.zIndex = styleArr[3];
+            }
+        }
+    }
+
+    async saveWidgetsStyles() {
+        const widgetsObj = {};
+        for (const c of document.querySelectorAll('widget-container')) {
+            widgetsObj[c.getAttribute('widget-id')] = [c.style.left, c.style.top, c.style.borderRadius, c.style.zIndex];
         }
 
+        await widgetStore.set('data', widgetsObj);
     }
 }
 

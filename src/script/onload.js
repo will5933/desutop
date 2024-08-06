@@ -8,17 +8,12 @@ const WIDGET_TYPE = {
     note: "note"
 };
 
-const cDate = document.querySelector('#date');
-const cTime = document.querySelector('#time');
+const dateTime = document.querySelector('#datetime');
 
 // TODO
-cDate.addEventListener('click', () => {
-    createSteamGamesWidget();
-});
+document.querySelector('#addwidget_note').addEventListener('click', createNoteWidget);
 // TODO
-cTime.addEventListener('click', () => {
-    createNoteWidget();
-});
+document.querySelector('#addwidget_steamgames').addEventListener('click', createSteamGamesWidget);
 
 // 
 // onload begin
@@ -56,9 +51,10 @@ function showCurrentDateTime() {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
     const weekdays = window.LANG.WEEKDAYS[now.getDay()];
-    cDate.textContent = `${weekdays} ${month}/${day}`;
+    // cDate.textContent = `${weekdays} ${month}/${day}`;
     // cDate.textContent = `${month}/${day}`;
-    cTime.textContent = `${hours}:${minutes}:${seconds}`;
+    // cTime.textContent = `${hours}:${minutes}:${seconds}`;
+    dateTime.textContent = `${month}/${day} ${weekdays} ${hours}:${minutes}:${seconds}`;
 }
 
 // fn randerStoredWidgets()
@@ -74,7 +70,7 @@ async function randerStoredWidgets(widgetsArr) {
             let { type, id, a, b } = widget;
             switch (type) {
                 case WIDGET_TYPE.note:
-                    widgetHtmlArr.push(`<widget-container widget-id="${id}"><div slot="label"><p contenteditable="true" class="contenteditable nowrap" spellcheck="false" widget-id="${id}" data-key="a">${a ?? ''}</p></div><div slot="content"><p contenteditable="true" class="contenteditable" spellcheck="false" widget-id="${id}" data-key="b">${b ?? ''}</p></div></widget-container>`);
+                    widgetHtmlArr.push(`<widget-container widget-id="${id}"><div slot="label"><p contenteditable="true" class="contenteditable padding_nowarp" spellcheck="false" widget-id="${id}" data-key="a">${a ?? ''}</p></div><div slot="content"><p contenteditable="true" class="contenteditable" spellcheck="false" widget-id="${id}" data-key="b">${b ?? ''}</p></div></widget-container>`);
                     break;
                 case WIDGET_TYPE.steamGames:
                     widgetHtmlArr.push(await getSteamGames(id));
@@ -90,7 +86,9 @@ async function randerStoredWidgets(widgetsArr) {
 
 // fn getSteamGames() -> String
 async function getSteamGames(id) {
-    const res_arr = await invoke('get_steam_games');
+    if (!window.res_arr) {
+        window.res_arr = await invoke('get_steam_games');
+    }
 
     const getStateStr = (stateNum) => {
         if (window.LANG.STEAM_GAME_STATE.hasOwnProperty(stateNum)) {
@@ -102,7 +100,7 @@ async function getSteamGames(id) {
 
     const steamGamefilterOut = ['228980'];
 
-    for (const steamgame of res_arr) {
+    for (const steamgame of window.res_arr) {
         // filter out [228980]
         if (steamGamefilterOut.includes(steamgame.appid)) continue;
         htmlArr.push(`<div class="steamgameitem" data-appid="${steamgame.appid}"><span class="steamgame_name">${steamgame.name}</span><span class="steamgame_state">${getStateStr(steamgame.state_flags)}<span class="steamgame_appid"> ${steamgame.appid}</span></span></div>`);
@@ -137,8 +135,7 @@ function bindEventListener() {
                         }
                         return v;
                     })
-                    await storedWidgets.set('data', arr)
-                    storedWidgets.save();
+                    await storedWidgets.set('data', arr);
                 }, 5000)
             }
         )
@@ -151,7 +148,6 @@ async function createSteamGamesWidget() {
     arr.push({ type: WIDGET_TYPE.steamGames, id: guid() });
     storedWidgets.set('data', arr);
     randerStoredWidgets(arr);
-    storedWidgets.save();
 }
 
 async function createNoteWidget() {
@@ -160,7 +156,6 @@ async function createNoteWidget() {
     arr.push({ type: WIDGET_TYPE.note, id: guid(), a: window.LANG.NOTE.UNTITLED, b: window.LANG.NOTE.UNTITLED_CONTENT });
     storedWidgets.set('data', arr);
     randerStoredWidgets(arr);
-    storedWidgets.save();
 }
 
 function guid() {

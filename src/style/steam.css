@@ -1,12 +1,14 @@
 .steamgameitem {
-    background-color: #ffffff20;
-    backdrop-filter: brightness(112%);
+    /* background-color: #ffffff20; */
+    /* backdrop-filter: brightness(112%); */
     position: relative;
 
     padding: 0.2em 0.6em;
     box-sizing: border-box;
+    border-radius: 10px;
 
     height: 3.4em;
+    max-width: 18em;
     overflow: hidden;
 
     display: flex;
