@@ -49,7 +49,7 @@ fn main() {
             // setup: get locale path
             let lang_json_file_path: std::path::PathBuf = app
                 .path()
-                .resolve("locale/CN.json", BaseDirectory::Resource)?;
+                .resolve("locale/default.json", BaseDirectory::Resource)?;
             let lang_json: Value = get_lang_json(lang_json_file_path);
 
             // setup: fn set_system_tray

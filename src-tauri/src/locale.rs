@@ -6,7 +6,7 @@ use tauri::{path::BaseDirectory, Manager};
 pub fn get_lang_json_string(handle: tauri::AppHandle) -> String {
     let resource_path = handle
         .path()
-        .resolve("locale/CN.json", BaseDirectory::Resource)
+        .resolve("locale/default.json", BaseDirectory::Resource)
         .unwrap();
 
     let mut json_str = String::new();
