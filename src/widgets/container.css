@@ -23,7 +23,7 @@
     /* js */
     border-radius: 20px;
 
-    padding: 0 1em 1em 1em;
+    padding: 0 0.8em 0.8em 0.8em;
 
     --theme-color: #8686ff;
     --bg-color-with-alpha: #e8e8ff10;
@@ -40,9 +40,6 @@
     height: 2em;
     line-height: 2em;
     white-space: nowrap;
-    overflow: hidden;
-
-    /* cursor: move; */
 
     font-weight: 800;
     font-size: 1em;
@@ -60,12 +57,15 @@
 
 
 svg {
-    height: 0.8em;
-    width: 0.8em;
+    /* height: 0.8em;
+    width: 0.8em; */
     fill: transparent;
     opacity: 0.35;
 
     transition: all 0.24s ease;
+}
+svg#move {
+    cursor: move;
 }
 #label:hover>svg {
     fill: currentColor;

@@ -128,27 +128,26 @@ function bindEventListener() {
     // type: note > save a / b
     for (const item of document.querySelectorAll('p.contenteditable')) {
         item.addEventListener('input',
-            function (e) {
-                clearTimeout(this.timer);
-                this.timer = setTimeout(async () => {
-                    const id = this.getAttribute('widget-id'), key = this.getAttribute('data-key');
-                    let arr = await storedWidgets.get('data');
-                    arr = arr.map((v) => {
-                        if (v['id'] == this.getAttribute('widget-id')) {
-                            v[key] = this.innerText;
+            (e) => {
+                clearTimeout(window.inputTimer);
+                window.inputTimer = setTimeout(async () => {
+                    console.log(e.target);
+                    const id = e.target.getAttribute('widget-id'), key = e.target.getAttribute('data-key');
+                    await storedWidgets.set('data', (await storedWidgets.get('data')).map((v) => {
+                        if (v['id'] == id) {
+                            v[key] = e.target.innerText;
                         }
                         return v;
-                    })
-                    await storedWidgets.set('data', arr);
+                    }));
                     await storedWidgets.save();
                 }, 5000)
             }
         )
     }
 
-    document.addEventListener('contextmenu', () => {
+    document.addEventListener('contextmenu', (e) => {
         // right
-        return false;
+        e.stopPropagation();
     })
 }
 

@@ -49,7 +49,7 @@ fn main() {
             // setup: get locale path
             let lang_json_file_path: std::path::PathBuf = app
                 .path()
-                .resolve("locale/EN.json", BaseDirectory::Resource)?;
+                .resolve("locale/CN.json", BaseDirectory::Resource)?;
             let lang_json: Value = get_lang_json(lang_json_file_path);
 
             // setup: fn set_system_tray
@@ -60,11 +60,11 @@ fn main() {
             // };
 
             // setup: autostart
-            let autostart_manager: tauri::State<tauri_plugin_autostart::AutoLaunchManager> =
-                app.autolaunch();
-            if !autostart_manager.is_enabled().unwrap() {
-                autostart_manager.enable().unwrap();
-            }
+            // let autostart_manager: tauri::State<tauri_plugin_autostart::AutoLaunchManager> =
+            //     app.autolaunch();
+            // if !autostart_manager.is_enabled().unwrap() {
+            //     autostart_manager.enable().unwrap();
+            // }
             Ok(())
         })
         .run(tauri::generate_context!())
