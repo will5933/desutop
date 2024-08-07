@@ -1,7 +1,8 @@
-# Tauri + Vanilla
+# Desutop
 
-This template should help get you started developing with Tauri in vanilla HTML, CSS and Javascript.
+这是一个由 Tauri 构建的 Windows 端桌面替代项目，目前正在努力开发中，目前已拥有多款桌面微件（Widget）。
 
-## Recommended IDE Setup
+## 语言支持
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+- English
+- 简体中文
