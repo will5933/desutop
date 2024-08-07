@@ -122,7 +122,7 @@ class Container extends HTMLElement {
         this.style.left = '160px';
         this.style.top = '80px';
         this.style.borderRadius = '20px';
-        this.style.borderRadius = 1;
+        this.style.zIndex = 999;
 
         const widgetsObj = await widgetStore.get('data');
         if (widgetsObj) {

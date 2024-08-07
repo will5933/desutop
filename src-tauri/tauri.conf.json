@@ -11,11 +11,13 @@
       {
         "title": "Desutop",
         "label": "main",
+        "alwaysOnTop": true,
         "decorations": false,
         "fullscreen": true,
-        "transparent": true,
+        "focus": false,
+        "closable": false,
+        "shadow": false,
         "resizable": false,
-        "dragDropEnabled": false,
         "visible": false
       }
     ],

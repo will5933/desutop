@@ -9,6 +9,7 @@ const WIDGET_TYPE = {
 };
 
 const dateTime = document.querySelector('#datetime');
+const widgetLayer = document.querySelector('#widget_layer');
 
 // TODO
 document.querySelector('#addwidget_note').addEventListener('click', createNoteWidget);
@@ -77,7 +78,7 @@ async function randerStoredWidgets() {
                     break;
             }
         }
-        document.querySelector('#widget_layer').innerHTML = widgetHtmlArr.join('');
+        widgetLayer.innerHTML = widgetHtmlArr.join('');
         bindEventListener();
     }
 }
@@ -156,7 +157,7 @@ async function createSteamGamesWidget() {
     let arr = await storedWidgets.get('data');
     if (!arr) arr = [];
     arr.push({ type: WIDGET_TYPE.steamGames, id: id });
-    document.querySelector('#widget_layer').innerHTML += await makeSteamGamesWidget(id);
+    widgetLayer.innerHTML += await makeSteamGamesWidget(id);
     await storedWidgets.set('data', arr);
     await storedWidgets.save();
 }
@@ -166,7 +167,7 @@ async function createNoteWidget() {
     let arr = await storedWidgets.get('data');
     if (!arr) arr = [];
     arr.push({ type: WIDGET_TYPE.note, id: id, a: window.LANG.NOTE.UNTITLED, b: window.LANG.NOTE.UNTITLED_CONTENT });
-    document.querySelector('#widget_layer').innerHTML += makeNoteWidget(id, window.LANG.NOTE.UNTITLED, window.LANG.NOTE.UNTITLED_CONTENT);
+    widgetLayer.innerHTML += makeNoteWidget(id, window.LANG.NOTE.UNTITLED, window.LANG.NOTE.UNTITLED_CONTENT);
     await storedWidgets.set('data', arr);
     await storedWidgets.save();
 }

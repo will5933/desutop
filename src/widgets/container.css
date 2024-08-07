@@ -3,9 +3,7 @@
 }
 
 :host {
-    font-family: 'MiSans VF', 'MiSans', 'HarmonyOS Sans', Helvetica, Arial, sans-serif;
-    font-weight: 400;
-
+    font-family: inherit;
     position: absolute;
     box-sizing: border-box;
 
@@ -15,18 +13,19 @@
     min-width: 5em;
     max-width: min(25%, 30em);
 
+    caret-color: var(--theme-color);
     color: var(--font-color);
     background-color: var(--bg-color-with-alpha);
-    backdrop-filter: blur(60px) brightness(120%);
+    backdrop-filter: blur(80px) brightness(120%);
     /* border: 1px solid var(--border-color); */
-    box-shadow: 0 0 10px var(--shadow-color);
+    box-shadow: 0 4px 20px var(--shadow-color);
     /* js */
     border-radius: 20px;
 
-    padding: 0 0.8em 0.8em 0.8em;
+    padding: 0.2em 0.8em 0.8em 0.8em;
 
     --theme-color: #8686ff;
-    --bg-color-with-alpha: #e8e8ff10;
+    --bg-color-with-alpha: #ffffff08;
     --font-color: #404045;
     --border-color: #40404515;
     --shadow-color: #40404520;
@@ -41,8 +40,7 @@
     line-height: 2em;
     white-space: nowrap;
 
-    font-weight: 800;
-    font-size: 1em;
+    font-weight: 600;
 
     display: flex;
     align-items: center;
@@ -57,8 +55,6 @@
 
 
 svg {
-    /* height: 0.8em;
-    width: 0.8em; */
     fill: transparent;
     opacity: 0.35;
 
@@ -80,13 +76,10 @@ svg:hover {
     width: 100%;
     box-sizing: border-box;
     font-size: 0.88em;
-    user-select: none;
 
     overflow-y: scroll;
     height: auto;
     max-height: 20em;
-
-    /* border-radius: 6px; */
 }
 
 ::-webkit-scrollbar {

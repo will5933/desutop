@@ -11,7 +11,7 @@ use tauri::{
 
 use serde_json::Value;
 
-use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
+// use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 
 mod setwindow;
 use setwindow::set_wallpaper;
@@ -25,10 +25,10 @@ use steamgames::*;
 fn main() {
     tauri::Builder::default()
         // autostart
-        .plugin(tauri_plugin_autostart::init(
-            MacosLauncher::LaunchAgent,
-            None,
-        ))
+        // .plugin(tauri_plugin_autostart::init(
+        //     MacosLauncher::LaunchAgent,
+        //     None,
+        // ))
         // store
         .plugin(tauri_plugin_store::Builder::new().build())
         // shell
