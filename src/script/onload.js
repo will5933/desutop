@@ -140,10 +140,16 @@ function bindEventListener() {
                         return v;
                     })
                     await storedWidgets.set('data', arr);
+                    await storedWidgets.save();
                 }, 5000)
             }
         )
     }
+
+    document.addEventListener('contextmenu', () => {
+        // right
+        return false;
+    })
 }
 
 async function createSteamGamesWidget() {
@@ -152,7 +158,8 @@ async function createSteamGamesWidget() {
     if (!arr) arr = [];
     arr.push({ type: WIDGET_TYPE.steamGames, id: id });
     document.querySelector('#widget_layer').innerHTML += await makeSteamGamesWidget(id);
-    storedWidgets.set('data', arr);
+    await storedWidgets.set('data', arr);
+    await storedWidgets.save();
 }
 
 async function createNoteWidget() {
@@ -161,7 +168,8 @@ async function createNoteWidget() {
     if (!arr) arr = [];
     arr.push({ type: WIDGET_TYPE.note, id: id, a: window.LANG.NOTE.UNTITLED, b: window.LANG.NOTE.UNTITLED_CONTENT });
     document.querySelector('#widget_layer').innerHTML += makeNoteWidget(id, window.LANG.NOTE.UNTITLED, window.LANG.NOTE.UNTITLED_CONTENT);
-    storedWidgets.set('data', arr);
+    await storedWidgets.set('data', arr);
+    await storedWidgets.save();
 }
 
 function make_widgetID() {

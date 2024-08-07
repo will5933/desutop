@@ -143,6 +143,7 @@ class Container extends HTMLElement {
         }
 
         await widgetStore.set('data', widgetsObj);
+        await widgetStore.save();
     }
 }
 
