@@ -11,8 +11,7 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
 ### *Deployed / 已上线*
 
 - [`v0.2.3`](https://github.com/will5933/desutop/releases/tag/v0.2.2) Steam game status display / steam 游戏状态显示
-
-![](.readme_pic/steam_games_widget.png)
+- > ![](.readme_pic/steam_games_widget.png)
 
 - [`v0.2.2`](https://github.com/will5933/desutop/releases/tag/v0.2.2) Note widget / 笔记微件
 
