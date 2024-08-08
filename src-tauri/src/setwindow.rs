@@ -45,58 +45,55 @@ fn find_window(
     class_name: &str,
     window_name: &str,
 ) -> Result<HWND, Error> {
-    let mut _parent_window: HWND;
-    let mut _child_after: HWND;
-    match parent_window {
-        Some(x) => _parent_window = x,
-        None => _parent_window = HWND(null_mut()),
-    }
-    match child_after {
-        Some(x) => _child_after = x,
-        None => _child_after = HWND(null_mut()),
-    }
+    // Use default HWND if not provided
+    let parent_window = parent_window.unwrap_or(HWND(null_mut()));
+    let child_after = child_after.unwrap_or(HWND(null_mut()));
+
+    // Convert strings to PCWSTR, handle empty strings as null
+    let class_name_pcwstr = if !class_name.is_empty() {
+        to_pcwstr(class_name)
+    } else {
+        PCWSTR::null()
+    };
+
+    let window_name_pcwstr = if !window_name.is_empty() {
+        to_pcwstr(window_name)
+    } else {
+        PCWSTR::null()
+    };
 
     unsafe {
-        FindWindowExW(
-            _parent_window,
-            _child_after,
-            if class_name != "" {
-                to_pcwstr(class_name)
-            } else {
-                PCWSTR::null()
-            },
-            if window_name != "" {
-                to_pcwstr(window_name)
-            } else {
-                PCWSTR::null()
-            },
-        )
+        FindWindowExW(parent_window, child_after, class_name_pcwstr, window_name_pcwstr)
     }
 }
 
-fn send_0x52c() -> () {
-    for i in 0..=9 {
-        if let Ok(hwnd) = find_window(None, None, "Progman", "Program Manager") {
-            let lpdwresult: Option<*mut usize> = Some(&mut 0);
+fn send_0x52c() {
+    let mut lpdwresult: usize = 0;
+    let sleep_duration = Duration::from_millis(100);
 
-            // SendMessage 0x52C
-            unsafe {
-                SendMessageTimeoutW(
-                    hwnd,
-                    0x52C,
-                    WPARAM(0),
-                    LPARAM(0),
-                    SEND_MESSAGE_TIMEOUT_FLAGS(SMTO_BLOCK.0),
-                    100,
-                    lpdwresult,
-                );
+    for i in 0..=9 {
+        match find_window(None, None, "Progman", "Program Manager") {
+            Ok(hwnd) => {
+                // SendMessage 0x52C
+                unsafe {
+                    SendMessageTimeoutW(
+                        hwnd,
+                        0x52C,
+                        WPARAM(0),
+                        LPARAM(0),
+                        SEND_MESSAGE_TIMEOUT_FLAGS(SMTO_BLOCK.0),
+                        100,
+                        Some(&mut lpdwresult),
+                    );
+                }
+                return; // Successfully sent message, exit function
             }
-            break;
+            Err(_) if i == 9 => {
+                panic!("[CODE03] Cannot find window named `Program Manager`");
+            }
+            Err(_) => {
+                sleep(sleep_duration);
+            }
         }
-        // panic
-        if i == 9 {
-            panic!("[CODE03] Cannot find window named `Program Manager`")
-        }
-        sleep(Duration::from_millis(100));
     }
 }

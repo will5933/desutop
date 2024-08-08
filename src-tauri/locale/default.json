@@ -1,4 +1,26 @@
 {
+    "DATETIME": {
+        "DAY": "d",
+        "HOUR": "h",
+        "MINUTE": "m",
+        "MONTH": "Month",
+        "SECOND": "s",
+        "WEEK": "w",
+        "YEAR": "Year"
+    },
+    "NOTE": {
+        "UNTITLED": "Untitled",
+        "UNTITLED_CONTENT": "To be edited"
+    },
+    "QUIT": "quit",
+    "STEAM_CONTAINER_LABEL": "Steam Games",
+    "STEAM_GAME_LASTPLAYED_NOT": "-",
+    "STEAM_GAME_STATE": {
+        "4": "Ready",
+        "6": "Pending",
+        "518": "Unscheduled",
+        "UNKNOWN": "Unknown"
+    },
     "WEEKDAYS": [
         "Sun.",
         "Mon.",
@@ -7,17 +29,5 @@
         "Thu.",
         "Fri.",
         "Sat."
-    ],
-    "STEAM_CONTAINER_LABEL": "Steam Games",
-    "STEAM_GAME_STATE": {
-        "4": "Ready",
-        "6": "Pending",
-        "518": "Unscheduled",
-        "UNKNOWN": "Unknown"
-    },
-    "QUIT": "quit",
-    "NOTE": {
-        "UNTITLED": "Untitled",
-        "UNTITLED_CONTENT": "TO EDIT"
-    }
+    ]
 }

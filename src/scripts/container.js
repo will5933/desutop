@@ -1,13 +1,13 @@
 const widgets = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
 const widgetStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets_styles.bin');
 
-class Container extends HTMLElement {
+export class WidgetContainer extends HTMLElement {
     constructor() {
         super();
         // 创建一个shadow root并将其附加到自定义元素
         const shadow = this.attachShadow({ mode: 'open' });
 
-        const template = document.getElementById('container_template');
+        const template = document.getElementById('widget_container_template');
         const content = template.content.cloneNode(true);
         shadow.appendChild(content);
 
@@ -22,7 +22,7 @@ class Container extends HTMLElement {
             zIndexArr.sort((a, b) => a - b);
             allContainers.forEach(c => c.style.zIndex = zIndexArr.indexOf(c.style.zIndex) + 1);
         });
-        
+
         // destory self
         shadow.getElementById('destory').addEventListener('click', async () => {
             widgets.set('data', (await widgets.get('data')).filter(obj => obj['id'] !== this.getAttribute('widget-id')));
@@ -146,6 +146,3 @@ class Container extends HTMLElement {
         await widgetStore.save();
     }
 }
-
-// 定义自定义元素
-customElements.define('widget-container', Container);

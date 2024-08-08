@@ -1,5 +1,7 @@
 use lazy_static::lazy_static;
+use rayon::prelude::*;
 use regex::Regex;
+use std::borrow::Cow;
 use std::fs::File;
 use std::io::Read;
 use std::{fs, path::Path};
@@ -13,30 +15,31 @@ use std::process::{Command, Stdio};
 // SteamGame
 //
 #[derive(Serialize)]
-pub struct SteamGame {
-    appid: String,
-    name: String,
-    state_flags: String,
+pub struct SteamGame<'a> {
+    appid: Cow<'a, str>,
+    name: Cow<'a, str>,
+    state_flags: Cow<'a, str>,
+    last_played: Cow<'a, str>,
+    size_on_disk: Cow<'a, str>,
 }
 
 #[tauri::command]
-pub fn get_steam_games() -> Result<Vec<SteamGame>, ()> {
+pub fn get_steam_games() -> Result<Vec<SteamGame<'static>>, ()> {
     match get_steam_install_path() {
         Some(steam_path) => {
-            // println!("{}", steam_path);
             let steamapps_dir: String = steam_path + "/steamapps";
             let vec: Vec<String> = dir_scan(Path::new(&steamapps_dir));
 
-            let mut res_vec: Vec<SteamGame> = Vec::new();
-            for filename in vec {
-                if filename.contains("appmanifest_") {
-                    if let Some(res) =
+            let res_vec: Vec<SteamGame> = vec
+                .into_par_iter()
+                .filter_map(|filename| {
+                    if filename.contains("appmanifest_") {
                         read_steam_game_config(format!("{}/{}", steamapps_dir, filename))
-                    {
-                        res_vec.push(res);
-                    };
-                }
-            }
+                    } else {
+                        None
+                    }
+                })
+                .collect();
             Ok(res_vec)
         }
         None => Err(()),
@@ -104,45 +107,32 @@ lazy_static! {
             Regex::new(r#"\"appid\"\t\t\"(\d+)\""#).unwrap(),
             Regex::new(r#"\"name\"\t\t\"(.+)\""#).unwrap(),
             Regex::new(r#"\"StateFlags\"\t\t\"(\d+)\""#).unwrap(),
+            Regex::new(r#"\"LastPlayed\"\t\t\"(\d+)\""#).unwrap(),
+            Regex::new(r#"\"SizeOnDisk\"\t\t\"(\d+)\""#).unwrap(),
         ]
     };
 }
 
-fn read_steam_game_config(filepath: String) -> Option<SteamGame> {
-    let f = File::open(filepath);
-    if let Ok(mut file) = f {
-        let mut buffer: String = String::new();
+fn read_steam_game_config(filepath: String) -> Option<SteamGame<'static>> {
+    let mut file = File::open(filepath).ok()?;
+    let mut buffer = String::new();
+    file.read_to_string(&mut buffer).ok()?;
 
-        // read the whole file
-        let _ = file.read_to_string(&mut buffer);
+    let appid = get_kv_data(&buffer, &KEY_REGEX_VEC[0])?;
+    let name = get_kv_data(&buffer, &KEY_REGEX_VEC[1])?;
+    let state_flags = get_kv_data(&buffer, &KEY_REGEX_VEC[2])?;
+    let last_played = get_kv_data(&buffer, &KEY_REGEX_VEC[3])?;
+    let size_on_disk = get_kv_data(&buffer, &KEY_REGEX_VEC[4])?;
 
-        // println!("{:?}", buffer);
-
-        let appid = get_kv_data(&buffer, &KEY_REGEX_VEC[0]);
-        let name = get_kv_data(&buffer, &KEY_REGEX_VEC[1]);
-        let state_flags = get_kv_data(&buffer, &KEY_REGEX_VEC[2]);
-
-        match (appid, name, state_flags) {
-            (Some(a), Some(n), Some(s)) => {
-                let game = SteamGame {
-                    appid: a,
-                    name: n,
-                    state_flags: s,
-                };
-                // println!("{}", game);
-                Some(game)
-            }
-            _ => None,
-        }
-    } else {
-        None
-    }
+    Some(SteamGame {
+        appid: appid.into_owned().into(),
+        name: name.into_owned().into(),
+        state_flags: state_flags.into_owned().into(),
+        last_played: last_played.into_owned().into(),
+        size_on_disk: size_on_disk.into_owned().into(),
+    })
 }
 
-fn get_kv_data(buffer: &str, re: &Regex) -> Option<String> {
-    if let Some(re) = re.captures(buffer) {
-        Some(re.get(1).map_or("".to_owned(), |m| m.as_str().to_string()))
-    } else {
-        None
-    }
+fn get_kv_data<'a>(buffer: &'a str, re: &Regex) -> Option<Cow<'a, str>> {
+    re.captures(buffer).and_then(|cap| cap.get(1).map(|m| Cow::from(m.as_str())))
 }

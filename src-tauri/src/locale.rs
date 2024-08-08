@@ -10,9 +10,7 @@ pub fn get_lang_json_string(handle: tauri::AppHandle) -> String {
         .unwrap();
 
     let mut json_str = String::new();
-
     let mut file = std::fs::File::open(&resource_path).unwrap();
-
     let _ = file.read_to_string(&mut json_str);
 
     json_str
