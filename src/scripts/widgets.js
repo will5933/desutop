@@ -19,7 +19,7 @@ export async function initWidgets() {
         // rander widgets
         for (const widget of widgetsArr) {
             let { type, id, a, b } = widget;
-            appendWidget(type, id, a, b);
+            await appendWidget(type, id, a, b);
         }
         bindEventListener();
     }
@@ -46,7 +46,7 @@ async function appendWidget(type, id, a, b) {
             break;
 
         case WIDGET_TYPE.steamGames:
-            [label, content] = await makeSteamGamesWidget(id);
+            [label, content] = await makeSteamGamesWidget();
             labelDiv.appendChild(label);
             content.forEach(e => contentDiv.appendChild(e));
     }
@@ -77,7 +77,7 @@ function makeNoteWidget(id, a, b) {
 }
 
 // fn makeSteamGamesWidget() -> [label, content]
-async function makeSteamGamesWidget(id) {
+async function makeSteamGamesWidget() {
     if (!window.mSGW_cache) {
         const arr = await invoke('get_steam_games');
         arr.sort((a, b) => b.last_played - a.last_played);
@@ -93,7 +93,6 @@ async function makeSteamGamesWidget(id) {
     };
 
     const getSizeStr = (byteNumStr) => {
-        `${(Number.parseInt(byteNumStr) / 1024 / 1024 / 1024).toFixed(2)}GB`
         const B = Number.parseInt(byteNumStr);
         if (B < 1024) return `${B.toFixed(2)}B`;
         if (B < 1048576) return `${(B / 1024).toFixed(2)}KB`;
@@ -164,6 +163,7 @@ function bindEventListener() {
     for (const item of document.querySelectorAll('.steamgameitem')) {
         item.addEventListener('click',
             () => {
+                console.log(item.getAttribute("data-appid"));
                 invoke('start_steam_game', { appid: item.getAttribute("data-appid") });
             }
         )
