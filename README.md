@@ -4,13 +4,16 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
 
 这是一个由 [Tauri](https://github.com/tauri-apps/tauri) 构建的 **Windows** 端桌面替代项目，目前正在努力开发中，目前已拥有多款桌面微件（Widget）。
 
-![](pic-a.png)
+![](.readme_pic/pic-a.png)
 
 ## *Road Map / 开发路线*
 
 ### *Deployed / 已上线*
 
-- [`v0.2.2`](https://github.com/will5933/desutop/releases/tag/v0.2.2) Steam game status display / steam 游戏状态显示 
+- [`v0.2.3`](https://github.com/will5933/desutop/releases/tag/v0.2.2) Steam game status display / steam 游戏状态显示
+
+![](.readme_pic/steam_games_widget.png)
+
 - [`v0.2.2`](https://github.com/will5933/desutop/releases/tag/v0.2.2) Note widget / 笔记微件
 
 ### *Developing / 开发中*
