@@ -1,12 +1,14 @@
 {
     "DATETIME": {
-        "DAY": "d",
-        "HOUR": "h",
-        "MINUTE": "m",
-        "MONTH": "Month",
-        "SECOND": "s",
-        "WEEK": "w",
-        "YEAR": "Year"
+        "DAY": "day",
+        "HOUR": "hour",
+        "MINUTE": "minute",
+        "MONTH": "month",
+        "SECOND": "second",
+        "WEEK": "week",
+        "YEAR": "year",
+        "PLURAL": "s",
+        "AGO": " ago"
     },
     "NOTE": {
         "UNTITLED": "Untitled",
@@ -14,7 +16,7 @@
     },
     "QUIT": "quit",
     "STEAM_CONTAINER_LABEL": "Steam Games",
-    "STEAM_GAME_LASTPLAYED_NOT": "-",
+    "STEAM_GAME_LASTPLAYED_NOT": "Long time ago",
     "STEAM_GAME_STATE": {
         "4": "Ready",
         "6": "Pending",

@@ -26,6 +26,7 @@ export class WidgetContainer extends HTMLElement {
         // destory self
         shadow.getElementById('destory').addEventListener('click', async () => {
             widgets.set('data', (await widgets.get('data')).filter(obj => obj['id'] !== this.getAttribute('widget-id')));
+            widgets.save();
             this.remove();
             this.saveWidgetsStyles();
         });

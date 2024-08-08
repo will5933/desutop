@@ -79,10 +79,12 @@ function makeNoteWidget(id, a, b) {
 // fn makeSteamGamesWidget() -> [label, content]
 async function makeSteamGamesWidget(id) {
     if (!window.mSGW_cache) {
-        window.mSGW_cache = await invoke('get_steam_games');
+        const arr = await invoke('get_steam_games');
+        arr.sort((a, b) => b.last_played - a.last_played);
+        window.mSGW_cache = arr;
     }
 
-    const { SECOND, MINUTE, HOUR, DAY, WEEK } = window.LANG.DATETIME;
+    const { SECOND, MINUTE, HOUR, DAY, WEEK, PLURAL, AGO } = window.LANG.DATETIME;
 
     const getStateStr = (stateNumStr) => {
         if (window.LANG.STEAM_GAME_STATE.hasOwnProperty(stateNumStr)) {
@@ -90,25 +92,35 @@ async function makeSteamGamesWidget(id) {
         } else return window.LANG.STEAM_GAME_STATE["UNKNOWN"];
     };
 
-    const getSizeStr = (byteNumStr) => `${(Number.parseInt(byteNumStr) / 1024 / 1024 / 1024).toFixed(2)}GB`;
+    const getSizeStr = (byteNumStr) => {
+        `${(Number.parseInt(byteNumStr) / 1024 / 1024 / 1024).toFixed(2)}GB`
+        const B = Number.parseInt(byteNumStr);
+        if (B < 1024) return `${B.toFixed(2)}B`;
+        if (B < 1048576) return `${(B / 1024).toFixed(2)}KB`;
+        if (B < 1073741824) return `${(B / 1048576).toFixed(2)}MB`;
+        return `${(B / 1073741824).toFixed(2)}GB`;
+    };
 
     const getLastPlayedStr = (LastPlayedNumStr) => {
         if (LastPlayedNumStr === '0') return window.LANG.STEAM_GAME_LASTPLAYED_NOT;
         const sec = Math.round(Date.now() / 1000) - Number.parseInt(LastPlayedNumStr);
 
         if (sec < 60) {
-            return `${sec}${SECOND} ago`;
+            return `${sec} ${SECOND}${sec === 1 ? '' : PLURAL}${AGO}`;
         } else if (sec < 3600) {
-            return `${Math.round(sec / 60)}${MINUTE} ago`;
+            const x = Math.round(sec / 60);
+            return `${x} ${MINUTE}${x === 1 ? '' : PLURAL}${AGO}`;
         } else if (sec < 86400) {
-            return `${Math.round(sec / 3600)}${HOUR} ago`;
+            const x = Math.round(sec / 3600);
+            return `${x} ${HOUR}${x === 1 ? '' : PLURAL}${AGO}`;
         } else if (sec < 604800) {
-            return `${Math.round(sec / 86400)}${DAY} ago`;
+            const x = Math.round(sec / 86400);
+            return `${x} ${DAY}${x === 1 ? '' : PLURAL}${AGO}`;
         } else {
-            return `${Math.round(sec / 604800)}${WEEK} ago`;
+            const x = Math.round(sec / 604800);
+            return `${x} ${WEEK}${x === 1 ? '' : PLURAL}${AGO}`;
         }
     };
-
 
     // filter
     const steamGamefilterOut = ['228980'];
@@ -124,20 +136,10 @@ async function makeSteamGamesWidget(id) {
         const name = createElementWithAttributes('span', { 'class': 'steamgame_name' });
         name.textContent = steamgame.name;
         const info = createElementWithAttributes('span', { 'class': 'steamgame_state' });
-        info.textContent = `${getStateStr(steamgame.state_flags)} ${getSizeStr(steamgame.size_on_disk)} ${getLastPlayedStr(steamgame.last_played)}`
-
-        console.log(info.textContent, steamgame);
-        // >
-        // const [span1, span2, span3] = [createElement('span'), createElement('span'), createElement('span')];
-        // span1.textContent = getStateStr(steamgame.state_flags);
-        // span2.textContent = getSizeStr(steamgame.size_on_disk);
-        // span3.textContent = getLastPlayStr(steamgame.last_played);
+        info.textContent = `${getLastPlayedStr(steamgame.last_played)} · ${getStateStr(steamgame.state_flags)} · ${getSizeStr(steamgame.size_on_disk)}`
 
         wrapper.appendChild(name);
         wrapper.appendChild(info);
-        // info.appendChild(span1);
-        // info.appendChild(span2);
-        // info.appendChild(span3);
 
         contentArr.push(wrapper);
     }

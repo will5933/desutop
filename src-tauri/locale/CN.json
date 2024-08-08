@@ -6,7 +6,9 @@
         "MONTH": "月",
         "SECOND": "秒",
         "WEEK": "周",
-        "YEAR": "年"
+        "YEAR": "年",
+        "PLURAL": "",
+        "AGO": "以前"
     },
     "NOTE": {
         "UNTITLED": "未命名",
@@ -14,7 +16,7 @@
     },
     "QUIT": "退出",
     "STEAM_CONTAINER_LABEL": "Steam 游戏",
-    "STEAM_GAME_LASTPLAYED_NOT": "-",
+    "STEAM_GAME_LASTPLAYED_NOT": "很久以前",
     "STEAM_GAME_STATE": {
         "4": "准备就绪",
         "6": "等待更新",
