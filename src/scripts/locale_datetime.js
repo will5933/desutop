@@ -14,6 +14,8 @@ const dateTime = document.querySelector('#datetime');
         setInterval(showCurrentDateTime, 1000);
 
         customElements.define('widget-container', WidgetContainer);
+
+        // bindListeners();
         
         initWidgets();
     })
@@ -22,6 +24,9 @@ const dateTime = document.querySelector('#datetime');
     const assetUrl = window.__TAURI__.core.convertFileSrc(await window.__TAURI__.path.resolveResource('pic/wp.jpg'));
     document.querySelector("#screen").style.backgroundImage = `url('${assetUrl}')`;
 })();
+
+// TODO
+function bindListeners() {}
 
 // fn showCurrentDateTime()
 function showCurrentDateTime() {

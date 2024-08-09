@@ -1,6 +1,6 @@
 {
   "productName": "Desutop",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "identifier": "com.desutop.tauri",
   "build": {
     "frontendDist": "../src"
@@ -42,7 +42,6 @@
       "icons/icon.ico"
     ],
     "resources": [
-      "icons/icon.ico",
       "pic/wp.jpg",
       "locale/*"
     ]

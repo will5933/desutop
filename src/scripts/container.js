@@ -12,7 +12,7 @@ export class WidgetContainer extends HTMLElement {
         shadow.appendChild(content);
 
         // handle z-index
-        shadow.addEventListener('mousedown', () => {
+        this.addEventListener('mousedown', () => {
             const oldIndex = this.style.zIndex;
             this.style.zIndex = 999;
             const allContainers = Array.from(this.parentElement.querySelectorAll('widget-container'));
@@ -123,7 +123,7 @@ export class WidgetContainer extends HTMLElement {
         this.style.left = '160px';
         this.style.top = '80px';
         this.style.borderRadius = '20px';
-        this.style.zIndex = 999;
+        this.style.zIndex = 100;
 
         const widgetsObj = await widgetStore.get('data');
         if (widgetsObj) {

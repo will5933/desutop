@@ -17,11 +17,11 @@
     align-items: flex-start;
     justify-content: center;
 
-    transition: background-color 0.2s ease-out;
+    transition: background-color 0.2s ease;
 }
 
 .steamgameitem:hover {
-    background-color: #ffffff80;
+    background-color: #ffffffc0;
 }
 
 .steamgame_name,

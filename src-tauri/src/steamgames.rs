@@ -48,7 +48,7 @@ pub fn get_steam_games() -> Result<Vec<SteamGame<'static>>, ()> {
 
 #[tauri::command]
 pub fn start_steam_game(appid: &str) -> () {
-    let status = Command::new("cmd")
+    let status: std::process::ExitStatus = Command::new("cmd")
         .arg("/C")
         .arg(&format!("start steam://rungameid/{appid}"))
         .creation_flags(0x08000000)
@@ -64,7 +64,7 @@ pub fn start_steam_game(appid: &str) -> () {
 
 // 扫描文件夹
 pub fn dir_scan(path: &Path) -> Vec<String> {
-    let entries = fs::read_dir(path).unwrap();
+    let entries: fs::ReadDir = fs::read_dir(path).unwrap();
     let mut contents: Vec<String> = Vec::with_capacity(30);
     for entry in entries {
         if let Ok(entry) = entry {
@@ -83,7 +83,7 @@ fn get_steam_install_path() -> Option<String> {
         (Get-ItemProperty -Path 'HKLM:\SOFTWARE\WOW6432Node\Valve\Steam' -Name 'InstallPath').InstallPath
     "#;
 
-    let output = Command::new("powershell")
+    let output: std::process::Output = Command::new("powershell")
         .arg("-NoProfile")
         .arg("-Command")
         .arg(ps_command)
@@ -91,7 +91,7 @@ fn get_steam_install_path() -> Option<String> {
         .output()
         .ok()?;
 
-    let install_path = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    let install_path: String = String::from_utf8_lossy(&output.stdout).trim().to_string();
 
     if install_path.is_empty() {
         None
@@ -114,15 +114,15 @@ lazy_static! {
 }
 
 fn read_steam_game_config(filepath: String) -> Option<SteamGame<'static>> {
-    let mut file = File::open(filepath).ok()?;
-    let mut buffer = String::new();
+    let mut file: File = File::open(filepath).ok()?;
+    let mut buffer: String = String::new();
     file.read_to_string(&mut buffer).ok()?;
 
-    let appid = get_kv_data(&buffer, &KEY_REGEX_VEC[0])?;
-    let name = get_kv_data(&buffer, &KEY_REGEX_VEC[1])?;
-    let state_flags = get_kv_data(&buffer, &KEY_REGEX_VEC[2])?;
-    let last_played = get_kv_data(&buffer, &KEY_REGEX_VEC[3])?;
-    let size_on_disk = get_kv_data(&buffer, &KEY_REGEX_VEC[4])?;
+    let appid: Cow<str> = get_kv_data(&buffer, &KEY_REGEX_VEC[0])?;
+    let name: Cow<str> = get_kv_data(&buffer, &KEY_REGEX_VEC[1])?;
+    let state_flags: Cow<str> = get_kv_data(&buffer, &KEY_REGEX_VEC[2])?;
+    let last_played: Cow<str> = get_kv_data(&buffer, &KEY_REGEX_VEC[3])?;
+    let size_on_disk: Cow<str> = get_kv_data(&buffer, &KEY_REGEX_VEC[4])?;
 
     Some(SteamGame {
         appid: appid.into_owned().into(),

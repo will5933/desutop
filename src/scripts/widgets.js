@@ -24,8 +24,7 @@ export async function initWidgets() {
         bindEventListener();
     }
 
-    document.querySelector('#addwidget_note').addEventListener('click', createNoteWidget);
-    document.querySelector('#addwidget_steamgames').addEventListener('click', createSteamGamesWidget);
+    setAddWidgetMenu();
 }
 
 async function appendWidget(type, id, a, b) {
@@ -169,14 +168,15 @@ function bindEventListener() {
         )
     }
 
+    window.inputTimer = {};
     // type: note > save a / b
-    for (const item of document.querySelectorAll('p.contenteditable')) {
+    for (const item of document.querySelectorAll('.contenteditable')) {
         item.addEventListener('input',
             (e) => {
-                clearTimeout(window.inputTimer);
-                window.inputTimer = setTimeout(async () => {
-                    console.log(e.target);
-                    const id = e.target.getAttribute('widget-id'), key = e.target.getAttribute('data-key');
+                const id = e.target.getAttribute('widget-id'), key = e.target.getAttribute('data-key');
+                clearTimeout(window.inputTimer[id + key]);
+                window.inputTimer[id + key] = setTimeout(async () => {
+                    console.log("input, save!");
                     await storedWidgets.set('data', (await storedWidgets.get('data')).map((v) => {
                         if (v['id'] == id) {
                             v[key] = e.target.innerText;
@@ -184,7 +184,7 @@ function bindEventListener() {
                         return v;
                     }));
                     await storedWidgets.save();
-                }, 5000)
+                }, 2000)
             }
         )
     }
@@ -195,6 +195,68 @@ function bindEventListener() {
     // })
 }
 
+// 
+// menu begin
+// 
+const aboveLayer = document.querySelector('#above_layer'), menu = document.querySelector('#menu');
+
+function setAddWidgetMenu() {
+    const itemArr = [['Note', createNoteWidget], ['Steam Games', createSteamGamesWidget]].map((arr) => {
+        const ele = createElementWithAttributes('p', { 'class': 'menu-item' });
+        ele.textContent = arr[0];
+        ele.addEventListener('click', () => {
+            closeMenu();
+            arr[1]();
+        });
+        return ele;
+    });
+
+    document.querySelector('#addwidget_btn').addEventListener('mousedown', (e) => {
+        const btn = e.currentTarget;
+        showMenu(
+            itemArr,
+            btn.getBoundingClientRect(),
+            () => btn.classList.add('topbar_ele_on'),
+            () => btn.classList.remove('topbar_ele_on')
+        );
+    });
+}
+
+function showMenu(itemArr, rect, afterShowFn, afterCloseFn) {
+    if (itemArr?.length > 0) {
+        menu.innerHTML = '';
+        itemArr.forEach((e) => menu.appendChild(e));
+    }
+
+    const { left, right, top, bottom } = rect;
+    menu.style.left = `${(left + right) / 2}px`;
+    menu.style.top = `${bottom + 6}px`;
+
+    window.menu_after_close_fn = afterCloseFn;
+    aboveLayer.style.pointerEvents = 'auto';
+    aboveLayer.style.backdropFilter = 'blur(5px)';
+    aboveLayer.addEventListener('click', closeMenu);
+    menu.style.display = 'block';
+    // afterShowFn()
+    if (afterShowFn) afterShowFn();
+    setTimeout(() => {
+        menu.classList.add('show');
+    });
+}
+
+function closeMenu() {
+    aboveLayer.style.backdropFilter = aboveLayer.style.pointerEvents = '';
+    menu.classList.remove('show');
+    // afterCloseFn()
+    if (window.menu_after_close_fn) window.menu_after_close_fn();
+    window.menu_after_close_fn = null;
+    setTimeout(() => {
+        menu.style.display = '';
+    }, 300);
+}
+// 
+// menu end
+// 
 async function createNoteWidget() {
     const id = make_widgetID();
     let arr = await storedWidgets.get('data');

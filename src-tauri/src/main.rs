@@ -2,11 +2,10 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use tauri::{
-    image::Image,
     menu::{MenuBuilder, MenuItemBuilder},
     path::BaseDirectory,
     tray::TrayIconBuilder,
-    Manager,
+    AppHandle, Manager, WebviewWindowBuilder,
 };
 
 use serde_json::Value;
@@ -24,6 +23,9 @@ use steamgames::*;
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app, _, _| {
+            let _ = show_window(app);
+        }))
         // autostart
         // .plugin(tauri_plugin_autostart::init(
         //     MacosLauncher::LaunchAgent,
@@ -74,18 +76,36 @@ fn main() {
 //
 // set_system_tray
 //
-fn setup_set_system_tray(app: &mut tauri::App, lang_json: Value) -> () {
-    let lang_quit = lang_json["QUIT"].as_str().unwrap();
+fn setup_set_system_tray(app: &mut tauri::App,  lang_json: Value) -> () {
+    let lang_quit: &str = lang_json["QUIT"].as_str().unwrap();
+    let lang_settings: &str = lang_json["SETTINGS"].as_str().unwrap();
+    // let lang_title_settings: &str = lang_json["TITLE_SETTINGS"].as_str().unwrap();
+
     let quit = MenuItemBuilder::with_id("quit", lang_quit)
         .build(app)
         .unwrap();
-    let menu = MenuBuilder::new(app).items(&[&quit]).build().unwrap();
-    let _tray = TrayIconBuilder::new()
-        .icon(Image::from_path("icons/icon.ico").unwrap())
+    let settings = MenuItemBuilder::with_id("settings", lang_settings)
+        .build(app)
+        .unwrap();
+    //
+    let menu = MenuBuilder::new(app)
+        .items(&[&settings, &quit])
+        .build()
+        .unwrap();
+    let _tray: tauri::tray::TrayIcon = TrayIconBuilder::new()
+        .icon(app.default_window_icon().unwrap().to_owned())
         .menu(&menu)
         .on_menu_event(move |app, event| match event.id().as_ref() {
             "quit" => {
                 app.exit(0);
+            }
+            "settings" => {
+                let builder = WebviewWindowBuilder::new(
+                    app,
+                    "settings",
+                    tauri::WebviewUrl::App("settings.html".into()),
+                );
+                let _webview = builder.center().title(lang_json["TITLE_SETTINGS"].as_str().unwrap()).build().unwrap();
             }
             _ => (),
         })
@@ -128,4 +148,15 @@ fn setup_set_windows(app: &mut tauri::App) -> () {
     } else {
         panic!("[CODE01] The main window not found");
     }
+}
+
+fn show_window(app: &AppHandle) {
+    let windows = app.webview_windows();
+
+    windows
+        .values()
+        .next()
+        .expect("Sorry, no window found")
+        .set_focus()
+        .expect("Can't Bring Window to Focus");
 }

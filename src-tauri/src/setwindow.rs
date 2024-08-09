@@ -21,7 +21,7 @@ extern "system" fn set_wallpaper_layer(hwnd: HWND, tauri_hwnd_lparam: LPARAM) ->
     let mut res: BOOL = TRUE;
 
     if let Ok(_) = find_window(Some(hwnd), None, "SHELLDLL_DefView", "") {
-        let tauri_hwnd = HWND(tauri_hwnd_lparam.0 as *mut c_void);
+        let tauri_hwnd: HWND = HWND(tauri_hwnd_lparam.0 as *mut c_void);
 
         //
         // set parent
@@ -46,17 +46,17 @@ fn find_window(
     window_name: &str,
 ) -> Result<HWND, Error> {
     // Use default HWND if not provided
-    let parent_window = parent_window.unwrap_or(HWND(null_mut()));
-    let child_after = child_after.unwrap_or(HWND(null_mut()));
+    let parent_window: HWND = parent_window.unwrap_or(HWND(null_mut()));
+    let child_after: HWND = child_after.unwrap_or(HWND(null_mut()));
 
     // Convert strings to PCWSTR, handle empty strings as null
-    let class_name_pcwstr = if !class_name.is_empty() {
+    let class_name_pcwstr: PCWSTR = if !class_name.is_empty() {
         to_pcwstr(class_name)
     } else {
         PCWSTR::null()
     };
 
-    let window_name_pcwstr = if !window_name.is_empty() {
+    let window_name_pcwstr: PCWSTR = if !window_name.is_empty() {
         to_pcwstr(window_name)
     } else {
         PCWSTR::null()
@@ -69,7 +69,7 @@ fn find_window(
 
 fn send_0x52c() {
     let mut lpdwresult: usize = 0;
-    let sleep_duration = Duration::from_millis(100);
+    let sleep_duration: Duration = Duration::from_millis(100);
 
     for i in 0..=9 {
         match find_window(None, None, "Progman", "Program Manager") {

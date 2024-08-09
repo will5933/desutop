@@ -16,20 +16,26 @@
     caret-color: var(--theme-color);
     color: var(--font-color);
     background-color: var(--bg-color-with-alpha);
-    backdrop-filter: blur(80px) brightness(120%);
+    backdrop-filter: blur(60px) brightness(108%);
     /* border: 1px solid var(--border-color); */
     box-shadow: 0 4px 20px var(--shadow-color);
     /* js */
     border-radius: 20px;
-
     padding: 0.2em 0.8em 0.8em 0.8em;
 
+    transition: background-color 0.5s ease;
+
     --theme-color: #8686ff;
-    --bg-color-with-alpha: #ffffff08;
+    --bg-color-with-alpha: #ffffff60;
+    --bg-color-with-alpha-hover: #ffffff80;
     --font-color: #404045;
     --border-color: #40404515;
     --shadow-color: #40404520;
     --bg-color-text-selection: #8686ff80;
+}
+
+:host(:hover) {
+    background-color: var(--bg-color-with-alpha-hover);
 }
 
 #label {
@@ -57,13 +63,11 @@
 svg {
     fill: transparent;
     opacity: 0.35;
+    cursor: none;
 
     transition: all 0.24s ease;
 }
-svg#move {
-    cursor: move;
-}
-#label:hover>svg {
+:host(:hover) svg {
     fill: currentColor;
 }
 svg:hover {
