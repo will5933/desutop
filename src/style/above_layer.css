@@ -1,8 +1,12 @@
+#blur_layer {
+    pointer-events: none;
+    z-index: 10;
+    transition: backdrop-filter 0.3s ease;
+}
+
 #above_layer {
     pointer-events: none;
     z-index: 10;
-
-    transition: backdrop-filter 0.3s ease;
 }
 
 #menu {

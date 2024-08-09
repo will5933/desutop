@@ -198,7 +198,7 @@ function bindEventListener() {
 // 
 // menu begin
 // 
-const aboveLayer = document.querySelector('#above_layer'), menu = document.querySelector('#menu');
+const aboveLayer = document.querySelector('#above_layer'), blurLayer = document.querySelector('#blur_layer'), menu = document.querySelector('#menu');
 
 function setAddWidgetMenu() {
     const itemArr = [['Note', createNoteWidget], ['Steam Games', createSteamGamesWidget]].map((arr) => {
@@ -234,7 +234,7 @@ function showMenu(itemArr, rect, afterShowFn, afterCloseFn) {
 
     window.menu_after_close_fn = afterCloseFn;
     aboveLayer.style.pointerEvents = 'auto';
-    aboveLayer.style.backdropFilter = 'blur(5px)';
+    blurLayer.style.backdropFilter = 'blur(5px)';
     aboveLayer.addEventListener('click', closeMenu);
     menu.style.display = 'block';
     // afterShowFn()
@@ -245,7 +245,8 @@ function showMenu(itemArr, rect, afterShowFn, afterCloseFn) {
 }
 
 function closeMenu() {
-    aboveLayer.style.backdropFilter = aboveLayer.style.pointerEvents = '';
+    blurLayer.style.backdropFilter = '';
+    aboveLayer.style.pointerEvents = '';
     menu.classList.remove('show');
     // afterCloseFn()
     if (window.menu_after_close_fn) window.menu_after_close_fn();
