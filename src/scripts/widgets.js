@@ -228,6 +228,7 @@ function showMenu(itemArr, rect, afterShowFn, afterCloseFn) {
         itemArr.forEach((e) => menu.appendChild(e));
     }
 
+    clearTimeout(window.close_menu_set_time_out);
     const { left, right, top, bottom } = rect;
     menu.style.left = `${(left + right) / 2}px`;
     menu.style.top = `${bottom + 6}px`;
@@ -251,7 +252,7 @@ function closeMenu() {
     // afterCloseFn()
     if (window.menu_after_close_fn) window.menu_after_close_fn();
     window.menu_after_close_fn = null;
-    setTimeout(() => {
+    window.close_menu_set_time_out = setTimeout(() => {
         menu.style.display = '';
     }, 300);
 }

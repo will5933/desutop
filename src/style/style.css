@@ -107,7 +107,7 @@ svg {
     height: calc(100% - 4px);
     padding: 0 0.8em;
     font-size: 0.92em;
-    font-weight: 600;
+    font-weight: 500;
     color: #ffffffd0;
     text-shadow: 0 0 4px #00000020;
     border-radius: 12px;
@@ -124,14 +124,15 @@ svg {
 .topbar_ele_on {
     /* background-color: #ffffff35; */
     color: #ffffff;
-    text-shadow: 0 0 8px #00000060;
-    backdrop-filter: blur(20px) brightness(115%);
-    box-shadow: 0 0 6px #00000008;
+    text-shadow: 0 0 8px #00000040;
+    backdrop-filter: blur(20px) brightness(110%);
+    box-shadow: 0 0 6px #00000010;
 }
 
 #datetime {
     padding: 0 0.8em;
     border-radius: 12px;
+    font-variant-numeric: tabular-nums;
 }
 
 /* scroll bar */
