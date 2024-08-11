@@ -1,0 +1,53 @@
+{
+    "language": "English",
+    "DATETIME": {
+        "DAY": "day",
+        "HOUR": "hour",
+        "MINUTE": "minute",
+        "MONTH": "month",
+        "SECOND": "second",
+        "WEEK": "week",
+        "YEAR": "year",
+        "DAYS": "days",
+        "HOURS": "hours",
+        "MINUTES": "minutes",
+        "MONTHS": "months",
+        "SECONDS": "seconds",
+        "WEEKS": "weeks",
+        "YEARS": "years",
+        "AGO": " ago"
+    },
+    "NOTE": {
+        "UNTITLED": "Untitled",
+        "UNTITLED_CONTENT": "To be edited"
+    },
+    "QUIT": "quit",
+    "SETTINGS": {
+        "SETTINGS": "settings",
+        "TITLE_SETTINGS": "Settings - Desutop",
+        "COMMON": "Common",
+        "THEME&WALLPAPER": "Theme & Wallpaper",
+        "LANGUAGE&FONT": "Language & Font",
+        "LANGUAGE": "Language",
+        "ABOUT": "About",
+        "DISPLAY_LANGUAGE": "Display language",
+        "FONT_FAMILY": "Font"
+    },
+    "STEAM_CONTAINER_LABEL": "Steam Games",
+    "STEAM_GAME_LASTPLAYED_NOT": "Long time ago",
+    "STEAM_GAME_STATE": {
+        "4": "Ready",
+        "6": "Pending",
+        "518": "Unscheduled",
+        "UNKNOWN": "Unknown"
+    },
+    "WEEKDAYS": [
+        "Sun.",
+        "Mon.",
+        "Tue.",
+        "Wed.",
+        "Thu.",
+        "Fri.",
+        "Sat."
+    ]
+}

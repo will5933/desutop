@@ -11,10 +11,20 @@
           "user-select",
           "height: fit-content",
           "-webkit-text-size-adjust",
-          "font-synthesis"
+          "font-synthesis",
+          "width: fit-content"
         ]
       }
     ],
-    "create-element-svg": "off"
+    "create-element-svg": "off",
+    "axe/name-role-value": [
+      "default",
+      {
+        "link-name": "off"
+      }
+    ],
+    "css-prefix-order": "off",
+    "detect-css-reflows/composite": "off",
+    "detect-css-reflows/paint": "off"
   }
 }

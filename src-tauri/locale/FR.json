@@ -1,0 +1,53 @@
+{
+    "language": "Français",
+    "DATETIME": {
+        "DAY": "jour",
+        "HOUR": "heure",
+        "MINUTE": "minute",
+        "MONTH": "mois",
+        "SECOND": "seconde",
+        "WEEK": "semaine",
+        "YEAR": "an",
+        "DAYS": "jours",
+        "HOURS": "heures",
+        "MINUTES": "minutes",
+        "MONTHS": "mois",
+        "SECONDS": "secondes",
+        "WEEKS": "semaines",
+        "YEARS": "années",
+        "AGO": " plus tôt"
+    },
+    "NOTE": {
+        "UNTITLED": "Sans titre",
+        "UNTITLED_CONTENT": "À éditer"
+    },
+    "QUIT": "Quitter",
+    "SETTINGS": {
+        "SETTINGS": "Paramètres",
+        "TITLE_SETTINGS": "Paramètres - Desutop",
+        "COMMON": "Général",
+        "THEME&WALLPAPER": "Thème et Fond d'écran",
+        "LANGUAGE&FONT": "Langue et Police",
+        "LANGUAGE": "Langue",
+        "ABOUT": "À propos",
+        "DISPLAY_LANGUAGE": "Langue d'affichage",
+        "FONT_FAMILY": "Police"
+    },
+    "STEAM_CONTAINER_LABEL": "Jeux Steam",
+    "STEAM_GAME_LASTPLAYED_NOT": "Il y a longtemps",
+    "STEAM_GAME_STATE": {
+        "4": "Prêt",
+        "6": "En attente de mise à jour",
+        "518": "Téléchargement non planifié",
+        "UNKNOWN": "État inconnu"
+    },
+    "WEEKDAYS": [
+        "Dimanche",
+        "Lundi",
+        "Mardi",
+        "Mercredi",
+        "Jeudi",
+        "Vendredi",
+        "Samedi"
+    ]
+}

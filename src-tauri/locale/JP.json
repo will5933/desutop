@@ -1,0 +1,53 @@
+{
+    "language": "日本語",
+    "DATETIME": {
+        "DAY": "日",
+        "HOUR": "時",
+        "MINUTE": "分",
+        "MONTH": "月",
+        "SECOND": "秒",
+        "WEEK": "週",
+        "YEAR": "年",
+        "DAYS": "日",
+        "HOURS": "時",
+        "MINUTES": "分",
+        "MONTHS": "月",
+        "SECONDS": "秒",
+        "WEEKS": "週",
+        "YEARS": "年",
+        "AGO": "前"
+    },
+    "NOTE": {
+        "UNTITLED": "無題",
+        "UNTITLED_CONTENT": "編集待ち"
+    },
+    "QUIT": "終了",
+    "SETTINGS": {
+        "SETTINGS": "設定",
+        "TITLE_SETTINGS": "設定 - Desutop",
+        "COMMON": "共通",
+        "THEME&WALLPAPER": "テーマと壁紙",
+        "LANGUAGE&FONT": "言語とフォント",
+        "LANGUAGE": "言語",
+        "ABOUT": "情報",
+        "DISPLAY_LANGUAGE": "表示言語",
+        "FONT_FAMILY": "フォント"
+    },
+    "STEAM_CONTAINER_LABEL": "Steam ゲーム",
+    "STEAM_GAME_LASTPLAYED_NOT": "ずっと前",
+    "STEAM_GAME_STATE": {
+        "4": "準備完了",
+        "6": "更新待ち",
+        "518": "ダウンロード未予定",
+        "UNKNOWN": "不明な状態"
+    },
+    "WEEKDAYS": [
+        "日曜日",
+        "月曜日",
+        "火曜日",
+        "水曜日",
+        "木曜日",
+        "金曜日",
+        "土曜日"
+    ]
+}

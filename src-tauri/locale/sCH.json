@@ -1,0 +1,53 @@
+{
+    "language": "简体中文",
+    "DATETIME": {
+        "DAY": "天",
+        "HOUR": "时",
+        "MINUTE": "分",
+        "MONTH": "月",
+        "SECOND": "秒",
+        "WEEK": "周",
+        "YEAR": "年",
+        "DAYS": "天",
+        "HOURS": "时",
+        "MINUTES": "分",
+        "MONTHS": "月",
+        "SECONDS": "秒",
+        "WEEKS": "周",
+        "YEARS": "年",
+        "AGO": "以前"
+    },
+    "NOTE": {
+        "UNTITLED": "未命名",
+        "UNTITLED_CONTENT": "待编辑"
+    },
+    "QUIT": "退出",
+    "SETTINGS": {
+        "SETTINGS": "设置",
+        "TITLE_SETTINGS": "设置 - Desutop",
+        "COMMON": "通用",
+        "THEME&WALLPAPER": "主题与壁纸",
+        "LANGUAGE&FONT": "语言与字体",
+        "LANGUAGE": "语言",
+        "ABOUT": "关于",
+        "DISPLAY_LANGUAGE": "显示语言",
+        "FONT_FAMILY": "字体"
+    },
+    "STEAM_CONTAINER_LABEL": "Steam 游戏",
+    "STEAM_GAME_LASTPLAYED_NOT": "很久以前",
+    "STEAM_GAME_STATE": {
+        "4": "准备就绪",
+        "6": "等待更新",
+        "518": "未安排下载",
+        "UNKNOWN": "未知状态"
+    },
+    "WEEKDAYS": [
+        "周日",
+        "周一",
+        "周二",
+        "周三",
+        "周四",
+        "周五",
+        "周六"
+    ]
+}

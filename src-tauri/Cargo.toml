@@ -1,6 +1,6 @@
 [package]
 name = "Desutop"
-version = "0.2.4"
+version = "0.2.5"
 description = "Desutop: A Tauri Based Desktop App"
 authors = ["fanin"]
 edition = "2021"
@@ -23,6 +23,7 @@ regex = "1.10.5"
 lazy_static = "1.5.0"
 tauri-plugin-store = "2.0.0-rc"
 rayon = "1.10.0"
+tauri-plugin-dialog = "2.0.0-rc.0"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

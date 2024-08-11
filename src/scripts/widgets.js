@@ -83,7 +83,7 @@ async function makeSteamGamesWidget() {
         window.mSGW_cache = arr;
     }
 
-    const { SECOND, MINUTE, HOUR, DAY, WEEK, PLURAL, AGO } = window.LANG.DATETIME;
+    const { SECOND, MINUTE, HOUR, DAY, WEEK, SECONDS, MINUTES, HOURS, DAYS, WEEKS, AGO } = window.LANG.DATETIME;
 
     const getStateStr = (stateNumStr) => {
         if (window.LANG.STEAM_GAME_STATE.hasOwnProperty(stateNumStr)) {
@@ -104,19 +104,19 @@ async function makeSteamGamesWidget() {
         const sec = Math.round(Date.now() / 1000) - Number.parseInt(LastPlayedNumStr);
 
         if (sec < 60) {
-            return `${sec} ${SECOND}${sec === 1 ? '' : PLURAL}${AGO}`;
+            return `${sec} ${sec === 1 ? SECOND : SECONDS}${AGO}`;
         } else if (sec < 3600) {
             const x = Math.round(sec / 60);
-            return `${x} ${MINUTE}${x === 1 ? '' : PLURAL}${AGO}`;
+            return `${x} ${x === 1 ? MINUTE : MINUTES}${AGO}`;
         } else if (sec < 86400) {
             const x = Math.round(sec / 3600);
-            return `${x} ${HOUR}${x === 1 ? '' : PLURAL}${AGO}`;
+            return `${x} ${x === 1 ? HOUR : HOURS}${AGO}`;
         } else if (sec < 604800) {
             const x = Math.round(sec / 86400);
-            return `${x} ${DAY}${x === 1 ? '' : PLURAL}${AGO}`;
+            return `${x} ${x === 1 ? DAY : DAYS}${AGO}`;
         } else {
             const x = Math.round(sec / 604800);
-            return `${x} ${WEEK}${x === 1 ? '' : PLURAL}${AGO}`;
+            return `${x} ${x === 1 ? WEEK : WEEKS}${AGO}`;
         }
     };
 

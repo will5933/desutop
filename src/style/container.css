@@ -25,13 +25,13 @@
 
     transition: background-color 0.5s ease;
 
-    --theme-color: #8686ff;
+    --theme-color: #7272fb;
     --bg-color-with-alpha: #ffffff60;
     --bg-color-with-alpha-hover: #ffffff80;
     --font-color: #404045;
     --border-color: #40404515;
     --shadow-color: #40404520;
-    --bg-color-text-selection: #8686ff80;
+    --bg-color-text-selection: #7272fb80;
 }
 
 :host(:hover) {

@@ -63,7 +63,12 @@ fn find_window(
     };
 
     unsafe {
-        FindWindowExW(parent_window, child_after, class_name_pcwstr, window_name_pcwstr)
+        FindWindowExW(
+            parent_window,
+            child_after,
+            class_name_pcwstr,
+            window_name_pcwstr,
+        )
     }
 }
 

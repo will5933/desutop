@@ -134,5 +134,6 @@ fn read_steam_game_config(filepath: String) -> Option<SteamGame<'static>> {
 }
 
 fn get_kv_data<'a>(buffer: &'a str, re: &Regex) -> Option<Cow<'a, str>> {
-    re.captures(buffer).and_then(|cap| cap.get(1).map(|m| Cow::from(m.as_str())))
+    re.captures(buffer)
+        .and_then(|cap| cap.get(1).map(|m| Cow::from(m.as_str())))
 }

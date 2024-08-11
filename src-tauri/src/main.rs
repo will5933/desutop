@@ -3,7 +3,6 @@
 
 use tauri::{
     menu::{MenuBuilder, MenuItemBuilder},
-    path::BaseDirectory,
     tray::TrayIconBuilder,
     AppHandle, Manager, WebviewWindowBuilder,
 };
@@ -12,19 +11,19 @@ use serde_json::Value;
 
 // use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 
-mod setwindow;
-use setwindow::set_wallpaper;
-
 mod locale;
-use locale::{get_lang_json, get_lang_json_string};
+mod setwindow;
 
 mod steamgames;
-use steamgames::*;
 
 fn main() {
+    use locale::*;
+    use steamgames::*;
+
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
-            let _ = show_window(app);
+            let _ = show_msg(app);
         }))
         // autostart
         // .plugin(tauri_plugin_autostart::init(
@@ -48,11 +47,7 @@ fn main() {
             // setup: fn set_windows
             setup_set_windows(app);
 
-            // setup: get locale path
-            let lang_json_file_path: std::path::PathBuf = app
-                .path()
-                .resolve("locale/default.json", BaseDirectory::Resource)?;
-            let lang_json: Value = get_lang_json(lang_json_file_path);
+            let lang_json: Value = serde_json::from_str(get_lang_json_string(app.handle().clone()).as_str()).unwrap();
 
             // setup: fn set_system_tray
             setup_set_system_tray(app, lang_json);
@@ -76,9 +71,9 @@ fn main() {
 //
 // set_system_tray
 //
-fn setup_set_system_tray(app: &mut tauri::App,  lang_json: Value) -> () {
+fn setup_set_system_tray(app: &mut tauri::App, lang_json: Value) -> () {
     let lang_quit: &str = lang_json["QUIT"].as_str().unwrap();
-    let lang_settings: &str = lang_json["SETTINGS"].as_str().unwrap();
+    let lang_settings: &str = lang_json["SETTINGS"]["SETTINGS"].as_str().unwrap();
     // let lang_title_settings: &str = lang_json["TITLE_SETTINGS"].as_str().unwrap();
 
     let quit = MenuItemBuilder::with_id("quit", lang_quit)
@@ -95,17 +90,12 @@ fn setup_set_system_tray(app: &mut tauri::App,  lang_json: Value) -> () {
     let _tray: tauri::tray::TrayIcon = TrayIconBuilder::new()
         .icon(app.default_window_icon().unwrap().to_owned())
         .menu(&menu)
-        .on_menu_event(move |app, event| match event.id().as_ref() {
+        .on_menu_event(move |app: &AppHandle, event| match event.id().as_ref() {
             "quit" => {
                 app.exit(0);
             }
             "settings" => {
-                let builder = WebviewWindowBuilder::new(
-                    app,
-                    "settings",
-                    tauri::WebviewUrl::App("settings.html".into()),
-                );
-                let _webview = builder.center().title(lang_json["TITLE_SETTINGS"].as_str().unwrap()).build().unwrap();
+                open_settings_windows(app, &lang_json);
             }
             _ => (),
         })
@@ -138,25 +128,38 @@ fn setup_set_windows(app: &mut tauri::App) -> () {
         // Get HWND
         if let Ok(hwnd) = ww.hwnd() {
             // set_wallpaper()
-            set_wallpaper(hwnd.0);
+            setwindow::set_wallpaper(hwnd.0);
 
             // Waiting for fn set_wallpaper()
             ww.show().unwrap();
-        } else {
-            panic!("[CODE02] Window handle not found");
         }
-    } else {
-        panic!("[CODE01] The main window not found");
     }
 }
 
-fn show_window(app: &AppHandle) {
-    let windows = app.webview_windows();
+fn open_settings_windows(app: &AppHandle, lang_json: &Value) -> () {
+    let builder = WebviewWindowBuilder::new(
+        app,
+        "settings",
+        tauri::WebviewUrl::App("settings_page/settings.html".into()),
+    );
+    let _webview = builder
+        .inner_size(800.0, 600.0)
+        .min_inner_size(600.0, 400.0)
+        .max_inner_size(1200.0, 800.0)
+        .decorations(false)
+        .center()
+        .title(lang_json["SETTINGS"]["TITLE_SETTINGS"].as_str().unwrap())
+        .build()
+        .unwrap();
+}
 
-    windows
-        .values()
-        .next()
-        .expect("Sorry, no window found")
-        .set_focus()
-        .expect("Can't Bring Window to Focus");
+fn show_msg(app: &AppHandle) {
+    use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
+
+    let _ans = app
+        .dialog()
+        .message("Desutop is running!")
+        .kind(MessageDialogKind::Error)
+        .title("Warning")
+        .blocking_show();
 }
