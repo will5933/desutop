@@ -1,27 +1,34 @@
 // locale
-window.__TAURI__.core.invoke('get_lang_json_string').then((jsonStr) => {
-  window.LANG = JSON.parse(jsonStr);
+{
+  const settingsStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin');
+  const dataObj = await settingsStore.get('data');
+  window.__TAURI__.core.invoke('get_lang_json_string', { "languageJsonFilename": dataObj["language_json_filename"] })
+    .then((jsonStr) => {
+      window.LANG = JSON.parse(jsonStr);
 
-  document.body.querySelectorAll('[data-lang]').forEach((e) => {
-    e.textContent = window.LANG['SETTINGS'][e.getAttribute('data-lang')];
-  })
-})
+      document.body.querySelectorAll('[data-lang]').forEach((e) => {
+        e.textContent = window.LANG['SETTINGS'][e.getAttribute('data-lang')];
+      })
+    })
+}
 
 // right click
 document.body.addEventListener('contextmenu', e => e.preventDefault());
 
-// btn
-const appWindow = new window.__TAURI__.window.Window('settings');
+{
+  // btn
+  const appWindow = new window.__TAURI__.window.Window('settings');
 
-document
-  .getElementById('titlebar-minimize')
-  ?.addEventListener('click', appWindow.minimize);
-document
-  .getElementById('titlebar-maximize')
-  ?.addEventListener('click', appWindow.toggleMaximize);
-document
-  .getElementById('titlebar-close')
-  ?.addEventListener('click', appWindow.close);
+  document
+    .getElementById('titlebar-minimize')
+    ?.addEventListener('click', appWindow.minimize);
+  document
+    .getElementById('titlebar-maximize')
+    ?.addEventListener('click', appWindow.toggleMaximize);
+  document
+    .getElementById('titlebar-close')
+    ?.addEventListener('click', appWindow.close);
+}
 
 // #sidebar div
 document.querySelectorAll('#sidebar div').forEach(link => {
@@ -60,10 +67,32 @@ document.querySelectorAll('.ripple-button').forEach(button => {
   });
 });
 
-// display-language-select
-const settingStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin'), lang_select = document.querySelector('#display-language-select');
-settingStore.get('language_json_filename').then(languageJsonFilename => lang_select.value = languageJsonFilename);
-lang_select.addEventListener('change', async () => {
-  await settingStore.set('language_json_filename', lang_select.value);
-  await settingStore.save();
-})
+// 
+// SETTINGS
+// 
+{
+  window.save_config_settimeout = {};
+  const settingStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin'), language_json_filename = document.getElementById('display-language-select'), set_wallpaper_for_windows = document.getElementById('set-wallpaper-for-system');
+
+  // read
+  const dataObj = await settingStore.get('data');
+  set_wallpaper_for_windows.checked = dataObj["set_wallpaper_for_windows"];
+  language_json_filename.value = dataObj["language_json_filename"];
+
+  // save
+  function saveConfig(key, value) {
+    clearTimeout(window.save_config_settimeout[key]);
+    window.save_config_settimeout[key] = setTimeout(async () => {
+      const dataObj = await settingStore.get('data');
+      dataObj[key] = value;
+      await settingStore.set('data', dataObj);
+      await settingStore.save();
+    }, 500);
+  }
+
+  // set_wallpaper_for_windows
+  set_wallpaper_for_windows.addEventListener('change', () => saveConfig('set_wallpaper_for_windows', set_wallpaper_for_windows.checked));
+
+  // language_json_filename
+  language_json_filename.addEventListener('change', () => saveConfig('language_json_filename', language_json_filename.value));
+}

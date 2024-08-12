@@ -21,7 +21,7 @@ export async function initWidgets() {
             let { type, id, a, b } = widget;
             await appendWidget(type, id, a, b);
         }
-        bindEventListener();
+        bindEventListener(document);
     }
 
     setAddWidgetMenu();
@@ -51,6 +51,7 @@ async function appendWidget(type, id, a, b) {
     }
 
     // 将 widget-container 添加到容器中
+    bindEventListener(widgetContainer);
     widgetLayer.appendChild(widgetContainer);
 }
 
@@ -157,12 +158,11 @@ function createElementWithAttributes(tagName, attributes) {
 }
 
 // bindEventListener
-function bindEventListener() {
+function bindEventListener(fromElement) {
     // type: steamgames > Run game
-    for (const item of document.querySelectorAll('.steamgameitem')) {
+    for (const item of fromElement.querySelectorAll('.steamgameitem')) {
         item.addEventListener('click',
             () => {
-                console.log(item.getAttribute("data-appid"));
                 invoke('start_steam_game', { appid: item.getAttribute("data-appid") });
             }
         )
@@ -170,13 +170,12 @@ function bindEventListener() {
 
     window.inputTimer = {};
     // type: note > save a / b
-    for (const item of document.querySelectorAll('.contenteditable')) {
+    for (const item of fromElement.querySelectorAll('.contenteditable')) {
         item.addEventListener('input',
             (e) => {
                 const id = e.target.getAttribute('widget-id'), key = e.target.getAttribute('data-key');
                 clearTimeout(window.inputTimer[id + key]);
                 window.inputTimer[id + key] = setTimeout(async () => {
-                    console.log("input, save!");
                     await storedWidgets.set('data', (await storedWidgets.get('data')).map((v) => {
                         if (v['id'] == id) {
                             v[key] = e.target.innerText;
@@ -188,11 +187,6 @@ function bindEventListener() {
             }
         )
     }
-
-    // document.addEventListener('contextmenu', (e) => {
-    //     // right
-    //     e.stopPropagation();
-    // })
 }
 
 // 

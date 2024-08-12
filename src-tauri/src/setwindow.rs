@@ -1,22 +1,49 @@
+use std::ffi::OsStr;
+use std::os::windows::ffi::OsStrExt as _;
+use std::path::PathBuf;
 use std::ptr::null_mut;
 use std::result::Result;
 use std::time::Duration;
 use std::{os::raw::c_void, thread::sleep};
+use tauri::{path::BaseDirectory, AppHandle, Manager};
 use windows::{core::*, Win32::Foundation::*, Win32::UI::WindowsAndMessaging::*};
 
 //
 // Public fn
 //
-pub fn set_wallpaper(hwnd_isize: isize) -> () {
+pub fn set_wallpaper(hwnd_isize: isize, handle: AppHandle, set_wallpaper_for_windows: bool) -> () {
     send_0x52c();
     unsafe {
         let _ = EnumWindows(Some(set_wallpaper_layer), LPARAM(hwnd_isize));
     };
+
+    if set_wallpaper_for_windows {
+        // set Windows wallpaper
+        let pic_path: PathBuf = handle
+            .path()
+            .resolve("pic/wp.jpg", BaseDirectory::Resource)
+            .expect("Failed to resolve wallpaper image path");
+        set_windows_wallpaper(pic_path.as_os_str());
+    }
 }
 
 //
 // Private fn
 //
+fn set_windows_wallpaper(pic_path: &OsStr) -> () {
+    let wide_path: Vec<u16> = pic_path.encode_wide().chain(Some(0).into_iter()).collect();
+
+    unsafe {
+        SystemParametersInfoW(
+            SPI_SETDESKWALLPAPER,
+            0,
+            Some(wide_path.as_ptr() as *mut _),
+            SPIF_UPDATEINIFILE | SPIF_SENDCHANGE,
+        )
+        .expect("Failed to set Windows wallpaper")
+    };
+}
+
 extern "system" fn set_wallpaper_layer(hwnd: HWND, tauri_hwnd_lparam: LPARAM) -> BOOL {
     let mut res: BOOL = TRUE;
 

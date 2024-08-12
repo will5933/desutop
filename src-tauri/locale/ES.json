@@ -31,7 +31,9 @@
         "LANGUAGE": "Idioma",
         "ABOUT": "Acerca de",
         "DISPLAY_LANGUAGE": "Idioma de la interfaz",
-        "FONT_FAMILY": "Fuente"
+        "FONT_FAMILY": "Fuente",
+        "STARTUP_SETTINGS": "Configuración de inicio",
+        "SET_WALLPAPER_FOR_SYSTEM": "Establecer fondo de pantalla para el sistema"
     },
     "STEAM_CONTAINER_LABEL": "Juegos de Steam",
     "STEAM_GAME_LASTPLAYED_NOT": "Hace mucho tiempo",

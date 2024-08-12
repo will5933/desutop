@@ -1,13 +1,13 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use serde_json::{json, Value};
 use tauri::{
     menu::{MenuBuilder, MenuItemBuilder},
     tray::TrayIconBuilder,
     AppHandle, Manager, WebviewWindowBuilder,
 };
-
-use serde_json::Value;
+use tauri_plugin_store::StoreBuilder;
 
 // use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 
@@ -44,10 +44,16 @@ fn main() {
         // setup
         //
         .setup(|app: &mut tauri::App| {
-            // setup: fn set_windows
-            setup_set_windows(app);
+            let settings_config: SettingsConfig = setup_get_settings(app);
 
-            let lang_json: Value = serde_json::from_str(get_lang_json_string(app.handle().clone()).as_str()).unwrap();
+            // setup: fn set_windows
+            setup_set_windows(app, settings_config.set_wallpaper_for_windows);
+
+            let lang_json: Value = serde_json::from_str(
+                get_lang_json_string(app.handle().clone(), settings_config.language_json_filename)
+                    .as_str(),
+            )
+            .unwrap();
 
             // setup: fn set_system_tray
             setup_set_system_tray(app, lang_json);
@@ -66,6 +72,37 @@ fn main() {
         })
         .run(tauri::generate_context!())
         .expect("error while running");
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct SettingsConfig {
+    set_wallpaper_for_windows: bool,
+    language_json_filename: String,
+}
+
+fn setup_get_settings(app: &mut tauri::App) -> SettingsConfig {
+    let mut store = StoreBuilder::new("settings.bin").build(app.handle().clone());
+
+    if let Ok(()) = store.load() {
+        // ?
+        if let Some(raw_json_string) = store.get("data") {
+            serde_json::from_value(raw_json_string.to_owned()).expect("Failed to load settings")
+        } else {
+            panic!("Failed to load settings");
+        }
+    } else {
+        // init
+        let init_setting = SettingsConfig {
+            set_wallpaper_for_windows: true,
+            language_json_filename: String::from("EN.json"),
+        };
+        store.insert(
+            String::from("data"),
+            json!(init_setting),
+        ).expect("Failed to init settings");
+        store.save().expect("Failed to save settings");
+        init_setting
+    }
 }
 
 //
@@ -87,6 +124,7 @@ fn setup_set_system_tray(app: &mut tauri::App, lang_json: Value) -> () {
         .items(&[&settings, &quit])
         .build()
         .unwrap();
+    //
     let _tray: tauri::tray::TrayIcon = TrayIconBuilder::new()
         .icon(app.default_window_icon().unwrap().to_owned())
         .menu(&menu)
@@ -120,7 +158,7 @@ fn setup_set_system_tray(app: &mut tauri::App, lang_json: Value) -> () {
 //
 // set_windows
 //
-fn setup_set_windows(app: &mut tauri::App) -> () {
+fn setup_set_windows(app: &mut tauri::App, set_wallpaper_for_windows: bool) -> () {
     if let Some(ww) = app.get_webview_window("main") {
         //  Set ignore cursor events
         // ww.set_ignore_cursor_events(true).unwrap();
@@ -128,7 +166,7 @@ fn setup_set_windows(app: &mut tauri::App) -> () {
         // Get HWND
         if let Ok(hwnd) = ww.hwnd() {
             // set_wallpaper()
-            setwindow::set_wallpaper(hwnd.0);
+            setwindow::set_wallpaper(hwnd.0, app.app_handle().clone(), set_wallpaper_for_windows);
 
             // Waiting for fn set_wallpaper()
             ww.show().unwrap();
@@ -144,7 +182,7 @@ fn open_settings_windows(app: &AppHandle, lang_json: &Value) -> () {
     );
     let _webview = builder
         .inner_size(800.0, 600.0)
-        .min_inner_size(600.0, 400.0)
+        .min_inner_size(800.0, 500.0)
         .max_inner_size(1200.0, 800.0)
         .decorations(false)
         .center()

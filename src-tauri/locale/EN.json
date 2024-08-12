@@ -31,7 +31,9 @@
         "LANGUAGE": "Language",
         "ABOUT": "About",
         "DISPLAY_LANGUAGE": "Display language",
-        "FONT_FAMILY": "Font"
+        "FONT_FAMILY": "Font",
+        "STARTUP_SETTINGS": "Startup settings",
+        "SET_WALLPAPER_FOR_SYSTEM": "Set wallpaper for system"
     },
     "STEAM_CONTAINER_LABEL": "Steam Games",
     "STEAM_GAME_LASTPLAYED_NOT": "Long time ago",

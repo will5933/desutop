@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - Desutop</title>
 
+    <!-- css -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="switch.css">
+    <!-- js -->
     <script defer type="module" src="script.js"></script>
 </head>
 
@@ -14,13 +17,13 @@
     <div data-tauri-drag-region id="titlebar">
         <span id="window_title" data-lang="TITLE_SETTINGS">TITLE_SETTINGS</span>
         <div class="titlebar-button" id="titlebar-minimize">
-            <img src="https://api.iconify.design/mdi:window-minimize.svg" alt="minimize" />
+            <img src="svg/window-minimize.svg" alt="minimize" />
         </div>
         <div class="titlebar-button" id="titlebar-maximize">
-            <img src="https://api.iconify.design/mdi:window-maximize.svg" alt="maximize" />
+            <img src="svg/window-maximize.svg" alt="maximize" />
         </div>
         <div class="titlebar-button" id="titlebar-close">
-            <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
+            <img src="svg/close.svg" alt="close" />
         </div>
     </div>
 
@@ -45,7 +48,15 @@
             <div id="common" class="content-section">
                 <h2 data-lang="COMMON">COMMON</h2>
                 <section>
-                    <p>COMMON</p>
+                    <h3 data-lang="STARTUP_SETTINGS">STARTUP_SETTINGS</h3>
+                    <div class="setting-item">
+                        <label for="set-wallpaper-for-system"
+                            data-lang="SET_WALLPAPER_FOR_SYSTEM">SET_WALLPAPER_FOR_SYSTEM</label>
+                        <label class="switch">
+                            <input id="set-wallpaper-for-system" type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </section>
             </div>
 
@@ -53,60 +64,6 @@
             <!-- THEME&WALLPAPER -->
             <div id="theme" class="content-section">
                 <h2 data-lang="THEME&WALLPAPER">THEME&WALLPAPER</h2>
-                <!-- <section>
-                    <h3>网站外观</h3>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="theme" value="auto" checked> 自动
-                        </label>
-                        <label>
-                            <input type="radio" name="theme" value="light"> 浅色
-                        </label>
-                        <label>
-                            <input type="radio" name="theme" value="dark"> 深色
-                        </label>
-                    </div>
-                </section>
-
-                <section>
-                    <h3>颜色</h3>
-                    <p>覆盖 Nightly 的默认文本、网站背景、链接颜色。</p>
-                    <button type="button" class="button">管理颜色...(C)</button>
-                </section> -->
-
-                <!-- <section>
-                <h3>字体</h3>
-                <label for="font-select">默认字体(D)</label>
-                <select id="font-select" class="dropdown">
-                    <option>MiSans VF</option>
-                    <option>Arial</option>
-                    <option>Verdana</option>
-                    <option>Tahoma</option>
-                </select>
-                <label for="font-size">字号(S)</label>
-                <select id="font-size" class="dropdown">
-                    <option>16</option>
-                    <option>14</option>
-                    <option>12</option>
-                    <option>18</option>
-                </select>
-                <button type="button" class="button">高级...(A)</button>
-            </section>
-
-            <section>
-                <h3>全局缩放</h3>
-                <label for="zooma-select">默认缩放(Z)</label>
-                <select id="zooma-select" class="dropdown">
-                    <option>100%</option>
-                    <option>90%</option>
-                    <option>110%</option>
-                    <option>120%</option>
-                </select>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="text-only">
-                    <label for="text-only">仅缩放文本(T)</label>
-                </div>
-            </section> -->
             </div>
 
             <!-- ######## -->
@@ -115,45 +72,33 @@
                 <h2 data-lang="LANGUAGE&FONT">LANGUAGE&FONT</h2>
                 <section>
                     <h3 data-lang="LANGUAGE">LANGUAGE</h3>
-                    <label for="display-language-select" data-lang="DISPLAY_LANGUAGE">DISPLAY_LANGUAGE</label>
-                    <select id="display-language-select" class="dropdown">
-                        <option value="sCH.json">简体中文 - sCH</option>
-                        <option value="tCH.json">繁體中文 - tCH</option>
-                        <option value="EN.json">English - EN</option>
-                        <option value="ES.json">Español - ES</option>
-                        <option value="FR.json">Français - FR</option>
-                        <option value="JP.json">日本語 - JP</option>
-                        <option value="KR.json">한국어 - KR</option>
-                    </select>
-                </section>
-
-                <section>
-                    <h3 data-lang="FONT_FAMILY">FONT_FAMILY</h3>
-                    <label for="font-family-select" data-lang="FONT_FAMILY">FONT_FAMILY</label>
-                    <select id="font-family-select" class="dropdown" data-options="FONT_FAMILY">
-                        <!-- data-options="FONTFAMILY" -->
-                    </select>
-                    <!-- <div class="checkbox-group">
-                    <input type="checkbox" id="text-only">
-                    <label for="text-only">仅缩放文本(T)</label>
-                </div> -->
+                    <div class="setting-item">
+                        <label for="display-language-select" data-lang="DISPLAY_LANGUAGE">DISPLAY_LANGUAGE</label>
+                        <select id="display-language-select" class="dropdown">
+                            <option value="sCH.json">简体中文 - sCH</option>
+                            <option value="tCH.json">繁體中文 - tCH</option>
+                            <option value="EN.json">English - EN</option>
+                            <option value="ES.json">Español - ES</option>
+                            <option value="FR.json">Français - FR</option>
+                            <option value="JP.json">日本語 - JP</option>
+                            <option value="KR.json">한국어 - KR</option>
+                        </select>
+                    </div>
                 </section>
             </div>
 
             <!-- ##### -->
             <!-- ABOUT -->
             <div id="about" class="content-section">
-                <h2 data-lang="ABOUT"><!-- 关于 --></h2>
-                <section>
-                    <h3>Desutop</h3>
-                    <p>Version: v0.2.4</p>
-                    <p><a href="https://github.com/will5933/desutop" rel="noopener" target="_blank">Github - fanin</a>
-                    </p>
-                </section>
+                <div class="center">
+                    <h1>Desutop</h1>
+                    <h3>Version: v0.3.0</h3>
+                    <h3><a href="https://github.com/will5933/desutop" rel="noopener" target="_blank">Github - fanin</a>
+                    </h3>
+                </div>
             </div>
         </div>
     </div>
-
 </body>
 
 </html>

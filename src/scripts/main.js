@@ -3,27 +3,30 @@ import { WidgetContainer } from "./container.js";
 
 const dateTime = document.querySelector('#datetime');
 
-(async () => {
+{
     // locale
-    window.__TAURI__.core.invoke('get_lang_json_string').then((jsonStr) => {
-        window.LANG = JSON.parse(jsonStr);
-        
-        // showCurrentDateTime
-        showCurrentDateTime();
-        setInterval(showCurrentDateTime, 1000);
+    const settingsStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin');
+    const dataObj = await settingsStore.get('data');
+    window.__TAURI__.core.invoke('get_lang_json_string', { "languageJsonFilename": dataObj["language_json_filename"] })
+        .then((jsonStr) => {
+            window.LANG = JSON.parse(jsonStr);
 
-        customElements.define('widget-container', WidgetContainer);
+            // showCurrentDateTime
+            showCurrentDateTime();
+            setInterval(showCurrentDateTime, 1000);
 
-        // ban contextmenu
-        bindListeners();
-        
-        initWidgets();
-    })
-    
+            customElements.define('widget-container', WidgetContainer);
+
+            // ban contextmenu
+            bindListeners();
+
+            initWidgets();
+        })
+
     // background-image
     const assetUrl = window.__TAURI__.core.convertFileSrc(await window.__TAURI__.path.resolveResource('pic/wp.jpg'));
     document.querySelector("#screen").style.backgroundImage = `url('${assetUrl}')`;
-})();
+}
 
 // TODO
 function bindListeners() {

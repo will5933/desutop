@@ -31,7 +31,9 @@
         "LANGUAGE": "言語",
         "ABOUT": "情報",
         "DISPLAY_LANGUAGE": "表示言語",
-        "FONT_FAMILY": "フォント"
+        "FONT_FAMILY": "フォント",
+        "STARTUP_SETTINGS": "スタートアップ設定",
+        "SET_WALLPAPER_FOR_SYSTEM": "システム用の壁紙を設定する"
     },
     "STEAM_CONTAINER_LABEL": "Steam ゲーム",
     "STEAM_GAME_LASTPLAYED_NOT": "ずっと前",
