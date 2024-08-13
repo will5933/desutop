@@ -6,16 +6,17 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
 
 <table>
   <tr>
+    <td><img alt="" src="static/pic-add.png"></td>
     <td><img alt="" src="static/pic-steamgames.png"></td>
     <td><img alt="" src="static/pic-note.png"></td>
   </tr>
   <tr>
-    <td><img alt="" src="static/pic-a.png"></td>
-    <td><img alt="" src="static/pic-add.png"></td>
+    <td><img alt="" src="static/pic-switchwallpaper.png"></td>
+    <td><img alt="" src="static/pic-b.png"></td>
+    <td><img alt="" src="static/pic-lang.png"></td>
   </tr>
   <tr>
-    <td><img alt="" src="static/pic-lang.png"></td>
-    <td><img alt="" src="static/pic-b.png"></td>
+    <img alt="" src="static/pic-a.png">
   </tr>
 </table>
 
@@ -25,7 +26,8 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
 - [x] Note widget / 笔记微件；
 - [x] Better settings / 更好的设置界面；
 - [x] Multi-language support / 多语言支持；
-- [x] Language switch / 语言切换；
+- [x] Language switch / 语言切换;
+- [x] Wallpaper switch / 壁纸切换;
 - [ ] Installed applications display / 已安装的应用程序显示；
 - [ ] Responsive Steam game status display / 响应式Steam游戏状态显示；
 - [ ] Note widget `Markdown` support / 便签的 `Markdown` 支持；
@@ -40,10 +42,7 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
 
 ## Change wallpaper / 切换壁纸
 
-> Currently, wallpaper switching can only be done by manually replacing jpg image file.  
-> 现在只能手动替换 jpg 图片文件来切换壁纸。
->
-> `>` `pic/wp.jpg`
+> `>` `wallpaper`
 
 ## Language Support / 语言支持
 
