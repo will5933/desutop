@@ -11,26 +11,26 @@ use windows::{core::*, Win32::Foundation::*, Win32::UI::WindowsAndMessaging::*};
 //
 // Public fn
 //
-pub fn set_wallpaper(hwnd_isize: isize, handle: AppHandle, set_wallpaper_for_windows: bool) -> () {
+pub fn set_wallpaper(hwnd_isize: isize, handle: AppHandle, set_for_system: bool, wallpaper_file_path: String) -> () {
     send_0x52c();
     unsafe {
         let _ = EnumWindows(Some(set_wallpaper_layer), LPARAM(hwnd_isize));
     };
 
-    if set_wallpaper_for_windows {
+    if set_for_system {
         // set Windows wallpaper
-        let pic_path: PathBuf = handle
+        let mut binding: PathBuf = handle
             .path()
-            .resolve("pic/wp.jpg", BaseDirectory::Resource)
+            .resolve(wallpaper_file_path, BaseDirectory::Resource)
             .expect("Failed to resolve wallpaper image path");
-        set_windows_wallpaper(pic_path.as_os_str());
+        set_windows_wallpaper(&mut binding);
     }
 }
 
-//
-// Private fn
-//
-fn set_windows_wallpaper(pic_path: &OsStr) -> () {
+pub fn set_windows_wallpaper(binding: &mut PathBuf) -> () {
+    let pic_path: &mut OsStr = binding
+        .as_mut_os_str();
+    
     let wide_path: Vec<u16> = pic_path.encode_wide().chain(Some(0).into_iter()).collect();
 
     unsafe {
@@ -44,6 +44,9 @@ fn set_windows_wallpaper(pic_path: &OsStr) -> () {
     };
 }
 
+//
+// Private fn
+//
 extern "system" fn set_wallpaper_layer(hwnd: HWND, tauri_hwnd_lparam: LPARAM) -> BOOL {
     let mut res: BOOL = TRUE;
 
@@ -120,8 +123,8 @@ fn send_0x52c() {
                 }
                 return; // Successfully sent message, exit function
             }
-            Err(_) if i == 9 => {
-                panic!("[CODE03] Cannot find window named `Program Manager`");
+            Err(e) if i == 9 => {
+                panic!("Cannot find window named `Program Manager` {}", e);
             }
             Err(_) => {
                 sleep(sleep_duration);

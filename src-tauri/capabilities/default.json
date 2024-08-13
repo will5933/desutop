@@ -25,6 +25,9 @@
     "store:allow-set",
     "store:allow-save",
     "store:allow-load",
-    "dialog:default"
+    "dialog:default",
+    "fs:allow-resource-read-recursive",
+    "fs:allow-resource-meta-recursive",
+    "fs:scope-resource-index"
   ]
 }

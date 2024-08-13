@@ -1,11 +1,13 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::path::PathBuf;
+
 use serde_json::{json, Value};
 use tauri::{
     menu::{MenuBuilder, MenuItemBuilder},
     tray::TrayIconBuilder,
-    AppHandle, Manager, WebviewWindowBuilder,
+    AppHandle, Listener, Manager, WebviewWindowBuilder,
 };
 use tauri_plugin_store::StoreBuilder;
 
@@ -21,6 +23,7 @@ fn main() {
     use steamgames::*;
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
             let _ = show_msg(app);
@@ -47,16 +50,29 @@ fn main() {
             let settings_config: SettingsConfig = setup_get_settings(app);
 
             // setup: fn set_windows
-            setup_set_windows(app, settings_config.set_wallpaper_for_windows);
+            setup_set_windows(
+                app,
+                settings_config.set_wallpaper_for_windows,
+                settings_config.wallpaper_file_path,
+            );
 
             let lang_json: Value = serde_json::from_str(
                 get_lang_json_string(app.handle().clone(), settings_config.language_json_filename)
                     .as_str(),
             )
-            .unwrap();
+            .expect("Language json file corruption");
 
             // setup: fn set_system_tray
             setup_set_system_tray(app, lang_json);
+
+            // listen
+            let _ = app.listen("wallpaper-change", move |event| {
+                let string: String =
+                    serde_json::from_str(event.payload()).expect("Wallpaper path error");
+                let mut x: PathBuf = PathBuf::from(string);
+                setwindow::set_windows_wallpaper(&mut x);
+                println!("{:?}", x);
+            });
 
             // if let Ok(vec) = get_desktop_contents() {
             //     println!("{:?} length: {}", vec, vec.len());
@@ -78,28 +94,30 @@ fn main() {
 struct SettingsConfig {
     set_wallpaper_for_windows: bool,
     language_json_filename: String,
+    wallpaper_file_path: String,
 }
 
 fn setup_get_settings(app: &mut tauri::App) -> SettingsConfig {
     let mut store = StoreBuilder::new("settings.bin").build(app.handle().clone());
 
     if let Ok(()) = store.load() {
-        // ?
         if let Some(raw_json_string) = store.get("data") {
             serde_json::from_value(raw_json_string.to_owned()).expect("Failed to load settings")
         } else {
             panic!("Failed to load settings");
         }
     } else {
+        //
         // init
-        let init_setting = SettingsConfig {
+        //
+        let init_setting: SettingsConfig = SettingsConfig {
             set_wallpaper_for_windows: true,
             language_json_filename: String::from("EN.json"),
+            wallpaper_file_path: String::from("wallpaper/default.jpg"),
         };
-        store.insert(
-            String::from("data"),
-            json!(init_setting),
-        ).expect("Failed to init settings");
+        store
+            .insert(String::from("data"), json!(init_setting))
+            .expect("Failed to init settings");
         store.save().expect("Failed to save settings");
         init_setting
     }
@@ -158,7 +176,11 @@ fn setup_set_system_tray(app: &mut tauri::App, lang_json: Value) -> () {
 //
 // set_windows
 //
-fn setup_set_windows(app: &mut tauri::App, set_wallpaper_for_windows: bool) -> () {
+fn setup_set_windows(
+    app: &mut tauri::App,
+    set_for_system: bool,
+    wallpaper_file_path: String,
+) -> () {
     if let Some(ww) = app.get_webview_window("main") {
         //  Set ignore cursor events
         // ww.set_ignore_cursor_events(true).unwrap();
@@ -166,7 +188,12 @@ fn setup_set_windows(app: &mut tauri::App, set_wallpaper_for_windows: bool) -> (
         // Get HWND
         if let Ok(hwnd) = ww.hwnd() {
             // set_wallpaper()
-            setwindow::set_wallpaper(hwnd.0, app.app_handle().clone(), set_wallpaper_for_windows);
+            setwindow::set_wallpaper(
+                hwnd.0,
+                app.app_handle().clone(),
+                set_for_system,
+                wallpaper_file_path,
+            );
 
             // Waiting for fn set_wallpaper()
             ww.show().unwrap();

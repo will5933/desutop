@@ -33,7 +33,8 @@
         "DISPLAY_LANGUAGE": "Langue d'affichage",
         "FONT_FAMILY": "Police",
         "STARTUP_SETTINGS": "Paramètres de démarrage",
-        "SET_WALLPAPER_FOR_SYSTEM": "Définir le fond d'écran pour le système"
+        "SET_WALLPAPER_FOR_SYSTEM": "Définir le fond d'écran pour le système",
+        "WALLPAPER": "Fond d'écran"
     },
     "STEAM_CONTAINER_LABEL": "Jeux Steam",
     "STEAM_GAME_LASTPLAYED_NOT": "Il y a longtemps",

@@ -33,7 +33,8 @@
         "DISPLAY_LANGUAGE": "显示语言",
         "FONT_FAMILY": "字体",
         "STARTUP_SETTINGS": "启动设置",
-        "SET_WALLPAPER_FOR_SYSTEM": "为系统更换壁纸"
+        "SET_WALLPAPER_FOR_SYSTEM": "为系统更换壁纸",
+        "WALLPAPER": "壁纸"
     },
     "STEAM_CONTAINER_LABEL": "Steam 游戏",
     "STEAM_GAME_LASTPLAYED_NOT": "很久以前",

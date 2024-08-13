@@ -1,7 +1,7 @@
 import { initWidgets } from './widgets.js';
 import { WidgetContainer } from "./container.js";
 
-const dateTime = document.querySelector('#datetime');
+const dateTime = document.getElementById('datetime');
 
 {
     // locale
@@ -24,9 +24,17 @@ const dateTime = document.querySelector('#datetime');
         })
 
     // background-image
-    const assetUrl = window.__TAURI__.core.convertFileSrc(await window.__TAURI__.path.resolveResource('pic/wp.jpg'));
-    document.querySelector("#screen").style.backgroundImage = `url('${assetUrl}')`;
+    setWallpaper(
+        await window.__TAURI__.path.resolveResource(dataObj['wallpaper_file_path'] ?? 'wallpapers/default.jpg')
+    );
+
+    window.wallpaper_change_listener = await window.__TAURI__.event.listen('wallpaper-change', e => setWallpaper(e.payload));
+
+    function setWallpaper(absolutePath) {
+        document.getElementById('screen').style.backgroundImage = `url('${window.__TAURI__.core.convertFileSrc(absolutePath)}')`;
+    }
 }
+
 
 // TODO
 function bindListeners() {

@@ -16,6 +16,7 @@
 
 body {
     margin: 0;
+    background-color: transparent;
 }
 
 * {
@@ -31,7 +32,7 @@ body {
     height: 100%;
     overflow: hidden;
     /* background-image: url('https://global.bing.com/th?id=OHR.AschauChiemgau_ZH-CN1929016406_UHD.jpg'); */
-    /* background-color: white; */
+    background-color: transparent;
     background-size: cover;
     background-position: center;
 

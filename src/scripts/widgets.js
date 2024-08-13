@@ -5,7 +5,7 @@ const WIDGET_TYPE = {
     note: "note"
 };
 
-const widgetLayer = document.querySelector('#widget_layer');
+const widgetLayer = document.getElementById('widget_layer');
 
 // 
 // Rander Stored Widgets
@@ -192,7 +192,7 @@ function bindEventListener(fromElement) {
 // 
 // menu begin
 // 
-const aboveLayer = document.querySelector('#above_layer'), blurLayer = document.querySelector('#blur_layer'), menu = document.querySelector('#menu');
+const aboveLayer = document.getElementById('above_layer'), blurLayer = document.getElementById('blur_layer'), menu = document.getElementById('menu');
 
 function setAddWidgetMenu() {
     const itemArr = [['Note', createNoteWidget], ['Steam Games', createSteamGamesWidget]].map((arr) => {
@@ -205,7 +205,7 @@ function setAddWidgetMenu() {
         return ele;
     });
 
-    document.querySelector('#addwidget_btn').addEventListener('mousedown', (e) => {
+    document.getElementById('addwidget_btn').addEventListener('mousedown', (e) => {
         const btn = e.currentTarget;
         showMenu(
             itemArr,

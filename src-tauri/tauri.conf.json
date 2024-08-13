@@ -12,6 +12,7 @@
         "title": "Desutop",
         "label": "main",
         "alwaysOnTop": true,
+        "transparent": true,
         "decorations": false,
         "fullscreen": true,
         "focus": false,
@@ -42,7 +43,7 @@
       "icons/icon.ico"
     ],
     "resources": [
-      "pic/wp.jpg",
+      "wallpapers/*",
       "locale/*"
     ]
   }
