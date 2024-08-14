@@ -29,7 +29,7 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
 - [x] Language switch / 语言切换;
 - [x] Wallpaper switch / 壁纸切换;
 - [ ] Installed applications display / 已安装的应用程序显示；
-- [ ] Responsive Steam game status display / 响应式Steam游戏状态显示；
+- [x] Responsive Steam game status display / 响应式Steam游戏状态显示；
 - [ ] Note widget `Markdown` support / 便签的 `Markdown` 支持；
 - [ ] Drop-down menu calendar / 下拉菜单日历；
 - [ ] Custom context menu / 自定义右键菜单；
