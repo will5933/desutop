@@ -7,6 +7,13 @@ const WIDGET_TYPE = {
 
 const widgetLayer = document.getElementById('widget_layer');
 
+{ // watch and update steamgames state
+    window.steamgames_state_change_listener = await window.__TAURI__.event.listen('steamgames-state-change', () => {
+        clearTimeout(window.steamgames_state_change_settimeout);
+        window.steamgames_state_change_settimeout = setTimeout(() => updateSteamGamesWidget(), 500);
+    });
+}
+
 // 
 // Rander Stored Widgets
 // Bind event
@@ -28,7 +35,7 @@ export async function initWidgets() {
 }
 
 async function appendWidget(type, id, a, b) {
-    const widgetContainer = createElementWithAttributes('widget-container', { 'widget-id': id });
+    const widgetContainer = createElementWithAttributes('widget-container', { 'widget-id': id, 'type': type });
 
     const labelDiv = createElementWithAttributes('div', { 'slot': 'label' });
     const contentDiv = createElementWithAttributes('div', { 'slot': 'content' });
@@ -76,13 +83,10 @@ function makeNoteWidget(id, a, b) {
     return [labelP, contentP];
 }
 
-// fn makeSteamGamesWidget() -> [label, content]
+// fn makeSteamGamesWidget() -> [label, contentArr]
 async function makeSteamGamesWidget() {
-    if (!window.mSGW_cache) {
-        const arr = await invoke('get_steam_games');
-        arr.sort((a, b) => b.last_played - a.last_played);
-        window.mSGW_cache = arr;
-    }
+    const steamgamesArr = await invoke('get_steam_games');
+    steamgamesArr.sort((a, b) => b.last_played - a.last_played);
 
     const { SECOND, MINUTE, HOUR, DAY, WEEK, SECONDS, MINUTES, HOURS, DAYS, WEEKS, AGO } = window.LANG.DATETIME;
 
@@ -126,7 +130,7 @@ async function makeSteamGamesWidget() {
 
     const contentArr = [];
 
-    for (const steamgame of window.mSGW_cache) {
+    for (const steamgame of steamgamesArr) {
         // filter out [228980]
         if (steamGamefilterOut.includes(steamgame.appid)) continue;
 
@@ -135,7 +139,7 @@ async function makeSteamGamesWidget() {
         const name = createElementWithAttributes('span', { 'class': 'steamgame_name' });
         name.textContent = steamgame.name;
         const info = createElementWithAttributes('span', { 'class': 'steamgame_state' });
-        info.textContent = `${getLastPlayedStr(steamgame.last_played)} · ${getStateStr(steamgame.state_flags)} · ${getSizeStr(steamgame.size_on_disk)}`
+        info.innerHTML = `${getLastPlayedStr(steamgame.last_played)} · ${getStateStr(steamgame.state_flags)} · ${getSizeStr(steamgame.size_on_disk)}`
 
         wrapper.appendChild(name);
         wrapper.appendChild(info);
@@ -147,6 +151,13 @@ async function makeSteamGamesWidget() {
     labelP.textContent = window.LANG.STEAM_CONTAINER_LABEL;
 
     return [labelP, contentArr];
+}
+
+async function updateSteamGamesWidget() {
+    let [, contentArr] = await makeSteamGamesWidget();
+    const contentSlot = document.querySelector(`widget-container[type="${WIDGET_TYPE.steamGames}"]>div[slot="content"]`);
+    contentSlot.replaceChildren(...contentArr);
+    bindEventListener(contentSlot);
 }
 
 function createElementWithAttributes(tagName, attributes) {
@@ -253,24 +264,25 @@ function closeMenu() {
 // 
 // menu end
 // 
-async function createNoteWidget() {
+
+function createNoteWidget() {
     const id = make_widgetID();
-    let arr = await storedWidgets.get('data');
-    if (!arr) arr = [];
-    arr.push({ type: WIDGET_TYPE.note, id: id, a: window.LANG.NOTE.UNTITLED, b: window.LANG.NOTE.UNTITLED_CONTENT });
+    storeNewWidget({ type: WIDGET_TYPE.note, id: id, a: window.LANG.NOTE.UNTITLED, b: window.LANG.NOTE.UNTITLED_CONTENT });
     appendWidget(WIDGET_TYPE.note, id, window.LANG.NOTE.UNTITLED, window.LANG.NOTE.UNTITLED_CONTENT);
-    // widgetLayer.innerHTML += makeNoteWidget(id, window.LANG.NOTE.UNTITLED, window.LANG.NOTE.UNTITLED_CONTENT);
-    await storedWidgets.set('data', arr);
-    await storedWidgets.save();
 }
 
-async function createSteamGamesWidget() {
-    const id = make_widgetID();
+function createSteamGamesWidget() {
+    if (!document.querySelector(`widget-container[type="${WIDGET_TYPE.steamGames}"]`)) {
+        const id = make_widgetID();
+        storeNewWidget({ type: WIDGET_TYPE.steamGames, id: id });
+        appendWidget(WIDGET_TYPE.steamGames, id);
+    }
+}
+
+async function storeNewWidget(obj) {
     let arr = await storedWidgets.get('data');
     if (!arr) arr = [];
-    arr.push({ type: WIDGET_TYPE.steamGames, id: id });
-    appendWidget(WIDGET_TYPE.steamGames, id);
-    // widgetLayer.innerHTML += await makeSteamGamesWidget(id);
+    arr.push(obj);
     await storedWidgets.set('data', arr);
     await storedWidgets.save();
 }

@@ -40,8 +40,9 @@
     "STEAM_GAME_LASTPLAYED_NOT": "Hace mucho tiempo",
     "STEAM_GAME_STATE": {
         "4": "Listo",
-        "6": "Esperando actualización",
-        "518": "Descarga no programada",
+        "6": "Listo para actualizar",
+        "518": "No programado",
+        "1030": "<b>Actualizando</b>",
         "UNKNOWN": "Estado desconocido"
     },
     "WEEKDAYS": [

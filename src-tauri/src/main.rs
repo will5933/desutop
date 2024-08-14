@@ -1,13 +1,13 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::path::PathBuf;
+use std::{path::PathBuf, thread};
 
 use serde_json::{json, Value};
 use tauri::{
     menu::{MenuBuilder, MenuItemBuilder},
     tray::TrayIconBuilder,
-    AppHandle, Listener, Manager, WebviewWindowBuilder,
+    AppHandle, Emitter, Listener, Manager, WebviewWindowBuilder,
 };
 use tauri_plugin_store::StoreBuilder;
 
@@ -18,11 +18,11 @@ mod setwindow;
 
 mod steamgames;
 
-fn main() {
+fn main() -> () {
     use locale::*;
     use steamgames::*;
 
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
@@ -47,7 +47,7 @@ fn main() {
         // setup
         //
         .setup(|app: &mut tauri::App| {
-            let settings_config: SettingsConfig = setup_get_settings(app);
+            let settings_config: SettingsConfig = setup_get_settings(app.app_handle().clone());
 
             // setup: fn set_windows
             setup_set_windows(
@@ -74,6 +74,24 @@ fn main() {
                 println!("{:?}", x);
             });
 
+            // steam games info watcher
+            let handle: AppHandle = app.app_handle().clone();
+            if let Some(steam_path) = get_steam_install_path() {
+                thread::spawn(move || {
+                    if let Err(error) =
+                        watch(format!("{}\\steamapps", steam_path), |e: notify::Event| {
+                            if e.paths.iter().any(|path| path.extension().map(|ext| ext == "acf").unwrap_or(false)) {
+                                handle
+                                    .emit_to("main", "steamgames-state-change", 0)
+                                    .expect("Failed to emit event `steamgames-state-change`");
+                            }
+                        })
+                    {
+                        println!("Error: {error:?}");
+                    }
+                });
+            }
+
             // if let Ok(vec) = get_desktop_contents() {
             //     println!("{:?} length: {}", vec, vec.len());
             // };
@@ -85,9 +103,10 @@ fn main() {
             //     autostart_manager.enable().unwrap();
             // }
             Ok(())
-        })
-        .run(tauri::generate_context!())
-        .expect("error while running");
+        });
+
+    app.run(tauri::generate_context!())
+        .expect("error while running")
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -97,8 +116,8 @@ struct SettingsConfig {
     wallpaper_file_path: String,
 }
 
-fn setup_get_settings(app: &mut tauri::App) -> SettingsConfig {
-    let mut store = StoreBuilder::new("settings.bin").build(app.handle().clone());
+fn setup_get_settings(handle: AppHandle) -> SettingsConfig {
+    let mut store = StoreBuilder::new("settings.bin").build(handle);
 
     if let Ok(()) = store.load() {
         if let Some(raw_json_string) = store.get("data") {
@@ -146,14 +165,17 @@ fn setup_set_system_tray(app: &mut tauri::App, lang_json: Value) -> () {
     let _tray: tauri::tray::TrayIcon = TrayIconBuilder::new()
         .icon(app.default_window_icon().unwrap().to_owned())
         .menu(&menu)
-        .on_menu_event(move |app: &AppHandle, event| match event.id().as_ref() {
-            "quit" => {
-                app.exit(0);
+        .on_menu_event(move |app: &AppHandle, event: tauri::menu::MenuEvent| {
+            match event.id().as_ref() {
+                "quit" => {
+                    app.cleanup_before_exit();
+                    app.exit(0);
+                }
+                "settings" => {
+                    open_settings_windows(app, &lang_json);
+                }
+                _ => (),
             }
-            "settings" => {
-                open_settings_windows(app, &lang_json);
-            }
-            _ => (),
         })
         // .on_tray_icon_event(|tray, event| {
         //     if let TrayIconEvent::Click {

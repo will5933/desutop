@@ -1,6 +1,6 @@
 {
   "productName": "Desutop",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "identifier": "com.desutop.tauri",
   "build": {
     "frontendDist": "../src"
@@ -15,7 +15,6 @@
         "transparent": true,
         "decorations": false,
         "fullscreen": true,
-        "focus": false,
         "closable": false,
         "shadow": false,
         "resizable": false,

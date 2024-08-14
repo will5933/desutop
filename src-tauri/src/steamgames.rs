@@ -1,4 +1,5 @@
 use lazy_static::lazy_static;
+use notify::{Config, Event, ReadDirectoryChangesWatcher, RecommendedWatcher, RecursiveMode, Watcher};
 use rayon::prelude::*;
 use regex::Regex;
 use std::borrow::Cow;
@@ -23,18 +24,33 @@ pub struct SteamGame<'a> {
     size_on_disk: Cow<'a, str>,
 }
 
+pub fn watch<P: AsRef<Path>, F: Fn(Event) -> ()>(path: P, f: F) -> notify::Result<()> {
+    let (tx, rx) = std::sync::mpsc::channel();
+
+    let mut watcher: ReadDirectoryChangesWatcher = RecommendedWatcher::new(tx, Config::default())?;
+    watcher.watch(path.as_ref(), RecursiveMode::NonRecursive)?;
+    for res in rx {
+        match res {
+            Ok(e) => f(e),
+            Err(error) => eprintln!("Error: {error:?}"),
+        }
+    }
+
+    Ok(())
+}
+
 #[tauri::command]
-pub fn get_steam_games() -> Result<Vec<SteamGame<'static>>, ()> {
+pub fn get_steam_games() -> core::result::Result<Vec<SteamGame<'static>>, ()> {
     match get_steam_install_path() {
         Some(steam_path) => {
-            let steamapps_dir: String = steam_path + "/steamapps";
+            let steamapps_dir: String = steam_path + "\\steamapps";
             let vec: Vec<String> = dir_scan(Path::new(&steamapps_dir));
 
             let res_vec: Vec<SteamGame> = vec
                 .into_par_iter()
                 .filter_map(|filename| {
                     if filename.contains("appmanifest_") {
-                        read_steam_game_config(format!("{}/{}", steamapps_dir, filename))
+                        read_steam_game_config(format!("{}\\{}", steamapps_dir, filename))
                     } else {
                         None
                     }
@@ -78,7 +94,7 @@ pub fn dir_scan(path: &Path) -> Vec<String> {
 }
 
 // 获取steam安装路径
-fn get_steam_install_path() -> Option<String> {
+pub fn get_steam_install_path() -> Option<String> {
     let ps_command: &str = r#"
         (Get-ItemProperty -Path 'HKLM:\SOFTWARE\WOW6432Node\Valve\Steam' -Name 'InstallPath').InstallPath
     "#;

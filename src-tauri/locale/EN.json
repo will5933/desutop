@@ -40,8 +40,9 @@
     "STEAM_GAME_LASTPLAYED_NOT": "Long time ago",
     "STEAM_GAME_STATE": {
         "4": "Ready",
-        "6": "Pending",
+        "6": "Queued",
         "518": "Unscheduled",
+        "1030": "<b>Updating</b>",
         "UNKNOWN": "Unknown"
     },
     "WEEKDAYS": [
