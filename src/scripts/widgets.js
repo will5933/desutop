@@ -1,5 +1,6 @@
 const invoke = window.__TAURI__.core.invoke;
 const storedWidgets = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
+
 const WIDGET_TYPE = {
     steamGames: "steamgames",
     note: "note"
@@ -12,6 +13,8 @@ const widgetLayer = document.getElementById('widget_layer');
         clearTimeout(window.steamgames_state_change_settimeout);
         window.steamgames_state_change_settimeout = setTimeout(() => updateSteamGamesWidget(), 500);
     });
+
+    setInterval(updateSteamGamesWidget, 1000 * 60);
 }
 
 // 
