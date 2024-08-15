@@ -1,6 +1,6 @@
 [package]
 name = "Desutop"
-version = "0.3.2"
+version = "0.3.3"
 description = "Desutop: A Tauri Based Desktop App"
 authors = ["fanin"]
 edition = "2021"

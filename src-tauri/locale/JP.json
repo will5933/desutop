@@ -36,6 +36,7 @@
         "SET_WALLPAPER_FOR_SYSTEM": "システム用の壁紙を設定する",
         "WALLPAPER": "壁紙"
     },
+    "STEAM_NOT_FOUNT": "Steam not found",
     "STEAM_CONTAINER_LABEL": "Steam ゲーム",
     "STEAM_GAME_LASTPLAYED_NOT": "ずっと前",
     "STEAM_GAME_STATE": {

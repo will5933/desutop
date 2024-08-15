@@ -36,6 +36,7 @@
         "SET_WALLPAPER_FOR_SYSTEM": "시스템용 배경화면 설정",
         "WALLPAPER": "배경 화면"
     },
+    "STEAM_NOT_FOUNT": "Steam not found",
     "STEAM_CONTAINER_LABEL": "Steam 게임",
     "STEAM_GAME_LASTPLAYED_NOT": "오래 전",
     "STEAM_GAME_STATE": {

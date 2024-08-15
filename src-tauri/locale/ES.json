@@ -36,6 +36,7 @@
         "SET_WALLPAPER_FOR_SYSTEM": "Establecer fondo de pantalla para el sistema",
         "WALLPAPER": "Fondo de pantalla"
     },
+    "STEAM_NOT_FOUNT": "Steam not found",
     "STEAM_CONTAINER_LABEL": "Juegos de Steam",
     "STEAM_GAME_LASTPLAYED_NOT": "Hace mucho tiempo",
     "STEAM_GAME_STATE": {

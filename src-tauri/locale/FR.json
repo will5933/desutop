@@ -36,6 +36,7 @@
         "SET_WALLPAPER_FOR_SYSTEM": "Définir le fond d'écran pour le système",
         "WALLPAPER": "Fond d'écran"
     },
+    "STEAM_NOT_FOUNT": "Steam not found",
     "STEAM_CONTAINER_LABEL": "Jeux Steam",
     "STEAM_GAME_LASTPLAYED_NOT": "Il y a longtemps",
     "STEAM_GAME_STATE": {

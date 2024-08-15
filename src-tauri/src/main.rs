@@ -9,7 +9,6 @@ use tauri::{
     tray::TrayIconBuilder,
     AppHandle, Emitter, Listener, Manager, WebviewWindowBuilder,
 };
-use tauri_plugin_store::StoreBuilder;
 
 // use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 
@@ -75,19 +74,26 @@ fn main() -> () {
             });
 
             // steam games info watcher
-            let handle: AppHandle = app.app_handle().clone();
-            if let Some(steam_path) = get_steam_install_path() {
+            if let Ok(mut library_path_vec) = extract_library_paths() {
+                let handle: AppHandle = app.app_handle().clone();
+
+                for s in library_path_vec.iter_mut() {
+                    s.push_str("\\steamapps");
+                }
+
+                // thread::spawn
                 thread::spawn(move || {
-                    if let Err(error) =
-                        watch(format!("{}\\steamapps", steam_path), |e: notify::Event| {
-                            if e.paths.iter().any(|path| path.extension().map(|ext| ext == "acf").unwrap_or(false)) {
-                                handle
-                                    .emit_to("main", "steamgames-state-change", 0)
-                                    .expect("Failed to emit event `steamgames-state-change`");
-                            }
-                        })
-                    {
-                        println!("Error: {error:?}");
+                    if let Err(e) = watch(library_path_vec, move |event| {
+                        if event.paths
+                            .iter()
+                            .any(|path| path.extension().map(|ext| ext == "acf").unwrap_or(false))
+                        {
+                            handle
+                                .emit_to("main", "steamgames-state-change", &get_steam_games().expect("Failed to get steam games"))
+                                .expect("Failed to emit event `steamgames-state-change`");
+                        }
+                    }) {
+                        eprintln!("Watch error: {:?}", e);
                     }
                 });
             }
@@ -114,9 +120,11 @@ struct SettingsConfig {
     set_wallpaper_for_windows: bool,
     language_json_filename: String,
     wallpaper_file_path: String,
+    steam_path: String,
 }
 
 fn setup_get_settings(handle: AppHandle) -> SettingsConfig {
+    use tauri_plugin_store::StoreBuilder;
     let mut store = StoreBuilder::new("settings.bin").build(handle);
 
     if let Ok(()) = store.load() {
@@ -133,6 +141,7 @@ fn setup_get_settings(handle: AppHandle) -> SettingsConfig {
             set_wallpaper_for_windows: true,
             language_json_filename: String::from("EN.json"),
             wallpaper_file_path: String::from("wallpaper/default.jpg"),
+            steam_path: steamgames::get_steam_install_path().unwrap_or(String::from("NOTFOUND")),
         };
         store
             .insert(String::from("data"), json!(init_setting))

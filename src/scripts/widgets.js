@@ -1,5 +1,7 @@
 const invoke = window.__TAURI__.core.invoke;
 const storedWidgets = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
+const steamPath = (await (new window.__TAURI_PLUGIN_STORE__.Store('settings.bin')).get('data'))['steam_path'];
+const hasSteam = steamPath !== 'NOTFOUND';
 
 const WIDGET_TYPE = {
     steamGames: "steamgames",
@@ -8,13 +10,13 @@ const WIDGET_TYPE = {
 
 const widgetLayer = document.getElementById('widget_layer');
 
-{ // watch and update steamgames state
-    window.steamgames_state_change_listener = await window.__TAURI__.event.listen('steamgames-state-change', () => {
+if (hasSteam) { // watch and update steamgames state
+    window.steamgames_state_change_listener = await window.__TAURI__.event.listen('steamgames-state-change', (event) => {
         clearTimeout(window.steamgames_state_change_settimeout);
-        window.steamgames_state_change_settimeout = setTimeout(() => updateSteamGamesWidget(), 500);
+        window.steamgames_state_change_settimeout = setTimeout(() => updateSteamGamesWidget(event.payload), 500);
     });
 
-    setInterval(updateSteamGamesWidget, 1000 * 60);
+    setInterval(updateSteamgamesStates, 10000);
 }
 
 // 
@@ -55,9 +57,11 @@ async function appendWidget(type, id, a, b) {
             break;
 
         case WIDGET_TYPE.steamGames:
+            if (!hasSteam) return;
             [label, content] = await makeSteamGamesWidget();
             labelDiv.appendChild(label);
             content.forEach(e => contentDiv.appendChild(e));
+
     }
 
     // 将 widget-container 添加到容器中
@@ -87,19 +91,19 @@ function makeNoteWidget(id, a, b) {
 }
 
 // fn makeSteamGamesWidget() -> [label, contentArr]
-async function makeSteamGamesWidget() {
-    const steamgamesArr = await invoke('get_steam_games');
-    steamgamesArr.sort((a, b) => b.last_played - a.last_played);
+async function makeSteamGamesWidget(steamgamesArr) {
+    window.steamgamesArr = steamgamesArr ?? await invoke('get_steam_games');
+    window.steamgamesArr.sort((a, b) => b.last_played - a.last_played);
 
     const { SECOND, MINUTE, HOUR, DAY, WEEK, SECONDS, MINUTES, HOURS, DAYS, WEEKS, AGO } = window.LANG.DATETIME;
 
-    const getStateStr = (stateNumStr) => {
+    const getStateStr = stateNumStr => {
         if (window.LANG.STEAM_GAME_STATE.hasOwnProperty(stateNumStr)) {
             return window.LANG.STEAM_GAME_STATE[stateNumStr];
         } else return window.LANG.STEAM_GAME_STATE["UNKNOWN"];
     };
 
-    const getSizeStr = (byteNumStr) => {
+    const getSizeStr = byteNumStr => {
         const B = Number.parseInt(byteNumStr);
         if (B < 1024) return `${B.toFixed(2)}B`;
         if (B < 1048576) return `${(B / 1024).toFixed(2)}KB`;
@@ -107,9 +111,9 @@ async function makeSteamGamesWidget() {
         return `${(B / 1073741824).toFixed(2)}GB`;
     };
 
-    const getLastPlayedStr = (LastPlayedNumStr) => {
+    const getLastPlayedStr = (LastPlayedNumStr, secondNow) => {
         if (LastPlayedNumStr === '0') return window.LANG.STEAM_GAME_LASTPLAYED_NOT;
-        const sec = Math.round(Date.now() / 1000) - Number.parseInt(LastPlayedNumStr);
+        const sec = secondNow - Number.parseInt(LastPlayedNumStr);
 
         if (sec < 60) {
             return `${sec} ${sec === 1 ? SECOND : SECONDS}${AGO}`;
@@ -128,24 +132,45 @@ async function makeSteamGamesWidget() {
         }
     };
 
+    const secondNow = Math.round(Date.now() / 1000);
+
     // filter
     const steamGamefilterOut = ['228980'];
 
     const contentArr = [];
 
-    for (const steamgame of steamgamesArr) {
+    for (const steamgame of window.steamgamesArr) {
         // filter out [228980]
         if (steamGamefilterOut.includes(steamgame.appid)) continue;
 
-        const wrapper = createElementWithAttributes('div', { 'class': 'steamgameitem', "data-appid": steamgame.appid });
+        const wrapper = createElementWithAttributes('div', { 'class': 'steamgameitem' });
+        wrapper['appid'] = steamgame.appid
         // >
         const name = createElementWithAttributes('span', { 'class': 'steamgame_name' });
         name.textContent = steamgame.name;
         const info = createElementWithAttributes('span', { 'class': 'steamgame_state' });
-        info.innerHTML = `${getLastPlayedStr(steamgame.last_played)} · ${getStateStr(steamgame.state_flags)} · ${getSizeStr(steamgame.size_on_disk)}`
+        info['last_played'] = steamgame.last_played;
+        info['state_flags_str'] = getStateStr(steamgame.state_flags);
+        info['size_on_disk_str'] = getSizeStr(steamgame.size_on_disk);
+        info.updataState = function (secondNow) {
+            this.innerHTML = `${getLastPlayedStr(this['last_played'], secondNow)} · ${this['state_flags_str']} · ${this['size_on_disk_str']}`;
+        }
+        info.updataState(secondNow);
+
+        const libraryHero = window.__TAURI__.core.convertFileSrc(`${steamPath}\\appcache\\librarycache\\${steamgame.appid}_library_hero.jpg`);
+        // test icon
+        const icon = createElementWithAttributes(
+            'img',
+            {
+                'class': 'steamgame_library_hero',
+                'src': libraryHero,
+            }
+        );
+        icon.onerror = function () { this.src = 'static/library_hero.png'; };
 
         wrapper.appendChild(name);
         wrapper.appendChild(info);
+        wrapper.appendChild(icon);
 
         contentArr.push(wrapper);
     }
@@ -156,11 +181,18 @@ async function makeSteamGamesWidget() {
     return [labelP, contentArr];
 }
 
-async function updateSteamGamesWidget() {
-    let [, contentArr] = await makeSteamGamesWidget();
+async function updateSteamGamesWidget(payload) {
+    let [, contentArr] = await makeSteamGamesWidget(payload);
     const contentSlot = document.querySelector(`widget-container[type="${WIDGET_TYPE.steamGames}"]>div[slot="content"]`);
     contentSlot.replaceChildren(...contentArr);
     bindEventListener(contentSlot);
+}
+
+function updateSteamgamesStates() {
+    const st = Date.now();
+    const secondNow = Math.round(Date.now() / 1000);
+    document.querySelectorAll('span.steamgame_state').forEach((e) => e.updataState(secondNow));
+    console.log(Date.now() - st);
 }
 
 function createElementWithAttributes(tagName, attributes) {
@@ -177,7 +209,7 @@ function bindEventListener(fromElement) {
     for (const item of fromElement.querySelectorAll('.steamgameitem')) {
         item.addEventListener('click',
             () => {
-                invoke('start_steam_game', { appid: item.getAttribute("data-appid") });
+                invoke('start_steam_game', { appid: item['appid'] });
             }
         )
     }
@@ -274,12 +306,20 @@ function createNoteWidget() {
     appendWidget(WIDGET_TYPE.note, id, window.LANG.NOTE.UNTITLED, window.LANG.NOTE.UNTITLED_CONTENT);
 }
 
-function createSteamGamesWidget() {
-    if (!document.querySelector(`widget-container[type="${WIDGET_TYPE.steamGames}"]`)) {
-        const id = make_widgetID();
-        storeNewWidget({ type: WIDGET_TYPE.steamGames, id: id });
-        appendWidget(WIDGET_TYPE.steamGames, id);
+async function createSteamGamesWidget() {
+    if (!hasSteam) {
+        alert(window.LANG.STEAM_NOT_FOUND);
+        return;
     }
+    if (document.querySelector(`widget-container[type="${WIDGET_TYPE.steamGames}"]`)) {
+        document.querySelector(`widget-container[type="${WIDGET_TYPE.steamGames}"]`).style.zIndex = 99;
+        alert(window.LANG.WIDGET_ALREADY_EXISTS);
+        return;
+    }
+    const id = make_widgetID();
+    storeNewWidget({ type: WIDGET_TYPE.steamGames, id: id });
+    appendWidget(WIDGET_TYPE.steamGames, id);
+
 }
 
 async function storeNewWidget(obj) {

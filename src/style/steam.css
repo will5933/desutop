@@ -5,7 +5,7 @@
 
     padding: 0.2em 0.6em;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: 8px;
 
     height: 3.4em;
     max-width: 18em;
@@ -17,17 +17,12 @@
     align-items: flex-start;
     justify-content: center;
 
-    transition: background-color 0.2s ease;
-}
-
-.steamgameitem:hover {
-    background-color: #ffffffc0;
+    transition: .2s ease;
 }
 
 .steamgame_name,
 .steamgame_appid,
 .steamgame_state {
-    overflow: hidden;
     white-space: nowrap;
 }
 
@@ -35,8 +30,35 @@
     text-align: center;
     font-weight: 600;
     font-size: 1em;
+    line-height: 2em;
 }
 
 .steamgame_state {
     font-size: 0.8em;
+    line-height: 1.2em;
+}
+
+.steamgame_library_hero {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: -1;
+    opacity: 0;
+    filter: blur(8px);
+    transform: scale(112%);
+    transition: .3s ease;
+}
+
+.steamgameitem:hover {
+    color: #fff;
+    text-shadow: 0 0 2px black, 0 0 8px black;
+    box-shadow: 0 0 8px #0004 inset;
+}
+
+.steamgameitem:hover>.steamgame_library_hero {
+    /* background-color: #ffffffc0; */
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(100%);
 }

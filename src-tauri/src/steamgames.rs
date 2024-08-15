@@ -1,10 +1,10 @@
 use lazy_static::lazy_static;
-use notify::{Config, Event, ReadDirectoryChangesWatcher, RecommendedWatcher, RecursiveMode, Watcher};
+use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
 use rayon::prelude::*;
 use regex::Regex;
-use std::borrow::Cow;
 use std::fs::File;
 use std::io::Read;
+use std::sync::mpsc::{self};
 use std::{fs, path::Path};
 
 use serde::Serialize;
@@ -16,38 +16,44 @@ use std::process::{Command, Stdio};
 // SteamGame
 //
 #[derive(Serialize)]
-pub struct SteamGame<'a> {
-    appid: Cow<'a, str>,
-    name: Cow<'a, str>,
-    state_flags: Cow<'a, str>,
-    last_played: Cow<'a, str>,
-    size_on_disk: Cow<'a, str>,
+pub struct SteamGame {
+    appid: String,
+    name: String,
+    state_flags: String,
+    last_played: String,
+    size_on_disk: String,
 }
 
-pub fn watch<P: AsRef<Path>, F: Fn(Event) -> ()>(path: P, f: F) -> notify::Result<()> {
-    let (tx, rx) = std::sync::mpsc::channel();
+pub fn watch<P: AsRef<Path>, F: Fn(Event) + Send + 'static>(
+    paths: Vec<P>,
+    callback: F,
+) -> notify::Result<()> {
+    let (tx, rx) = mpsc::channel();
+    let mut watcher: RecommendedWatcher = RecommendedWatcher::new(tx, Config::default())?;
 
-    let mut watcher: ReadDirectoryChangesWatcher = RecommendedWatcher::new(tx, Config::default())?;
-    watcher.watch(path.as_ref(), RecursiveMode::NonRecursive)?;
+    for path in paths {
+        watcher.watch(path.as_ref(), RecursiveMode::NonRecursive)?;
+    }
     for res in rx {
         match res {
-            Ok(e) => f(e),
-            Err(error) => eprintln!("Error: {error:?}"),
+            Ok(event) => callback(event),
+            Err(err) => eprintln!("Error: {:?}", err),
         }
     }
-
     Ok(())
 }
 
 #[tauri::command]
-pub fn get_steam_games() -> core::result::Result<Vec<SteamGame<'static>>, ()> {
-    match get_steam_install_path() {
-        Some(steam_path) => {
-            let steamapps_dir: String = steam_path + "\\steamapps";
+pub fn get_steam_games() -> core::result::Result<Vec<SteamGame>, ()> {
+    let mut all_steam_games: Vec<SteamGame> = Vec::new();
+
+    if let Ok(library_paths_vec) = extract_library_paths() {
+        for library_path in library_paths_vec {
+            let steamapps_dir: String = library_path + "\\steamapps";
             let vec: Vec<String> = dir_scan(Path::new(&steamapps_dir));
 
             let res_vec: Vec<SteamGame> = vec
-                .into_par_iter()
+                .into_par_iter() // 使用并行迭代器加速处理
                 .filter_map(|filename| {
                     if filename.contains("appmanifest_") {
                         read_steam_game_config(format!("{}\\{}", steamapps_dir, filename))
@@ -56,10 +62,13 @@ pub fn get_steam_games() -> core::result::Result<Vec<SteamGame<'static>>, ()> {
                     }
                 })
                 .collect();
-            Ok(res_vec)
+
+            // 将当前路径的结果添加到总结果向量中
+            all_steam_games.extend(res_vec);
         }
-        None => Err(()),
     }
+
+    Ok(all_steam_games)
 }
 
 #[tauri::command]
@@ -116,6 +125,25 @@ pub fn get_steam_install_path() -> Option<String> {
     }
 }
 
+// 获取 steam library 安装路径
+pub fn extract_library_paths() -> Result<Vec<String>, std::io::Error> {
+    let mut file = File::open(format!(
+        "{}\\config\\libraryfolders.vdf",
+        get_steam_install_path().expect("Failed to find steam path")
+    ))?;
+    let mut content = String::new();
+    file.read_to_string(&mut content)?;
+
+    // 正则表达式匹配路径
+    let re = Regex::new(r#"\"path\"\t\t\"(.+)\""#).unwrap();
+    let paths: Vec<String> = re
+        .captures_iter(&content)
+        .map(|cap| cap[1].to_string())
+        .collect();
+
+    Ok(paths)
+}
+
 // lazy_static
 lazy_static! {
     static ref KEY_REGEX_VEC: Vec<Regex> = {
@@ -129,27 +157,27 @@ lazy_static! {
     };
 }
 
-fn read_steam_game_config(filepath: String) -> Option<SteamGame<'static>> {
+fn read_steam_game_config(filepath: String) -> Option<SteamGame> {
     let mut file: File = File::open(filepath).ok()?;
     let mut buffer: String = String::new();
     file.read_to_string(&mut buffer).ok()?;
 
-    let appid: Cow<str> = get_kv_data(&buffer, &KEY_REGEX_VEC[0])?;
-    let name: Cow<str> = get_kv_data(&buffer, &KEY_REGEX_VEC[1])?;
-    let state_flags: Cow<str> = get_kv_data(&buffer, &KEY_REGEX_VEC[2])?;
-    let last_played: Cow<str> = get_kv_data(&buffer, &KEY_REGEX_VEC[3])?;
-    let size_on_disk: Cow<str> = get_kv_data(&buffer, &KEY_REGEX_VEC[4])?;
+    let appid: String = get_kv_data(&buffer, &KEY_REGEX_VEC[0])?;
+    let name: String = get_kv_data(&buffer, &KEY_REGEX_VEC[1])?;
+    let state_flags: String = get_kv_data(&buffer, &KEY_REGEX_VEC[2])?;
+    let last_played: String = get_kv_data(&buffer, &KEY_REGEX_VEC[3])?;
+    let size_on_disk: String = get_kv_data(&buffer, &KEY_REGEX_VEC[4])?;
 
     Some(SteamGame {
-        appid: appid.into_owned().into(),
-        name: name.into_owned().into(),
-        state_flags: state_flags.into_owned().into(),
-        last_played: last_played.into_owned().into(),
-        size_on_disk: size_on_disk.into_owned().into(),
+        appid,
+        name,
+        state_flags,
+        last_played,
+        size_on_disk,
     })
 }
 
-fn get_kv_data<'a>(buffer: &'a str, re: &Regex) -> Option<Cow<'a, str>> {
+fn get_kv_data<'a>(buffer: &'a str, re: &Regex) -> Option<String> {
     re.captures(buffer)
-        .and_then(|cap| cap.get(1).map(|m| Cow::from(m.as_str())))
+        .and_then(|cap| cap.get(1).map(|m| m.as_str().to_string()))
 }

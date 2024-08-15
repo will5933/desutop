@@ -36,8 +36,10 @@
         "SET_WALLPAPER_FOR_SYSTEM": "为系统更换壁纸",
         "WALLPAPER": "壁纸"
     },
+    "STEAM_NOT_FOUNT": "找不到 Steam",
     "STEAM_CONTAINER_LABEL": "Steam 游戏",
     "STEAM_GAME_LASTPLAYED_NOT": "很久以前",
+    "WIDGET_ALREADY_EXISTS": "该组件已存在",
     "STEAM_GAME_STATE": {
         "4": "准备就绪",
         "6": "准备更新",

@@ -36,6 +36,7 @@
         "SET_WALLPAPER_FOR_SYSTEM": "Set wallpaper for system",
         "WALLPAPER": "Wallpaper"
     },
+    "STEAM_NOT_FOUNT": "Steam not found",
     "STEAM_CONTAINER_LABEL": "Steam Games",
     "STEAM_GAME_LASTPLAYED_NOT": "Long time ago",
     "STEAM_GAME_STATE": {
@@ -45,6 +46,7 @@
         "1030": "<b>Updating</b>",
         "UNKNOWN": "Unknown"
     },
+    "WIDGET_ALREADY_EXISTS": "The widget already exists",
     "WEEKDAYS": [
         "Sun.",
         "Mon.",
