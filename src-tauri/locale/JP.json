@@ -36,7 +36,7 @@
         "SET_WALLPAPER_FOR_SYSTEM": "システム用の壁紙を設定する",
         "WALLPAPER": "壁紙"
     },
-    "STEAM_NOT_FOUNT": "Steam not found",
+    "STEAM_NOT_FOUNT": "Steam が見つかりません",
     "STEAM_CONTAINER_LABEL": "Steam ゲーム",
     "STEAM_GAME_LASTPLAYED_NOT": "ずっと前",
     "STEAM_GAME_STATE": {
@@ -46,6 +46,7 @@
         "1030": "<b>更新中</b>",
         "UNKNOWN": "不明"
     },
+    "WIDGET_ALREADY_EXISTS": "ウィジェットは既に存在しています",
     "WEEKDAYS": [
         "日曜日",
         "月曜日",

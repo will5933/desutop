@@ -48,8 +48,4 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
 
 - `English` *(Default/默认)*
 - `简体中文`
-- `繁體中文`
-- `Español`
-- `Français`
 - `日本語`
-- `한국어`

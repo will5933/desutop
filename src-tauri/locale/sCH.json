@@ -39,7 +39,6 @@
     "STEAM_NOT_FOUNT": "找不到 Steam",
     "STEAM_CONTAINER_LABEL": "Steam 游戏",
     "STEAM_GAME_LASTPLAYED_NOT": "很久以前",
-    "WIDGET_ALREADY_EXISTS": "该组件已存在",
     "STEAM_GAME_STATE": {
         "4": "准备就绪",
         "6": "准备更新",
@@ -47,6 +46,7 @@
         "1030": "<b>正在更新</b>",
         "UNKNOWN": "未知状态"
     },
+    "WIDGET_ALREADY_EXISTS": "该组件已存在",
     "WEEKDAYS": [
         "周日",
         "周一",
