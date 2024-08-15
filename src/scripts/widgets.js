@@ -312,7 +312,6 @@ async function createSteamGamesWidget() {
         return;
     }
     if (document.querySelector(`widget-container[type="${WIDGET_TYPE.steamGames}"]`)) {
-        document.querySelector(`widget-container[type="${WIDGET_TYPE.steamGames}"]`).style.zIndex = 99;
         alert(window.LANG.WIDGET_ALREADY_EXISTS);
         return;
     }
