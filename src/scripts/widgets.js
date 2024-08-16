@@ -164,6 +164,7 @@ async function makeSteamGamesWidget(steamgamesArr) {
             {
                 'class': 'steamgame_library_hero',
                 'src': libraryHero,
+                'loading': 'lazy',
             }
         );
         icon.onerror = function () { this.src = 'static/library_hero.png'; };
