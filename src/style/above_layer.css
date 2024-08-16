@@ -27,7 +27,7 @@
     opacity: 0;
     backdrop-filter: blur(40px) brightness(110%);
     filter: blur(8px);
-    transform: translate(-50%, -10%) scale(0.8);
+    transform: translateY(-10%) scale(0.8);
     transition: transform 0.3s ease, opacity 0.3s ease, filter 0.2s ease;
 }
 
@@ -53,7 +53,7 @@
 }
 
 #menu.show {
-    transform: translate(-50%, 0) scale(1);
+    transform: translateY(0) scale(1);
     opacity: 1;
     filter: blur(0);
 

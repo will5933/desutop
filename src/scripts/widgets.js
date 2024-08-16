@@ -190,10 +190,8 @@ async function updateSteamGamesWidget(payload) {
 }
 
 function updateSteamgamesStates() {
-    const st = Date.now();
     const secondNow = Math.round(Date.now() / 1000);
     document.querySelectorAll('span.steamgame_state').forEach((e) => e.updataState(secondNow));
-    console.log(Date.now() - st);
 }
 
 function createElementWithAttributes(tagName, attributes) {
@@ -271,7 +269,16 @@ function showMenu(itemArr, rect, afterShowFn, afterCloseFn) {
 
     clearTimeout(window.close_menu_set_time_out);
     const { left, right, top, bottom } = rect;
-    menu.style.left = `${(left + right) / 2}px`;
+    // menu.style.left = (left + right) / 2 > (document.body.offsetWidth - 124) ?
+    //     (`${document.body.offsetWidth - 124}px`) : (`${(left + right) / 2}px`);
+    menu.style.left = '';
+    menu.style.right = '';
+    if (left + right > document.body.offsetWidth) {
+        menu.style.right = (`${document.body.offsetWidth - right}px`);
+    } else {
+        menu.style.left = (`${left}px`);
+    }
+
     menu.style.top = `${bottom + 6}px`;
 
     window.menu_after_close_fn = afterCloseFn;

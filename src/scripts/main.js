@@ -35,6 +35,45 @@ const dateTime = document.getElementById('datetime');
     }
 }
 
+{
+    const { readText } = window.__TAURI_PLUGIN_CLIPBOARDMANAGER__;
+    const clipboardStore = new window.__TAURI_PLUGIN_STORE__.Store('clipboard.bin');
+    const clipboardBar = document.getElementById('clipboard_bar');
+    const clipArr = (await clipboardStore.get('data')) ?? [];
+    if (clipArr.length > 0) setClipboardBar(clipArr);
+
+    window.clipboard_change = await window.__TAURI__.event.listen('clipboard-change', e => onClipboardChange(e.payload));
+
+    async function onClipboardChange() {
+        try {
+            clipArr.push(await readText());
+            while ( clipArr.length > 20 ) {
+                clipArr.shift();
+            }
+
+            setClipboardBar(clipArr);
+
+            clearTimeout(window.clipboard_store_timeout);
+            window.clipboard_store_timeout = setTimeout(async () => {
+                await clipboardStore.set('data', clipArr);
+                await clipboardStore.save();
+            }, 200);
+        } catch (err) {
+            console.error('Failed to read clipboard content: ', err);
+        }
+    }
+
+
+    function setClipboardBar(clipArr) {
+        clipboardBar.textContent =  clipArr[clipArr.length - 1].length > 15 ? clipArr[clipArr.length - 1].slice(0, 14) + '…' : clipArr[clipArr.length - 1];
+        clipboardBar.classList.add('topbar_ele_on');
+        clearTimeout(window.set_clipboard_bar);
+        window.set_clipboard_bar = setTimeout(() => {
+            clipboardBar.classList.remove('topbar_ele_on');
+        }, 5000);
+    }
+}
+
 
 // TODO
 function bindListeners() {

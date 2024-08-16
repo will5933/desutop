@@ -25,6 +25,13 @@
     ],
     "css-prefix-order": "off",
     "detect-css-reflows/composite": "off",
-    "detect-css-reflows/paint": "off"
+    "detect-css-reflows/paint": "off",
+    "axe/forms": [
+      "default",
+      {
+        "label": "off",
+        "select-name": "off"
+      }
+    ]
   }
 }

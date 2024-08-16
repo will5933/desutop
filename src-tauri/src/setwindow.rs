@@ -11,7 +11,12 @@ use windows::{core::*, Win32::Foundation::*, Win32::UI::WindowsAndMessaging::*};
 //
 // Public fn
 //
-pub fn set_wallpaper(hwnd_isize: isize, handle: AppHandle, set_for_system: bool, wallpaper_file_path: String) -> () {
+pub fn set_wallpaper(
+    hwnd_isize: isize,
+    handle: AppHandle,
+    set_for_system: bool,
+    wallpaper_file_path: String,
+) -> () {
     send_0x52c();
     unsafe {
         let _ = EnumWindows(Some(set_wallpaper_layer), LPARAM(hwnd_isize));
@@ -28,9 +33,8 @@ pub fn set_wallpaper(hwnd_isize: isize, handle: AppHandle, set_for_system: bool,
 }
 
 pub fn set_windows_wallpaper(binding: &mut PathBuf) -> () {
-    let pic_path: &mut OsStr = binding
-        .as_mut_os_str();
-    
+    let pic_path: &mut OsStr = binding.as_mut_os_str();
+
     let wide_path: Vec<u16> = pic_path.encode_wide().chain(Some(0).into_iter()).collect();
 
     unsafe {

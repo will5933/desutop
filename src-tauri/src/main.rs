@@ -22,6 +22,7 @@ fn main() -> () {
     use steamgames::*;
 
     let app = tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
@@ -83,20 +84,35 @@ fn main() -> () {
 
                 // thread::spawn
                 thread::spawn(move || {
-                    if let Err(e) = watch(library_path_vec, move |event| {
-                        if event.paths
-                            .iter()
-                            .any(|path| path.extension().map(|ext| ext == "acf").unwrap_or(false))
-                        {
-                            handle
-                                .emit_to("main", "steamgames-state-change", &get_steam_games().expect("Failed to get steam games"))
-                                .expect("Failed to emit event `steamgames-state-change`");
-                        }
-                    }) {
+                    if let Err(e) =
+                        watch(library_path_vec, move |event| {
+                            if event.paths.iter().any(|path| {
+                                path.extension().map(|ext| ext == "acf").unwrap_or(false)
+                            }) {
+                                handle
+                                    .emit_to(
+                                        "main",
+                                        "steamgames-state-change",
+                                        &get_steam_games().expect("Failed to get steam games"),
+                                    )
+                                    .expect("Failed to emit event `steamgames-state-change`");
+                            }
+                        })
+                    {
                         eprintln!("Watch error: {:?}", e);
                     }
                 });
             }
+
+            // clipboard watcher
+            let handle: AppHandle = app.app_handle().clone();
+            thread::spawn(move || {
+                start_listen_clipboard(|| {
+                    handle
+                        .emit_to("main", "clipboard-change", 0)
+                        .expect("clipboard-change");
+                });
+            });
 
             // if let Ok(vec) = get_desktop_contents() {
             //     println!("{:?} length: {}", vec, vec.len());
@@ -148,6 +164,21 @@ fn setup_get_settings(handle: AppHandle) -> SettingsConfig {
             .expect("Failed to init settings");
         store.save().expect("Failed to save settings");
         init_setting
+    }
+}
+
+fn start_listen_clipboard<F: Fn() -> ()>(handle_fn: F) -> thread::JoinHandle<()> {
+    use clipboard_win::{formats, get_clipboard};
+
+    let mut cache: String = String::new();
+    loop {
+        let new_data: String = get_clipboard(formats::Unicode).unwrap_or(String::new());
+        if cache != new_data {
+            handle_fn();
+            cache = new_data;
+        }
+
+        thread::sleep(std::time::Duration::from_millis(300));
     }
 }
 
@@ -236,7 +267,7 @@ fn open_settings_windows(app: &AppHandle, lang_json: &Value) -> () {
     let builder = WebviewWindowBuilder::new(
         app,
         "settings",
-        tauri::WebviewUrl::App("settings_page/settings.html".into()),
+        tauri::WebviewUrl::App("settings_page/settings.html#common".into()),
     );
     let _webview = builder
         .inner_size(800.0, 600.0)

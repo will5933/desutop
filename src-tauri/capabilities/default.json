@@ -28,6 +28,11 @@
     "dialog:default",
     "fs:allow-resource-read-recursive",
     "fs:allow-resource-meta-recursive",
-    "fs:scope-resource-index"
+    "fs:scope-resource-index",
+    "clipboard-manager:allow-read-image",
+    "clipboard-manager:allow-read-text",
+    "clipboard-manager:allow-write-image",
+    "clipboard-manager:allow-write-text",
+    "clipboard-manager:allow-write-html"
   ]
 }

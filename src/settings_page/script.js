@@ -1,19 +1,6 @@
 import { getWallpaperFilesPathArr } from "../wallpaper.js";
 const settingStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin');
 
-// locale
-{
-    const dataObj = await settingStore.get('data');
-    window.__TAURI__.core.invoke('get_lang_json_string', { "languageJsonFilename": dataObj["language_json_filename"] })
-        .then((jsonStr) => {
-            window.LANG = JSON.parse(jsonStr);
-
-            document.querySelectorAll('[data-lang]').forEach((e) => {
-                e.textContent = window.LANG['SETTINGS'][e.getAttribute('data-lang')];
-            })
-        })
-}
-
 // right click
 document.body.addEventListener('contextmenu', e => e.preventDefault());
 
@@ -32,22 +19,27 @@ document.body.addEventListener('contextmenu', e => e.preventDefault());
         ?.addEventListener('click', appWindow.close);
 }
 
-// #sidebar div
-document.querySelectorAll('#sidebar div').forEach(link => {
-    link.addEventListener('click', (event) => {
-        event.preventDefault();
+{
+    // init
+    handleHash();
 
-        document.querySelectorAll('.content-section').forEach(section => {
-            section.style.display = 'none';
+    // #sidebar div
+    document.querySelectorAll('#sidebar div').forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            location.hash = link.getAttribute('data-target');
         });
-        document.getElementById(link.getAttribute('data-target')).style.display = 'block';
-
-        document.querySelectorAll('#sidebar div').forEach(div => {
-            div.classList.remove('on');
-        });
-        link.classList.add('on');
     });
-});
+
+    window.addEventListener("hashchange", handleHash, false);
+
+    function handleHash() {
+        document.querySelectorAll('.content-section').forEach(section => section.style.display = 'none');
+        document.getElementById(location.hash.substring(1)).style.display = 'block';
+        document.querySelectorAll('#sidebar div').forEach(div => div.classList.remove('on'));
+        document.querySelector(`#sidebar div[data-target="${location.hash.substring(1)}"]`).classList.add('on');
+    }
+}
 
 // ripple
 document.querySelectorAll('.ripple-button').forEach(button => {
@@ -84,18 +76,23 @@ document.querySelectorAll('.ripple-button').forEach(button => {
     set_wallpaper_for_windows.addEventListener('change', () => saveConfig('set_wallpaper_for_windows', set_wallpaper_for_windows.checked));
 
     // language_json_filename
-    language_json_filename.addEventListener('change', () => saveConfig('language_json_filename', language_json_filename.value));
+    language_json_filename.addEventListener('change', () => saveConfig(
+        'language_json_filename',
+        language_json_filename.value,
+        () => location.reload(),
+    ));
 }
 
 window.save_config_settimeout = {};
-function saveConfig(key, value) {
+function saveConfig(key, value, afterFn) {
     clearTimeout(window.save_config_settimeout[key]);
     window.save_config_settimeout[key] = setTimeout(async () => {
         const dataObj = await settingStore.get('data');
         dataObj[key] = value;
         await settingStore.set('data', dataObj);
         await settingStore.save();
-    }, 500);
+        if (afterFn) afterFn();
+    }, 50);
 }
 
 // WALLPAPER

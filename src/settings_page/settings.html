@@ -16,7 +16,7 @@
 
 <body>
     <div data-tauri-drag-region id="titlebar">
-        <span id="window_title" data-lang="TITLE_SETTINGS">TITLE_SETTINGS</span>
+        <span id="window_title" data-lang="TITLE_SETTINGS"><!-- TITLE_SETTINGS --></span>
         <div class="titlebar-button" id="titlebar-minimize">
             <img src="svg/window-minimize.svg" alt="minimize" />
         </div>
@@ -30,20 +30,14 @@
 
     <div id="settings_body">
         <div id="sidebar">
-            <div data-target="common" class="on ripple-button"><a href="#" data-lang="COMMON">COMMON</a></div>
-            <div data-target="theme" class="ripple-button"><a href="#" data-lang="THEME&WALLPAPER">THEME&WALLPAPER</a>
+            <div data-target="common" class="ripple-button"><a href="#" data-lang="COMMON"><!-- COMMON --></a></div>
+            <div data-target="theme" class="ripple-button"><a href="#" data-lang="THEME&WALLPAPER"><!-- THEME&WALLPAPER --></a>
             </div>
-            <div data-target="lang" class="ripple-button"><a href="#" data-lang="LANGUAGE&FONT">LANGUAGE&FONT</a></div>
-            <div data-target="about" class="ripple-button"><a href="#" data-lang="ABOUT">ABOUT</a></div>
+            <div data-target="lang" class="ripple-button"><a href="#" data-lang="LANGUAGE&FONT"><!-- LANGUAGE&FONT --></a></div>
+            <div data-target="about" class="ripple-button"><a href="#" data-lang="ABOUT"><!-- ABOUT --></a></div>
         </div>
 
         <div id="content">
-            <style>
-                .content-section:not(#common) {
-                    display: none;
-                }
-            </style>
-
             <!-- ###### -->
             <!-- COMMON -->
             <div id="common" class="content-section">
@@ -93,13 +87,29 @@
             <div id="about" class="content-section">
                 <div class="center">
                     <h1>Desutop</h1>
-                    <h3>Version: v0.3.3</h3>
+                    <h3>Version: v0.3.4</h3>
                     <h3><a href="https://github.com/will5933/desutop" rel="noopener" target="_blank">Github - fanin</a>
                     </h3>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        (new window.__TAURI_PLUGIN_STORE__.Store('settings.bin')).get('data').then((settingsObj) => {
+            window.__TAURI__.core.invoke(
+                'get_lang_json_string',
+                { "languageJsonFilename": settingsObj["language_json_filename"] }
+            )
+                .then((jsonStr) => {
+                    window.LANG = JSON.parse(jsonStr);
+
+                    document.querySelectorAll('[data-lang]').forEach((e) => {
+                        e.textContent = window.LANG['SETTINGS'][e.getAttribute('data-lang')];
+                    })
+                })
+        });
+    </script>
 </body>
 
 </html>

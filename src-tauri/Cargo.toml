@@ -1,6 +1,6 @@
 [package]
 name = "Desutop"
-version = "0.3.3"
+version = "0.3.4"
 description = "Desutop: A Tauri Based Desktop App"
 authors = ["fanin"]
 edition = "2021"
@@ -26,6 +26,8 @@ rayon = "1.10.0"
 tauri-plugin-dialog = "2.0.0-rc"
 tauri-plugin-fs = "2.0.0-rc.0"
 notify = { version = "6.1.1", features = ["serde"] }
+clipboard-win = "5.4.0"
+tauri-plugin-clipboard-manager = "2.1.0-beta.7"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
