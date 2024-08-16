@@ -1,8 +1,20 @@
 import { getWallpaperFilesPathArr } from "../wallpaper.js";
 const settingStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin');
 
-// right click
-document.body.addEventListener('contextmenu', e => e.preventDefault());
+
+{ // prevent keys
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', function (event) {
+        if (event.ctrlKey) {
+            if (['p', 'f', 'r', 'j'].includes(event.key)) {
+                event.preventDefault();
+            }
+        }
+        if (['F3', 'F5', 'F7'].includes(event.key)) {
+            event.preventDefault();
+        }
+    });
+}
 
 {
     // btn

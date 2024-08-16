@@ -74,18 +74,16 @@ function makeNoteWidget(id, a, b) {
     const labelP = createElementWithAttributes('p', {
         'contenteditable': 'true',
         'class': 'contenteditable padding_nowarp',
-        'spellcheck': 'false',
         'widget-id': id,
-        'data-key': 'a'
     });
+    labelP['data-key'] = 'a';
     labelP.textContent = a ?? '';
     const contentP = createElementWithAttributes('p', {
         'contenteditable': 'true',
         'class': 'contenteditable',
-        'spellcheck': 'false',
         'widget-id': id,
-        'data-key': 'b'
     });
+    contentP['data-key'] = 'b';
     contentP.textContent = b ?? '';
     return [labelP, contentP];
 }
@@ -218,7 +216,7 @@ function bindEventListener(fromElement) {
     for (const item of fromElement.querySelectorAll('.contenteditable')) {
         item.addEventListener('input',
             (e) => {
-                const id = e.target.getAttribute('widget-id'), key = e.target.getAttribute('data-key');
+                const id = e.target.getAttribute('widget-id'), key = e.target['data-key'];
                 clearTimeout(window.inputTimer[id + key]);
                 window.inputTimer[id + key] = setTimeout(async () => {
                     await storedWidgets.set('data', (await storedWidgets.get('data')).map((v) => {

@@ -17,7 +17,7 @@
     align-items: flex-start;
     justify-content: center;
 
-    transition: .2s ease;
+    transition: color .2s ease ,text-shadow .2s ease, box-shadow .2s ease;
 }
 
 .steamgame_name,

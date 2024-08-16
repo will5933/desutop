@@ -17,9 +17,6 @@ const dateTime = document.getElementById('datetime');
 
             customElements.define('widget-container', WidgetContainer);
 
-            // ban contextmenu
-            bindListeners();
-
             initWidgets();
         })
 
@@ -47,7 +44,7 @@ const dateTime = document.getElementById('datetime');
     async function onClipboardChange() {
         try {
             clipArr.push(await readText());
-            while ( clipArr.length > 20 ) {
+            while (clipArr.length > 20) {
                 clipArr.shift();
             }
 
@@ -65,7 +62,7 @@ const dateTime = document.getElementById('datetime');
 
 
     function setClipboardBar(clipArr) {
-        clipboardBar.textContent =  clipArr[clipArr.length - 1].length > 15 ? clipArr[clipArr.length - 1].slice(0, 14) + '…' : clipArr[clipArr.length - 1];
+        clipboardBar.textContent = clipArr[clipArr.length - 1].length > 15 ? clipArr[clipArr.length - 1].slice(0, 14) + '…' : clipArr[clipArr.length - 1];
         clipboardBar.classList.add('topbar_ele_on');
         clearTimeout(window.set_clipboard_bar);
         window.set_clipboard_bar = setTimeout(() => {
@@ -74,12 +71,18 @@ const dateTime = document.getElementById('datetime');
     }
 }
 
-
-// TODO
-function bindListeners() {
-    document.body.addEventListener('contextmenu', (event) => {
-        event.preventDefault();
-    })
+{ // prevent keys
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', function (event) {
+        if (event.ctrlKey) {
+            if (['p', 'f', 'r', 'j'].includes(event.key)) {
+                event.preventDefault();
+            }
+        }
+        if (['F3', 'F5', 'F7'].includes(event.key)) {
+            event.preventDefault();
+        }
+    });
 }
 
 // fn showCurrentDateTime()
