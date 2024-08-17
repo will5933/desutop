@@ -11,7 +11,7 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
   </tr>
   <tr>
     <td><img alt="" src="static/pic-switchwallpaper.png"></td>
-    <td><img alt="" src="static/pic-lang.png"></td>
+    <td><img alt="" src="static/pic-dragdrop.png"></td>
   </tr>
   <tr>
     <td><img alt="" src="static/pic-steamgames.png"></td>

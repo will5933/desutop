@@ -1,4 +1,4 @@
-import { createElementWithAttributes, initWidgets } from './widgets.js';
+import { createElementWithAttributes, initWidgets, createNoteWidget } from './widgets.js';
 import { WidgetContainer } from "./container.js";
 import { showMenu, closeMenu, clipMenuItemStr } from "./menu.js";
 
@@ -39,6 +39,32 @@ const dateTime = document.getElementById('datetime');
 
     // reload
     window.reload_listener = await window.__TAURI__.event.listen('language-change', () => location.reload());
+}
+
+
+{ // enable drag & drop
+    document.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+    document.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (e.dataTransfer.items) {
+            for (let i = 0; i < e.dataTransfer.items.length; i++) {
+                if (e.dataTransfer.items[i].type === 'text/plain') {
+                    e.dataTransfer.items[i].getAsString(str => {
+                        createNoteWidget(str, [e.x, e.y]);
+                    });
+                }
+                //  else if (e.dataTransfer.items[i].kind === 'file') {
+                //     const file = e.dataTransfer.items[i].getAsFile();
+                //     console.log('File:', file.name);
+                // }
+            }
+        }
+    });
 }
 
 {

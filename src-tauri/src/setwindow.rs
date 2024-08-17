@@ -12,14 +12,14 @@ use windows::{core::*, Win32::Foundation::*, Win32::UI::WindowsAndMessaging::*};
 // Public fn
 //
 pub fn set_wallpaper(
-    hwnd_isize: isize,
+    hwnd_isize: *mut c_void,
     handle: AppHandle,
     set_for_system: bool,
     wallpaper_file_path: String,
 ) -> () {
     send_0x52c();
     unsafe {
-        let _ = EnumWindows(Some(set_wallpaper_layer), LPARAM(hwnd_isize));
+        let _ = EnumWindows(Some(set_wallpaper_layer), LPARAM(hwnd_isize as isize));
     };
 
     if set_for_system {

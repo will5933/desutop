@@ -69,6 +69,7 @@ async function appendWidget(type, id, a, b) {
     // 将 widget-container 添加到容器中
     bindEventListener(widgetContainer);
     widgetLayer.appendChild(widgetContainer);
+    return widgetContainer;
 }
 
 // fn makeNoteWidget() -> [label, content]
@@ -257,10 +258,16 @@ function setAddWidgetMenu() {
     });
 }
 
-function createNoteWidget() {
+export async function createNoteWidget(content, x_y) {
     const id = make_widgetID();
-    storeNewWidget({ type: WIDGET_TYPE.note, id: id, a: window.LANG.NOTE.UNTITLED, b: window.LANG.NOTE.UNTITLED_CONTENT });
-    appendWidget(WIDGET_TYPE.note, id, window.LANG.NOTE.UNTITLED, window.LANG.NOTE.UNTITLED_CONTENT);
+    storeNewWidget({ type: WIDGET_TYPE.note, id: id, a: window.LANG.NOTE.UNTITLED, b: content ?? window.LANG.NOTE.UNTITLED_CONTENT });
+    const widgetContainer = await appendWidget(WIDGET_TYPE.note, id, window.LANG.NOTE.UNTITLED, content ?? window.LANG.NOTE.UNTITLED_CONTENT);
+
+    if (x_y) {
+        widgetContainer.style.left = x_y[0] + 'px';
+        widgetContainer.style.top = x_y[1] + 'px';
+        widgetContainer.saveWidgetsStyles();
+    }
 }
 
 async function createSteamGamesWidget() {
