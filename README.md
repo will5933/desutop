@@ -6,17 +6,16 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
 
 <table>
   <tr>
-    <td><img alt="" src="static/pic-add.png"></td>
-    <td><img alt="" src="static/pic-steamgames.png"></td>
-    <td><img alt="" src="static/pic-note.png"></td>
+    <td><img alt="" title="addwidget" src="static/pic-add.png"></td>
+    <td><img alt="clipboard" title="clipboard" src="static/pic-clipboard.png"></td>
   </tr>
   <tr>
     <td><img alt="" src="static/pic-switchwallpaper.png"></td>
-    <td><img alt="" src="static/pic-b.png"></td>
     <td><img alt="" src="static/pic-lang.png"></td>
   </tr>
   <tr>
-    <img alt="" src="static/pic-a.png">
+    <td><img alt="" src="static/pic-steamgames.png"></td>
+    <td><img alt="" src="static/pic-note.png"></td>
   </tr>
 </table>
 
