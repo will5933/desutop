@@ -11,7 +11,7 @@
       {
         "title": "Desutop",
         "label": "main",
-        "drag-drop-enabled": false,
+        "dragDropEnabled": false,
         "alwaysOnTop": true,
         "transparent": true,
         "decorations": false,
