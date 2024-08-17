@@ -1,4 +1,4 @@
-# ***[Desutop](https://github.com/will5933/desutop)***
+# **[Desutop](https://github.com/will5933/desutop)**
 
 Here is a **Windows** desktop replacement project built with [Tauri](https://github.com/tauri-apps/tauri), which is currently under active development. It already includes several desktop widgets.
 
@@ -24,25 +24,26 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
 
 - [x] Steam game status display / steam 游戏状态显示；
 - [x] Note widget / 笔记微件；
-- [x] [ ] Better settings / 更好的设置界面；
+- [x] Better settings / 更好的设置界面；
 - [x] Multi-language support / 多语言支持；
 - [x] Language switch / 语言切换;
 - [x] Wallpaper switch / 壁纸切换;
+- [x] Start at boot / 自启动;
 - [ ] Installed applications display / 已安装的应用程序显示；
 - [x] Responsive Steam game status display / 响应式Steam游戏状态显示；
 - [ ] Note widget `Markdown` support / 便签的 `Markdown` 支持；
 - [ ] Drop-down menu calendar / 下拉菜单日历；
-- [x] [ ] Custom context menu / 自定义右键菜单；
+- [x] Custom context menu / 自定义右键菜单；
 - [ ] Picture paste and fix as a widget / 图片粘贴并作为微件固定；
 - [ ] System state and notification display / 系统状态和通知显示；
-- [x] [ ] Better widget alignment / 更好的微件对齐方式；
-- [x] [ ] Clipboard content display / 剪贴板内容显示；
+- [x] Better widget alignment / 更好的微件对齐方式；
+- [x] Clipboard content display / 剪贴板内容显示；
 - [ ] Theme color switch / 主题颜色切换；
 - [ ] Hide or collapse widgets / 隐藏或收起微件。
 
 ## Change wallpaper / 切换壁纸
 
-> `>` `wallpaper`
+> `>` `/wallpaper`
 
 ## Language Support / 语言支持
 

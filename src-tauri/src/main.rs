@@ -17,27 +17,23 @@ mod setwindow;
 
 mod steamgames;
 
-fn main() -> () {
+fn main() {
     use locale::*;
     use steamgames::*;
 
     let app = tauri::Builder::default()
-        .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_fs::init())
-        .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_single_instance::init(|app, _, _| {
-            let _ = show_msg(app);
-        }))
-        // autostart
-        // .plugin(tauri_plugin_autostart::init(
-        //     MacosLauncher::LaunchAgent,
-        //     None,
-        // ))
-        // store
         .plugin(tauri_plugin_store::Builder::new().build())
-        // shell
         .plugin(tauri_plugin_shell::init())
-        // invoke fn
+        .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_autostart::init(
+            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+            None,
+        ))
+        .plugin(tauri_plugin_single_instance::init(|app, _, _| {
+            show_msg(app);
+        }))
         .invoke_handler(tauri::generate_handler![
             get_lang_json_string,
             get_steam_games,
@@ -117,13 +113,6 @@ fn main() -> () {
             // if let Ok(vec) = get_desktop_contents() {
             //     println!("{:?} length: {}", vec, vec.len());
             // };
-
-            // setup: autostart
-            // let autostart_manager: tauri::State<tauri_plugin_autostart::AutoLaunchManager> =
-            //     app.autolaunch();
-            // if !autostart_manager.is_enabled().unwrap() {
-            //     autostart_manager.enable().unwrap();
-            // }
             Ok(())
         });
 

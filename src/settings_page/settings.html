@@ -31,9 +31,11 @@
     <div id="settings_body">
         <div id="sidebar">
             <div data-target="common" class="ripple-button"><a href="#" data-lang="COMMON"><!-- COMMON --></a></div>
-            <div data-target="theme" class="ripple-button"><a href="#" data-lang="THEME&WALLPAPER"><!-- THEME&WALLPAPER --></a>
+            <div data-target="theme" class="ripple-button"><a href="#"
+                    data-lang="THEME&WALLPAPER"><!-- THEME&WALLPAPER --></a>
             </div>
-            <div data-target="lang" class="ripple-button"><a href="#" data-lang="LANGUAGE&FONT"><!-- LANGUAGE&FONT --></a></div>
+            <div data-target="lang" class="ripple-button"><a href="#"
+                    data-lang="LANGUAGE&FONT"><!-- LANGUAGE&FONT --></a></div>
             <div data-target="about" class="ripple-button"><a href="#" data-lang="ABOUT"><!-- ABOUT --></a></div>
         </div>
 
@@ -45,11 +47,16 @@
                 <section>
                     <h3 data-lang="STARTUP_SETTINGS">STARTUP_SETTINGS</h3>
                     <div class="setting-item">
-                        <label for="set-wallpaper-for-system"
+                        <label for="auto-start-switch" data-lang="AUTO_START">AUTO_START</label>
+                        <label class="switch">
+                            <input id="auto-start-switch" type="checkbox"><span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label for="set-wallpaper-for-system-switch"
                             data-lang="SET_WALLPAPER_FOR_SYSTEM">SET_WALLPAPER_FOR_SYSTEM</label>
                         <label class="switch">
-                            <input id="set-wallpaper-for-system" type="checkbox">
-                            <span class="slider"></span>
+                            <input id="set-wallpaper-for-system-switch" type="checkbox"><span class="slider"></span>
                         </label>
                     </div>
                 </section>
@@ -87,7 +94,7 @@
             <div id="about" class="content-section">
                 <div class="center">
                     <h1>Desutop</h1>
-                    <h3>Version: v0.3.4</h3>
+                    <h3>Version: v0.3.5</h3>
                     <h3><a href="https://github.com/will5933/desutop" rel="noopener" target="_blank">Github - fanin</a>
                     </h3>
                 </div>

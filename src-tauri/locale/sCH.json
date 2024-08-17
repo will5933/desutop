@@ -33,6 +33,7 @@
         "DISPLAY_LANGUAGE": "显示语言",
         "FONT_FAMILY": "字体",
         "STARTUP_SETTINGS": "启动设置",
+        "AUTO_START": "开机时启动",
         "SET_WALLPAPER_FOR_SYSTEM": "为系统更换壁纸",
         "WALLPAPER": "壁纸"
     },
@@ -47,6 +48,8 @@
         "UNKNOWN": "未知状态"
     },
     "WIDGET_ALREADY_EXISTS": "该组件已存在",
+    "ADD_WIDGET_MENU_TITLE": "添加新的组件",
+    "CLIPBOARD_MENU_TITLE": "剪贴板",
     "WEEKDAYS": [
         "周日",
         "周一",

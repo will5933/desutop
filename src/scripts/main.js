@@ -1,5 +1,6 @@
-import { initWidgets } from './widgets.js';
+import { createElementWithAttributes, initWidgets } from './widgets.js';
 import { WidgetContainer } from "./container.js";
+import { showMenu, closeMenu, clipMenuItemStr } from "./menu.js";
 
 const dateTime = document.getElementById('datetime');
 
@@ -18,6 +19,11 @@ const dateTime = document.getElementById('datetime');
             customElements.define('widget-container', WidgetContainer);
 
             initWidgets();
+
+            setTimeout(() => {
+                document.getElementById('widget_layer').style.opacity = '1';
+                document.getElementById('widget_layer').style.transform = 'scale(1)';
+            }, 500);
         })
 
     // background-image
@@ -30,21 +36,24 @@ const dateTime = document.getElementById('datetime');
     function setWallpaper(absolutePath) {
         document.getElementById('screen').style.backgroundImage = `url('${window.__TAURI__.core.convertFileSrc(absolutePath)}')`;
     }
+
+    // reload
+    window.reload_listener = await window.__TAURI__.event.listen('language-change', () => location.reload());
 }
 
 {
-    const { readText } = window.__TAURI_PLUGIN_CLIPBOARDMANAGER__;
+    const { writeText, readText } = window.__TAURI_PLUGIN_CLIPBOARDMANAGER__;
     const clipboardStore = new window.__TAURI_PLUGIN_STORE__.Store('clipboard.bin');
     const clipboardBar = document.getElementById('clipboard_bar');
     const clipArr = (await clipboardStore.get('data')) ?? [];
     if (clipArr.length > 0) setClipboardBar(clipArr);
 
-    window.clipboard_change = await window.__TAURI__.event.listen('clipboard-change', e => onClipboardChange(e.payload));
+    window.clipboard_change = await window.__TAURI__.event.listen('clipboard-change', onClipboardChange);
 
     async function onClipboardChange() {
         try {
             clipArr.push(await readText());
-            while (clipArr.length > 20) {
+            while (clipArr.length > 50) {
                 clipArr.shift();
             }
 
@@ -62,12 +71,37 @@ const dateTime = document.getElementById('datetime');
 
 
     function setClipboardBar(clipArr) {
-        clipboardBar.textContent = clipArr[clipArr.length - 1].length > 15 ? clipArr[clipArr.length - 1].slice(0, 14) + '…' : clipArr[clipArr.length - 1];
+        clipboardBar.textContent = clipMenuItemStr(clipArr[clipArr.length - 1], 15);
         clipboardBar.classList.add('topbar_ele_on');
         clearTimeout(window.set_clipboard_bar);
         window.set_clipboard_bar = setTimeout(() => {
             clipboardBar.classList.remove('topbar_ele_on');
         }, 5000);
+    }
+
+    { // setAddWidgetMenu
+        clipboardBar.addEventListener('mousedown', e => {
+            const btn = e.currentTarget;
+            showMenu(
+                window.LANG['CLIPBOARD_MENU_TITLE'],
+                getItemArr(),
+                btn.getBoundingClientRect(),
+                () => btn.classList.add('topbar_ele_on'),
+                () => btn.classList.remove('topbar_ele_on')
+            );
+        });
+
+        function getItemArr() {
+            return clipArr.toReversed().map(str => {
+                const ele = createElementWithAttributes('p', { 'class': 'menu-item' });
+                ele.textContent = clipMenuItemStr(str, 40);
+                ele.addEventListener('click', async () => {
+                    closeMenu();
+                    await writeText(str);
+                });
+                return ele;
+            });
+        }
     }
 }
 

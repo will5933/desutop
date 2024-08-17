@@ -1,7 +1,6 @@
 import { getWallpaperFilesPathArr } from "../wallpaper.js";
 const settingStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin');
 
-
 { // prevent keys
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', function (event) {
@@ -77,21 +76,31 @@ document.querySelectorAll('.ripple-button').forEach(button => {
 // SETTINGS
 // 
 {
-    const language_json_filename = document.getElementById('display-language-select'), set_wallpaper_for_windows = document.getElementById('set-wallpaper-for-system');
+    const language_json_filename = document.getElementById('display-language-select'), set_wallpaper_for_windows = document.getElementById('set-wallpaper-for-system-switch'), auto_start_switch = document.getElementById('auto-start-switch');
 
     // read
     const dataObj = await settingStore.get('data');
     set_wallpaper_for_windows.checked = dataObj["set_wallpaper_for_windows"];
+    auto_start_switch.checked = await window.__TAURI_PLUGIN_AUTOSTART__.isEnabled();
     language_json_filename.value = dataObj["language_json_filename"];
 
     // set_wallpaper_for_windows
     set_wallpaper_for_windows.addEventListener('change', () => saveConfig('set_wallpaper_for_windows', set_wallpaper_for_windows.checked));
 
+    auto_start_switch.addEventListener('change', async () => {
+        if (auto_start_switch.checked) await window.__TAURI_PLUGIN_AUTOSTART__.enable();
+        else await window.__TAURI_PLUGIN_AUTOSTART__.disable();
+    });
+
+
     // language_json_filename
     language_json_filename.addEventListener('change', () => saveConfig(
         'language_json_filename',
         language_json_filename.value,
-        () => location.reload(),
+        async () => {
+            await window.__TAURI__.event.emit('language-change', 0);
+            location.reload();
+        },
     ));
 }
 

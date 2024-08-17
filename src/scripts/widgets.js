@@ -1,3 +1,5 @@
+import { showMenu, closeMenu } from "./menu.js";
+
 const invoke = window.__TAURI__.core.invoke;
 const storedWidgets = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
 const steamPath = (await (new window.__TAURI_PLUGIN_STORE__.Store('settings.bin')).get('data'))['steam_path'];
@@ -16,7 +18,7 @@ if (hasSteam) { // watch and update steamgames state
         window.steamgames_state_change_settimeout = setTimeout(() => updateSteamGamesWidget(event.payload), 500);
     });
 
-    setInterval(updateSteamgamesStates, 10000);
+    setInterval(updateSteamgamesStates, 20000);
 }
 
 // 
@@ -192,7 +194,7 @@ function updateSteamgamesStates() {
     document.querySelectorAll('span.steamgame_state').forEach((e) => e.updataState(secondNow));
 }
 
-function createElementWithAttributes(tagName, attributes) {
+export function createElementWithAttributes(tagName, attributes) {
     const element = document.createElement(tagName);
     for (const [key, value] of Object.entries(attributes)) {
         element.setAttribute(key, value);
@@ -232,11 +234,6 @@ function bindEventListener(fromElement) {
     }
 }
 
-// 
-// menu begin
-// 
-const aboveLayer = document.getElementById('above_layer'), blurLayer = document.getElementById('blur_layer'), menu = document.getElementById('menu');
-
 function setAddWidgetMenu() {
     const itemArr = [['Note', createNoteWidget], ['Steam Games', createSteamGamesWidget]].map((arr) => {
         const ele = createElementWithAttributes('p', { 'class': 'menu-item' });
@@ -251,6 +248,7 @@ function setAddWidgetMenu() {
     document.getElementById('addwidget_btn').addEventListener('mousedown', (e) => {
         const btn = e.currentTarget;
         showMenu(
+            window.LANG['ADD_WIDGET_MENU_TITLE'],
             itemArr,
             btn.getBoundingClientRect(),
             () => btn.classList.add('topbar_ele_on'),
@@ -258,53 +256,6 @@ function setAddWidgetMenu() {
         );
     });
 }
-
-function showMenu(itemArr, rect, afterShowFn, afterCloseFn) {
-    if (itemArr?.length > 0) {
-        menu.innerHTML = '';
-        itemArr.forEach((e) => menu.appendChild(e));
-    }
-
-    clearTimeout(window.close_menu_set_time_out);
-    const { left, right, top, bottom } = rect;
-    // menu.style.left = (left + right) / 2 > (document.body.offsetWidth - 124) ?
-    //     (`${document.body.offsetWidth - 124}px`) : (`${(left + right) / 2}px`);
-    menu.style.left = '';
-    menu.style.right = '';
-    if (left + right > document.body.offsetWidth) {
-        menu.style.right = (`${document.body.offsetWidth - right}px`);
-    } else {
-        menu.style.left = (`${left}px`);
-    }
-
-    menu.style.top = `${bottom + 6}px`;
-
-    window.menu_after_close_fn = afterCloseFn;
-    aboveLayer.style.pointerEvents = 'auto';
-    blurLayer.style.backdropFilter = 'blur(5px)';
-    aboveLayer.addEventListener('click', closeMenu);
-    menu.style.display = 'block';
-    // afterShowFn()
-    if (afterShowFn) afterShowFn();
-    setTimeout(() => {
-        menu.classList.add('show');
-    });
-}
-
-function closeMenu() {
-    blurLayer.style.backdropFilter = '';
-    aboveLayer.style.pointerEvents = '';
-    menu.classList.remove('show');
-    // afterCloseFn()
-    if (window.menu_after_close_fn) window.menu_after_close_fn();
-    window.menu_after_close_fn = null;
-    window.close_menu_set_time_out = setTimeout(() => {
-        menu.style.display = '';
-    }, 300);
-}
-// 
-// menu end
-// 
 
 function createNoteWidget() {
     const id = make_widgetID();
