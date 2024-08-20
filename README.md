@@ -30,6 +30,7 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
 - [x] Language switch / 语言切换;
 - [x] Wallpaper switch / 壁纸切换;
 - [x] Start at boot / 自启动;
+- [x] Clock widget / 时钟微件；
 - [ ] Installed applications display / 已安装的应用程序显示；
 - [x] Responsive Steam game status display / 响应式Steam游戏状态显示；
 - [ ] Note widget `Markdown` support / 便签的 `Markdown` 支持；
