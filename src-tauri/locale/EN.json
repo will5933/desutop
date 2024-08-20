@@ -50,6 +50,11 @@
     "WIDGET_ALREADY_EXISTS": "The widget already exists",
     "ADD_WIDGET_MENU_TITLE": "Add New Widget",
     "CLIPBOARD_MENU_TITLE": "Clipboard",
+    "WIDGETS": {
+        "NOTE": "Note",
+        "STEAMGAMES": "Steam Games",
+        "CLOCK": "Clock"
+    },
     "WEEKDAYS": [
         "Sun.",
         "Mon.",

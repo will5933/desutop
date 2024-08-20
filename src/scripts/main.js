@@ -51,8 +51,11 @@ const dateTime = document.getElementById('datetime');
         e.preventDefault();
         e.stopPropagation();
 
+        if (window.is_menu_open) return;
+
         if (e.dataTransfer.items) {
             for (let i = 0; i < e.dataTransfer.items.length; i++) {
+                console.log(`type ${ e.dataTransfer.items[i].type } dropped`);
                 if (e.dataTransfer.items[i].type === 'text/plain') {
                     e.dataTransfer.items[i].getAsString(str => {
                         createNoteWidget(str, [e.x, e.y]);
@@ -68,17 +71,21 @@ const dateTime = document.getElementById('datetime');
 }
 
 {
-    const { writeText, readText } = window.__TAURI_PLUGIN_CLIPBOARDMANAGER__;
+    const { writeText, readText } = window.__TAURI_PLUGIN_CLIPBOARD_MANAGER__;
     const clipboardStore = new window.__TAURI_PLUGIN_STORE__.Store('clipboard.bin');
     const clipboardBar = document.getElementById('clipboard_bar');
     const clipArr = (await clipboardStore.get('data')) ?? [];
     if (clipArr.length > 0) setClipboardBar(clipArr);
+    else clipboardBar.textContent = window.LANG['CLIPBOARD_MENU_TITLE'];
 
     window.clipboard_change = await window.__TAURI__.event.listen('clipboard-change', onClipboardChange);
 
     async function onClipboardChange() {
         try {
-            clipArr.push(await readText());
+            const str = (await readText()).trim();
+            if (str.length === 0) return;
+
+            clipArr.push(str);
             while (clipArr.length > 50) {
                 clipArr.shift();
             }
@@ -91,7 +98,7 @@ const dateTime = document.getElementById('datetime');
                 await clipboardStore.save();
             }, 200);
         } catch (err) {
-            console.error('Failed to read clipboard content: ', err);
+            console.warn('Failed to read clipboard content: ', err);
         }
     }
 
@@ -107,6 +114,7 @@ const dateTime = document.getElementById('datetime');
 
     { // setAddWidgetMenu
         clipboardBar.addEventListener('mousedown', e => {
+            if (clipArr.length === 0) return; 
             const btn = e.currentTarget;
             showMenu(
                 window.LANG['CLIPBOARD_MENU_TITLE'],
@@ -119,11 +127,14 @@ const dateTime = document.getElementById('datetime');
 
         function getItemArr() {
             return clipArr.toReversed().map(str => {
-                const ele = createElementWithAttributes('p', { 'class': 'menu-item' });
+                const ele = createElementWithAttributes('p', { 'class': 'menu-item', 'draggable': 'true' });
                 ele.textContent = clipMenuItemStr(str, 40);
                 ele.addEventListener('click', async () => {
                     closeMenu();
                     await writeText(str);
+                });
+                ele.addEventListener('dragstart', (event) => {
+                    event.dataTransfer.setData('text/plain', str);
                 });
                 return ele;
             });
@@ -157,10 +168,9 @@ function showCurrentDateTime() {
     const day = pad(now.getDate());
     const hours = pad(now.getHours());
     const minutes = pad(now.getMinutes());
-    const seconds = pad(now.getSeconds());
     const weekdays = window.LANG.WEEKDAYS[now.getDay()];
 
     // Update date and time display
-    dateTime.textContent = `${month}/${day} ${weekdays} ${hours}:${minutes}:${seconds}`;
+    dateTime.textContent = `${month}/${day} ${weekdays} ${hours}:${minutes}`;
 }
 

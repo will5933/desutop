@@ -7,7 +7,8 @@ const hasSteam = steamPath !== 'NOTFOUND';
 
 const WIDGET_TYPE = {
     steamGames: "steamgames",
-    note: "note"
+    note: "note",
+    clock: "clock"
 };
 
 const widgetLayer = document.getElementById('widget_layer');
@@ -44,32 +45,53 @@ export async function initWidgets() {
 async function appendWidget(type, id, a, b) {
     const widgetContainer = createElementWithAttributes('widget-container', { 'widget-id': id, 'type': type });
 
-    const labelDiv = createElementWithAttributes('div', { 'slot': 'label' });
-    const contentDiv = createElementWithAttributes('div', { 'slot': 'content' });
+    if (type === WIDGET_TYPE.note || type === WIDGET_TYPE.steamGames) { // note steamGames
+        const labelDiv = createElementWithAttributes('div', { 'slot': 'label' });
+        const contentDiv = createElementWithAttributes('div', { 'slot': 'content' });
 
-    widgetContainer.appendChild(labelDiv);
-    widgetContainer.appendChild(contentDiv);
+        setTimeout(() => widgetContainer.appendChild(labelDiv), 10);
+        setTimeout(() => widgetContainer.appendChild(contentDiv), 10);
 
-    let label, content;
-    switch (type) {
-        case WIDGET_TYPE.note:
-            [label, content] = makeNoteWidget(id, a, b);
-            labelDiv.appendChild(label);
-            contentDiv.appendChild(content);
-            break;
+        let label, content;
+        switch (type) {
+            case WIDGET_TYPE.note:
+                [label, content] = makeNoteWidget(id, a, b);
+                labelDiv.appendChild(label);
+                contentDiv.appendChild(content);
+                break;
 
-        case WIDGET_TYPE.steamGames:
-            if (!hasSteam) return;
-            [label, content] = await makeSteamGamesWidget();
-            labelDiv.appendChild(label);
-            content.forEach(e => contentDiv.appendChild(e));
+            case WIDGET_TYPE.steamGames:
+                if (!hasSteam) return;
+                [label, content] = await makeSteamGamesWidget();
+                labelDiv.appendChild(label);
+                content.forEach(e => contentDiv.appendChild(e));
+        }
 
+    } else if (type === WIDGET_TYPE.clock) { // clock
+        const absoDiv = createElementWithAttributes('div', { 'slot': 'abso' });
+        setTimeout(() => widgetContainer.appendChild(absoDiv), 10);
+        absoDiv.appendChild(makeClockWidget());
     }
 
-    // 将 widget-container 添加到容器中
     bindEventListener(widgetContainer);
     widgetLayer.appendChild(widgetContainer);
     return widgetContainer;
+}
+
+// fn makeClockWidget() -> content
+function makeClockWidget() {
+    const contentDiv = createElementWithAttributes('div', { 'class': 'clock' });
+    const clock_dial = createElementWithAttributes('img', { 'class': 'clock_dial', 'src': 'svg/clock_dial.svg' });
+    const hour = createElementWithAttributes('img', { 'class': 'clock_hour', 'src': 'svg/hour.svg' });
+    const minute = createElementWithAttributes('img', { 'class': 'clock_minute', 'src': 'svg/minute.svg' });
+    const second = createElementWithAttributes('img', { 'class': 'clock_second', 'src': 'svg/second.svg' });
+
+    contentDiv.appendChild(clock_dial);
+    contentDiv.appendChild(hour);
+    contentDiv.appendChild(minute);
+    contentDiv.appendChild(second);
+
+    return contentDiv;
 }
 
 // fn makeNoteWidget() -> [label, content]
@@ -236,7 +258,11 @@ function bindEventListener(fromElement) {
 }
 
 function setAddWidgetMenu() {
-    const itemArr = [['Note', createNoteWidget], ['Steam Games', createSteamGamesWidget]].map((arr) => {
+    const itemArr = [
+        [window.LANG['WIDGETS']['NOTE'], createNoteWidget],
+        [window.LANG['WIDGETS']['CLOCK'], createClockWidget],
+        [window.LANG['WIDGETS']['STEAMGAMES'], createSteamGamesWidget]
+    ].map((arr) => {
         const ele = createElementWithAttributes('p', { 'class': 'menu-item' });
         ele.textContent = arr[0];
         ele.addEventListener('click', () => {
@@ -270,6 +296,12 @@ export async function createNoteWidget(content, x_y) {
     }
 }
 
+async function createClockWidget() {
+    const id = make_widgetID();
+    storeNewWidget({ type: WIDGET_TYPE.clock, id: id });
+    await appendWidget(WIDGET_TYPE.clock, id);
+}
+
 async function createSteamGamesWidget() {
     if (!hasSteam) {
         alert(window.LANG.STEAM_NOT_FOUND);
@@ -282,7 +314,6 @@ async function createSteamGamesWidget() {
     const id = make_widgetID();
     storeNewWidget({ type: WIDGET_TYPE.steamGames, id: id });
     appendWidget(WIDGET_TYPE.steamGames, id);
-
 }
 
 async function storeNewWidget(obj) {

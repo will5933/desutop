@@ -36,6 +36,7 @@ export function showMenu(title, itemArr, rect, afterShowFn, afterCloseFn) {
     if (afterShowFn) afterShowFn();
     setTimeout(() => {
         menu.classList.add('show');
+        window.is_menu_open = true;
     });
 }
 
@@ -48,6 +49,7 @@ export function closeMenu() {
     menu_after_close_fn = null;
     close_menu_set_time_out = setTimeout(() => {
         menu.style.display = '';
+        window.is_menu_open = false;
     }, 300);
 }
 

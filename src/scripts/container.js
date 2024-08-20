@@ -121,7 +121,7 @@ export class WidgetContainer extends HTMLElement {
 
     async connectedCallback() {
         this.style.left = '500px';
-        this.style.top = '200px';
+        this.style.top = '100px';
         this.style.borderRadius = '20px';
         this.style.zIndex = 100;
 

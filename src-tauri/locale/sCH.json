@@ -50,6 +50,11 @@
     "WIDGET_ALREADY_EXISTS": "该组件已存在",
     "ADD_WIDGET_MENU_TITLE": "添加新的组件",
     "CLIPBOARD_MENU_TITLE": "剪贴板",
+    "WIDGETS": {
+        "NOTE": "笔记",
+        "STEAMGAMES": "Steam 游戏",
+        "CLOCK": "时钟"
+    },
     "WEEKDAYS": [
         "周日",
         "周一",

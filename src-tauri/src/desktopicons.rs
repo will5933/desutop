@@ -3,7 +3,7 @@ use core::str;
 use std::{ fs, io, path::PathBuf};
 
 // 获取桌面图标
-pub fn get_desktop_contents() -> Result<Vec<PathBuf>, io::Error> {
+pub fn _get_desktop_contents() -> Result<Vec<PathBuf>, io::Error> {
     if let Some(desktop_path) = desktop_dir() {
         let entries = fs::read_dir(desktop_path)?
             .filter_map(Result::ok)
@@ -25,7 +25,7 @@ pub fn get_desktop_contents() -> Result<Vec<PathBuf>, io::Error> {
     }
 }
 
-pub fn get_lnk_info(lnk_file_path: PathBuf) {
+pub fn _get_lnk_info(lnk_file_path: PathBuf) {
     let output = std::process::Command::new("powershell")
         .arg("-NoProfile")
         .arg("-Command")

@@ -1,7 +1,7 @@
 [package]
 name = "Desutop"
-version = "0.3.6"
-description = "Desutop: A Tauri Based Desktop App"
+version = "0.3.7"
+description = "Desutop"
 authors = ["fanin"]
 edition = "2021"
 
@@ -24,10 +24,10 @@ lazy_static = "1.5.0"
 tauri-plugin-store = "2.0.0-rc"
 rayon = "1.10.0"
 tauri-plugin-dialog = "2.0.0-rc"
-tauri-plugin-fs = "2.0.0-rc.0"
+tauri-plugin-fs = "2.0.0-rc"
 notify = { version = "6.1.1", features = ["serde"] }
 clipboard-win = "5.4.0"
-tauri-plugin-clipboard-manager = "2.1.0-beta.7"
+tauri-plugin-clipboard-manager = "2.0.0-rc"
 lnk = "0.5.1"
 
 [features]

@@ -3,7 +3,7 @@
 
 use std::{path::PathBuf, thread};
 
-use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+// use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use serde_json::{json, Value};
 use tauri::{
     menu::{MenuBuilder, MenuItemBuilder},
@@ -68,7 +68,6 @@ fn main() {
                     serde_json::from_str(event.payload()).expect("Wallpaper path error");
                 let mut x: PathBuf = PathBuf::from(string);
                 setwindow::set_windows_wallpaper(&mut x);
-                println!("{:?}", x);
             });
 
             // steam games info watcher
@@ -111,19 +110,19 @@ fn main() {
                 });
             });
 
-            use desktopicons::*;
+            // use desktopicons::*;
 
-            if let Ok(vec) = get_desktop_contents() {
-                // 使用 Rayon 并行处理
-                vec.par_iter().for_each(|path| {
-                    if let Some(extension) = path.extension() {
-                        if extension == "lnk" {
-                            println!("{:?}", path);
-                            get_lnk_info(path.clone());
-                        }
-                    }
-                });
-            }
+            // if let Ok(vec) = get_desktop_contents() {
+            //     // 使用 Rayon 并行处理
+            //     vec.par_iter().for_each(|path| {
+            //         if let Some(extension) = path.extension() {
+            //             if extension == "lnk" {
+            //                 println!("{:?}", path);
+            //                 get_lnk_info(path.clone());
+            //             }
+            //         }
+            //     });
+            // }
             Ok(())
         });
 
@@ -156,7 +155,7 @@ fn setup_get_settings(handle: AppHandle) -> SettingsConfig {
         let init_setting: SettingsConfig = SettingsConfig {
             set_wallpaper_for_windows: true,
             language_json_filename: String::from("EN.json"),
-            wallpaper_file_path: String::from("wallpaper/default.jpg"),
+            wallpaper_file_path: String::from("wallpapers/default.jpg"),
             steam_path: steamgames::get_steam_install_path().unwrap_or(String::from("NOTFOUND")),
         };
         store
