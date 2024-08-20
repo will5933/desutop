@@ -3,6 +3,7 @@
 
 use std::{path::PathBuf, thread};
 
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use serde_json::{json, Value};
 use tauri::{
     menu::{MenuBuilder, MenuItemBuilder},
@@ -10,12 +11,12 @@ use tauri::{
     AppHandle, Emitter, Listener, Manager, WebviewWindowBuilder,
 };
 
-// use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
-
 mod locale;
 mod setwindow;
 
 mod steamgames;
+
+mod desktopicons;
 
 fn main() {
     use locale::*;
@@ -110,9 +111,19 @@ fn main() {
                 });
             });
 
-            // if let Ok(vec) = get_desktop_contents() {
-            //     println!("{:?} length: {}", vec, vec.len());
-            // };
+            use desktopicons::*;
+
+            if let Ok(vec) = get_desktop_contents() {
+                // 使用 Rayon 并行处理
+                vec.par_iter().for_each(|path| {
+                    if let Some(extension) = path.extension() {
+                        if extension == "lnk" {
+                            println!("{:?}", path);
+                            get_lnk_info(path.clone());
+                        }
+                    }
+                });
+            }
             Ok(())
         });
 

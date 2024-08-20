@@ -28,6 +28,7 @@ tauri-plugin-fs = "2.0.0-rc.0"
 notify = { version = "6.1.1", features = ["serde"] }
 clipboard-win = "5.4.0"
 tauri-plugin-clipboard-manager = "2.1.0-beta.7"
+lnk = "0.5.1"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
