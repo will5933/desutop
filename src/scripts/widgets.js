@@ -49,9 +49,6 @@ async function appendWidget(type, id, a, b) {
         const labelDiv = createElementWithAttributes('div', { 'slot': 'label' });
         const contentDiv = createElementWithAttributes('div', { 'slot': 'content' });
 
-        setTimeout(() => widgetContainer.appendChild(labelDiv), 10);
-        setTimeout(() => widgetContainer.appendChild(contentDiv), 10);
-
         let label, content;
         switch (type) {
             case WIDGET_TYPE.note:
@@ -67,13 +64,18 @@ async function appendWidget(type, id, a, b) {
                 content.forEach(e => contentDiv.appendChild(e));
         }
 
+        setTimeout(() => {
+            widgetContainer.appendChild(labelDiv);
+            widgetContainer.appendChild(contentDiv);
+            bindEventListener(widgetContainer);
+        }, 10);
+
     } else if (type === WIDGET_TYPE.clock) { // clock
         const absoDiv = createElementWithAttributes('div', { 'slot': 'abso' });
-        setTimeout(() => widgetContainer.appendChild(absoDiv), 10);
         absoDiv.appendChild(makeClockWidget());
+        setTimeout(() => widgetContainer.appendChild(absoDiv), 10);
     }
 
-    bindEventListener(widgetContainer);
     widgetLayer.appendChild(widgetContainer);
     return widgetContainer;
 }

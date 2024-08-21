@@ -33,7 +33,7 @@ fn main() {
             None,
         ))
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
-            show_msg(app);
+            show_msg(app, "Desutop is running!");
         }))
         .invoke_handler(tauri::generate_handler![
             get_lang_json_string,
@@ -155,7 +155,7 @@ fn setup_get_settings(handle: AppHandle) -> SettingsConfig {
         let init_setting: SettingsConfig = SettingsConfig {
             set_wallpaper_for_windows: true,
             language_json_filename: String::from("EN.json"),
-            wallpaper_file_path: String::from("wallpapers/default.jpg"),
+            wallpaper_file_path: String::from("wallpapers/default.webp"),
             steam_path: steamgames::get_steam_install_path().unwrap_or(String::from("NOTFOUND")),
         };
         store
@@ -263,28 +263,32 @@ fn setup_set_windows(
 }
 
 fn open_settings_windows(app: &AppHandle, lang_json: &Value) -> () {
-    let builder = WebviewWindowBuilder::new(
-        app,
-        "settings",
-        tauri::WebviewUrl::App("settings_page/settings.html#common".into()),
-    );
-    let _webview = builder
-        .inner_size(800.0, 600.0)
-        .min_inner_size(800.0, 500.0)
-        .max_inner_size(1200.0, 800.0)
-        .decorations(false)
-        .center()
-        .title(lang_json["SETTINGS"]["TITLE_SETTINGS"].as_str().unwrap())
-        .build()
-        .unwrap();
+    if app.get_webview_window("settings").is_none() {
+        let builder = WebviewWindowBuilder::new(
+            app,
+            "settings",
+            tauri::WebviewUrl::App("settings_page/settings.html#common".into()),
+        );
+        let _webview = builder
+            .inner_size(800.0, 600.0)
+            .min_inner_size(800.0, 500.0)
+            .max_inner_size(1200.0, 800.0)
+            .decorations(false)
+            .center()
+            .title(lang_json["SETTINGS"]["TITLE_SETTINGS"].as_str().unwrap())
+            .build()
+            .unwrap();
+    } else {
+        app.get_webview_window("settings").unwrap().set_focus().unwrap();
+    }
 }
 
-fn show_msg(app: &AppHandle) {
+fn show_msg(app: &AppHandle, msg: &str) {
     use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
     let _ans = app
         .dialog()
-        .message("Desutop is running!")
+        .message(msg)
         .kind(MessageDialogKind::Error)
         .title("Warning")
         .blocking_show();

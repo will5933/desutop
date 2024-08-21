@@ -51,9 +51,9 @@
     "ADD_WIDGET_MENU_TITLE": "ウィジェット追加",
     "CLIPBOARD_MENU_TITLE": "クリップボード",
     "WIDGETS": {
-        "NOTE": "笔记",
-        "STEAMGAMES": "Steam 游戏",
-        "CLOCK": "时钟"
+        "NOTE": "メモ",
+        "STEAMGAMES": "Steamゲーム",
+        "CLOCK": "時計"
     },
     "WEEKDAYS": [
         "日曜日",
