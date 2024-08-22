@@ -42,7 +42,7 @@ export class WidgetContainer extends HTMLElement {
             offsetY = event.clientY - this.offsetTop;
 
             // 确定接触边缘
-            const margin = 10;
+            const margin = 8;
             isDragging = true;
             const onMouseMove = (event) => {
                 if (!isDragging) return;
@@ -54,32 +54,73 @@ export class WidgetContainer extends HTMLElement {
                 let newLeft = Math.min(Math.max(0, event.clientX - offsetX), parentRect.width - this.offsetWidth);
                 let newTop = Math.min(Math.max(0, event.clientY - offsetY), parentRect.height - this.offsetHeight);
 
-                let isBesideRightAngle;
+                let isBesideRightAngle, adsorbNum = 0;
 
-                allContainers.forEach(container => {
+                for (const container of allContainers) {
                     const containerRect = container.getBoundingClientRect();
-                    const newRect = {
-                        leftX: newLeft,
-                        topY: newTop,
-                        rightX: newLeft + this.offsetWidth,
-                        bottomY: newTop + this.offsetHeight
-                    };
+                    const rightX = newLeft + this.offsetWidth, bottomY = newTop + this.offsetHeight;
 
-                    if (
-                        (newRect.leftX - containerRect.right) < margin &&
-                        (containerRect.left - newRect.rightX) < margin &&
-                        (newRect.topY - containerRect.bottom) < margin &&
-                        (containerRect.top - newRect.bottomY) < margin
-                    ) {
-                        isBesideRightAngle = container.style.borderRadius == '0px';
+                    const hozIntersect = isIntersect([newLeft, rightX], [containerRect.left, containerRect.right]);
+                    const verIntersect = isIntersect([newTop, bottomY], [containerRect.top, containerRect.bottom]);
 
-                        // 计算水平和垂直对齐
-                        newLeft = Math.abs(newRect.leftX - containerRect.right) < margin ? containerRect.right : newLeft;
-                        newLeft = Math.abs(newRect.rightX - containerRect.left) < margin ? containerRect.left - this.offsetWidth : newLeft;
-                        newTop = Math.abs(newRect.topY - containerRect.bottom) < margin ? containerRect.bottom : newTop;
-                        newTop = Math.abs(newRect.bottomY - containerRect.top) < margin ? containerRect.top - this.offsetHeight : newTop;
+                    // exclude
+                    if (hozIntersect === verIntersect) {
+                        continue;
+                    } else {
+                        if (hozIntersect) {
+                            const gap = Math.max(containerRect.top - bottomY, newTop - containerRect.bottom);
+
+                            if (gap < 2 * margin) {
+                                adsorbNum++;
+                                isBesideRightAngle = container.style.borderRadius === '0px';
+                                // bottom - top
+                                if (containerRect.top - bottomY >= 0) newTop = containerRect.top - this.offsetHeight - margin;
+                                // top - bottom
+                                else newTop = containerRect.bottom + margin;
+
+                                { // cross-axis alignment
+                                    const leftDelta = abs(newLeft - containerRect.left),
+                                        rightDelta = abs(rightX - containerRect.right),
+                                        centerDelta = abs(avg(newLeft, rightX) - avg(containerRect.left, containerRect.right));
+                                    const minDelta = Math.min(leftDelta, rightDelta, centerDelta);
+
+                                    if (minDelta < margin) {
+                                        newLeft = minDelta === centerDelta ? avg(containerRect.left, containerRect.right) - this.offsetWidth / 2
+                                            : minDelta === leftDelta ? containerRect.left
+                                                : containerRect.right - this.offsetWidth;
+                                    }
+                                }
+                                // break;
+                            }
+                        } else {
+                            const gap = Math.max(containerRect.left - rightX, newLeft - containerRect.right);
+
+                            if (gap < 2 * margin) {
+                                adsorbNum++;
+                                isBesideRightAngle = container.style.borderRadius === '0px';
+                                // right - left
+                                if (containerRect.left - rightX >= 0) newLeft = containerRect.left - this.offsetWidth - margin;
+                                // left - right
+                                else newLeft = containerRect.right + margin;
+
+                                { // cross-axis alignment
+                                    const topDelta = abs(newTop - containerRect.top),
+                                        bottomDelta = abs(bottomY - containerRect.bottom),
+                                        centerDelta = abs(avg(newTop, bottomY) - avg(containerRect.top, containerRect.bottom));
+                                    const minDelta = Math.min(topDelta, bottomDelta, centerDelta);
+
+                                    if (minDelta < margin) {
+                                        newTop = minDelta === topDelta ? containerRect.top
+                                            : minDelta === centerDelta ? avg(containerRect.top, containerRect.bottom) - this.offsetHeight / 2
+                                                : containerRect.bottom - this.offsetHeight;
+                                    }
+                                }
+                                // break;
+                            }
+                        }
                     }
-                });
+                    if (adsorbNum === 4) break;
+                }
 
                 // 更新组件的位置
                 this.style.left = `${newLeft}px`;
@@ -146,4 +187,16 @@ export class WidgetContainer extends HTMLElement {
         await widgetStore.set('data', widgetsObj);
         await widgetStore.save();
     }
+}
+
+function isIntersect([a1, a2], [b1, b2]) {
+    return !((a1 < b1 && a2 <= b1) || (a1 >= b2 && a2 > b2));
+}
+
+function abs(num) {
+    return num < 0 ? -1 * num : num;
+}
+
+function avg(a, b) {
+    return (a + b) / 2;
 }
