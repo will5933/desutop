@@ -18,6 +18,17 @@
     background-color: var(--bg-color-text-selection);
 }
 
+.note_content {
+    white-space: wrap;
+    word-break: break-all;
+    outline: none;
+}
+
+.note_content.concentrate {
+    min-width: 40em;
+    padding: 0 1em;
+}
+
 .padding_nowarp {
     white-space: nowrap !important;
     padding: 0 0.4em !important;

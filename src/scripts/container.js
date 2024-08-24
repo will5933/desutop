@@ -1,18 +1,20 @@
+import { popLayer } from "./menu.js";
+
 const widgets = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
 const widgetStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets_styles.bin');
 
-export class WidgetContainer extends HTMLElement {
+customElements.define('widget-container', class WidgetContainer extends HTMLElement {
     constructor() {
         super();
-        // 创建一个shadow root并将其附加到自定义元素
+
+        // shadow
         const shadow = this.attachShadow({ mode: 'open' });
+        shadow.appendChild(document.getElementById('widget_container_template').content.cloneNode(true));
 
-        const template = document.getElementById('widget_container_template');
-        const content = template.content.cloneNode(true);
-        shadow.appendChild(content);
+        // get layers / elements
+        const aboveLayer = document.getElementById('above_layer'), blurLayer = document.getElementById('blur_layer'), widgetLayer = document.getElementById('widget_layer'), move = shadow.getElementById('move'), destory = shadow.getElementById('destory');
 
-        // handle z-index
-        this.addEventListener('mousedown', () => {
+        const setFront = () => {
             const oldIndex = this.style.zIndex;
             this.style.zIndex = 999;
             const allContainers = Array.from(this.parentElement.querySelectorAll('widget-container'));
@@ -21,31 +23,24 @@ export class WidgetContainer extends HTMLElement {
 
             zIndexArr.sort((a, b) => a - b);
             allContainers.forEach(c => c.style.zIndex = zIndexArr.indexOf(c.style.zIndex) + 1);
-        });
-
-        // destory self
-        shadow.getElementById('destory').addEventListener('click', async () => {
-            widgets.set('data', (await widgets.get('data')).filter(obj => obj['id'] !== this.getAttribute('widget-id')));
-            widgets.save();
-            this.remove();
-            this.saveWidgetsStyles();
-        });
+        }
 
         // drug event
-        let offsetX, offsetY, isDragging = false;
+        let offsetX, offsetY;
+        const margin = 8;
+        const bigMargin = 16;
 
-        shadow.getElementById('move').addEventListener('mousedown', (event) => {
+        // start move
+        const onMouseDown = (event) => {
             // 获取其他组件
             const allContainers = Array.from(this.parentElement.querySelectorAll('widget-container')).filter(c => c !== this);
 
             offsetX = event.clientX - this.offsetLeft;
             offsetY = event.clientY - this.offsetTop;
 
-            // 确定接触边缘
-            const margin = 8;
-            isDragging = true;
+            this.isDragging = true;
             const onMouseMove = (event) => {
-                if (!isDragging) return;
+                if (!this.isDragging) return;
 
                 // 父元素
                 const parentRect = this.parentElement.getBoundingClientRect();
@@ -58,61 +53,62 @@ export class WidgetContainer extends HTMLElement {
 
                 for (const container of allContainers) {
                     const containerRect = container.getBoundingClientRect();
+                    const ctnTop = containerRect.top - parentRect.top, ctnBottom = containerRect.bottom - parentRect.top, ctnLeft = containerRect.left, ctnRight = containerRect.right;
                     const rightX = newLeft + this.offsetWidth, bottomY = newTop + this.offsetHeight;
 
-                    const hozIntersect = isIntersect([newLeft, rightX], [containerRect.left, containerRect.right]);
-                    const verIntersect = isIntersect([newTop, bottomY], [containerRect.top, containerRect.bottom]);
+                    const hozIntersect = isIntersect([newLeft, rightX], [ctnLeft, ctnRight]);
+                    const verIntersect = isIntersect([newTop, bottomY], [ctnTop, ctnBottom]);
 
                     // exclude
                     if (hozIntersect === verIntersect) {
                         continue;
                     } else {
                         if (hozIntersect) {
-                            const gap = Math.max(containerRect.top - bottomY, newTop - containerRect.bottom);
+                            const gap = Math.max(ctnTop - bottomY, newTop - ctnBottom);
 
-                            if (gap < 2 * margin) {
+                            if (gap <= 2 * margin) {
                                 adsorbNum++;
                                 isBesideRightAngle = container.style.borderRadius === '0px';
                                 // bottom - top
-                                if (containerRect.top - bottomY >= 0) newTop = containerRect.top - this.offsetHeight - margin;
+                                if (ctnTop - bottomY >= 0) newTop = ctnTop - this.offsetHeight - margin;
                                 // top - bottom
-                                else newTop = containerRect.bottom + margin;
+                                else newTop = ctnBottom + margin;
 
                                 { // cross-axis alignment
-                                    const leftDelta = abs(newLeft - containerRect.left),
-                                        rightDelta = abs(rightX - containerRect.right),
-                                        centerDelta = abs(avg(newLeft, rightX) - avg(containerRect.left, containerRect.right));
+                                    const leftDelta = abs(newLeft - ctnLeft),
+                                        rightDelta = abs(rightX - ctnRight),
+                                        centerDelta = abs(avg(newLeft, rightX) - avg(ctnLeft, ctnRight));
                                     const minDelta = Math.min(leftDelta, rightDelta, centerDelta);
 
-                                    if (minDelta < margin) {
-                                        newLeft = minDelta === centerDelta ? avg(containerRect.left, containerRect.right) - this.offsetWidth / 2
-                                            : minDelta === leftDelta ? containerRect.left
-                                                : containerRect.right - this.offsetWidth;
+                                    if (minDelta <= margin) {
+                                        newLeft = minDelta === centerDelta ? avg(ctnLeft, ctnRight) - this.offsetWidth / 2
+                                            : minDelta === leftDelta ? ctnLeft
+                                                : ctnRight - this.offsetWidth;
                                     }
                                 }
                                 // break;
                             }
                         } else {
-                            const gap = Math.max(containerRect.left - rightX, newLeft - containerRect.right);
+                            const gap = Math.max(ctnLeft - rightX, newLeft - ctnRight);
 
-                            if (gap < 2 * margin) {
+                            if (gap <= 2 * margin) {
                                 adsorbNum++;
                                 isBesideRightAngle = container.style.borderRadius === '0px';
                                 // right - left
-                                if (containerRect.left - rightX >= 0) newLeft = containerRect.left - this.offsetWidth - margin;
+                                if (ctnLeft - rightX >= 0) newLeft = ctnLeft - this.offsetWidth - margin;
                                 // left - right
-                                else newLeft = containerRect.right + margin;
+                                else newLeft = ctnRight + margin;
 
                                 { // cross-axis alignment
-                                    const topDelta = abs(newTop - containerRect.top),
-                                        bottomDelta = abs(bottomY - containerRect.bottom),
-                                        centerDelta = abs(avg(newTop, bottomY) - avg(containerRect.top, containerRect.bottom));
+                                    const topDelta = abs(newTop - ctnTop),
+                                        bottomDelta = abs(bottomY - ctnBottom),
+                                        centerDelta = abs(avg(newTop, bottomY) - avg(ctnTop, ctnBottom));
                                     const minDelta = Math.min(topDelta, bottomDelta, centerDelta);
 
-                                    if (minDelta < margin) {
-                                        newTop = minDelta === topDelta ? containerRect.top
-                                            : minDelta === centerDelta ? avg(containerRect.top, containerRect.bottom) - this.offsetHeight / 2
-                                                : containerRect.bottom - this.offsetHeight;
+                                    if (minDelta <= margin) {
+                                        newTop = minDelta === topDelta ? ctnTop
+                                            : minDelta === centerDelta ? avg(ctnTop, ctnBottom) - this.offsetHeight / 2
+                                                : ctnBottom - this.offsetHeight;
                                     }
                                 }
                                 // break;
@@ -133,21 +129,20 @@ export class WidgetContainer extends HTMLElement {
                 const right = parentRect.right - elemRect.right;
                 const bottom = parentRect.bottom - elemRect.bottom;
 
-                const isNearEdge = Math.min(left, top, right, bottom) < 10;
+                const nearEdge = Math.min(left, top, right, bottom) < bigMargin && Math.min(left, top, right, bottom) >= margin;
 
-                this.style.borderRadius = (isNearEdge || isBesideRightAngle) ? '0px' : '20px';
+                this.style.borderRadius = (Math.min(left, top, right, bottom) < 1 || isBesideRightAngle) ? '0px' : '20px';
 
-                if (isNearEdge) {
-                    // 自动吸附到边缘
-                    if (left < 10) this.style.left = '0px';
-                    if (top < 10) this.style.top = '0px';
-                    if (right < 10) this.style.left = `${parentRect.width - this.offsetWidth}px`;
-                    if (bottom < 10) this.style.top = `${parentRect.height - this.offsetHeight}px`;
+                if (nearEdge) {
+                    if (left < bigMargin) this.style.left = `${margin}px`;
+                    else if (right < bigMargin) this.style.left = `${parentRect.width - this.offsetWidth - margin}px`;
+                    if (top < bigMargin) this.style.top = `${margin}px`;
+                    else if (bottom < bigMargin) this.style.top = `${parentRect.height - this.offsetHeight - margin}px`;
                 }
             };
 
-            const onMouseUp = async () => {
-                isDragging = false;
+            const onMouseUp = () => {
+                this.isDragging = false;
                 document.removeEventListener('mousemove', onMouseMove);
                 document.removeEventListener('mouseup', onMouseUp);
 
@@ -157,14 +152,66 @@ export class WidgetContainer extends HTMLElement {
 
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('mouseup', onMouseUp);
+        };
+
+        // 
+        // concentrate
+        // 
+        const unConcentrate = () => {
+            aboveLayer.removeEventListener('mousedown', unConcentrate);
+            popLayer(false);
+            widgetLayer.insertBefore(this, null);
+            this.classList.remove('concentrate');
+            if (window.setWidgetConcentrate) window.setWidgetConcentrate(this, false);
+            this.isConcentrated = false;
+        }
+        const toConcentrate = () => {
+            if (this.isDragging) return;
+            aboveLayer.insertBefore(this, null);
+            popLayer(true);
+            aboveLayer.addEventListener('mousedown', unConcentrate);
+            this.classList.add('concentrate');
+            if (window.setWidgetConcentrate) window.setWidgetConcentrate(this, true);
+            this.isConcentrated = true;
+        }
+
+        this.addEventListener('mousedown', e => {
+            e.stopPropagation();
+            if (!this.isConcentrated) setFront();
+        });
+
+        move.addEventListener('mousedown', e => {
+            e.stopPropagation();
+            if (this.isConcentrated) {
+                unConcentrate();
+            } else {
+                setFront();
+                onMouseDown(e);
+            }
+        });
+
+        move.addEventListener('dblclick', toConcentrate);
+
+        // destory self
+        destory.addEventListener('click', async () => {
+            if (this.isConcentrated) unConcentrate();
+            this.remove();
+            await widgets.set('data', (await widgets.get('data')).filter(obj => obj['id'] !== this.getAttribute('widget-id')));
+            await widgets.save();
+            this.saveWidgetsStyles();
         });
     }
 
+    isDragging = false;
+    isConcentrated = false;
+
     async connectedCallback() {
-        this.style.left = '500px';
-        this.style.top = '100px';
-        this.style.borderRadius = '20px';
-        this.style.zIndex = 100;
+        const setDefaultStyle = () => {
+            this.style.left = '500px';
+            this.style.top = '100px';
+            this.style.borderRadius = '20px';
+            this.style.zIndex = 998;
+        }
 
         const widgetsObj = await widgetStore.get('data');
         if (widgetsObj) {
@@ -174,8 +221,14 @@ export class WidgetContainer extends HTMLElement {
                 this.style.top = styleArr[1];
                 this.style.borderRadius = styleArr[2];
                 this.style.zIndex = styleArr[3];
-            }
-        }
+            } else setDefaultStyle();
+        } else setDefaultStyle();
+
+        setTimeout(() => this.style.visibility = 'visible');
+    }
+
+    disconnectedCallback() {
+        this.style.visibility = 'hidden';
     }
 
     async saveWidgetsStyles() {
@@ -187,7 +240,7 @@ export class WidgetContainer extends HTMLElement {
         await widgetStore.set('data', widgetsObj);
         await widgetStore.save();
     }
-}
+});
 
 function isIntersect([a1, a2], [b1, b2]) {
     return !((a1 < b1 && a2 <= b1) || (a1 >= b2 && a2 > b2));

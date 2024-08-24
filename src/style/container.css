@@ -1,7 +1,3 @@
-* {
-    transition: text-shadow 0.3s ease-out;
-}
-
 :host {
     font-family: inherit;
     position: absolute;
@@ -18,17 +14,33 @@
     caret-color: var(--theme-color);
     color: var(--font-color);
     background-color: var(--bg-color-with-alpha);
-    backdrop-filter: blur(60px) brightness(108%);
+    backdrop-filter: blur(80px) brightness(108%);
     box-shadow: 0 4px 20px var(--shadow-color);
-    /* js */
-    border-radius: 20px;
     padding: 0.2em 0.8em 0.8em 0.8em;
 
-    transition: background-color 0.6s ease, border-radius 0.6s ease;
+    transition: box-shadow .4s ease, border .4s ease, backdrop-filter .4s ease, max-width .4s ease, background-color .4s ease;
+    /* js */
+    border-radius: 20px;
+    visibility: hidden;
 }
 
 :host(:hover) {
     background-color: var(--bg-color-with-alpha-hover);
+}
+
+:host(.concentrate) {
+    position: relative;
+    left: 0 !important;
+    top: 0 !important;
+    border-radius: 20px !important;
+
+    box-shadow: 0px 8px 24px #00000020;
+    border: 0;
+    background-color: var(--bg-color-with-alpha-hover);
+    backdrop-filter: blur(240px) brightness(120%);
+
+    max-width: min(50%, 60em);
+    max-height: 100%;
 }
 
 #label {
@@ -77,6 +89,10 @@ svg:hover {
     overflow-y: scroll;
     height: auto;
     max-height: 20em;
+}
+
+:host(.concentrate) > #content {
+    max-height: 60vh;
 }
 
 ::-webkit-scrollbar {

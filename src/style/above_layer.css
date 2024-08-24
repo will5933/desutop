@@ -7,6 +7,10 @@
 #above_layer {
     pointer-events: none;
     z-index: 10;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #menu {
@@ -26,7 +30,7 @@
     max-height: 32vh;
     
     opacity: 0;
-    backdrop-filter: blur(40px);
+    backdrop-filter: blur(120px);
     filter: blur(4px);
     transform: translateY(-10%) scale(0.8);
     transition: transform 0.3s ease, opacity 0.3s ease, filter 0.2s ease, box-shadow 0.3s ease;

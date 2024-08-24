@@ -1,5 +1,5 @@
 import { createElementWithAttributes, initWidgets, createNoteWidget } from './widgets.js';
-import { WidgetContainer } from "./container.js";
+// import { WidgetContainer } from "./container.js";
 import { showMenu, closeMenu, clipMenuItemStr } from "./menu.js";
 
 const dateTime = document.getElementById('datetime');
@@ -16,14 +16,12 @@ const dateTime = document.getElementById('datetime');
             showCurrentDateTime();
             setInterval(showCurrentDateTime, 1000);
 
-            customElements.define('widget-container', WidgetContainer);
-
             initWidgets();
 
             setTimeout(() => {
                 document.getElementById('widget_layer').style.opacity = '1';
                 document.getElementById('widget_layer').style.transform = 'scale(1)';
-            }, 500);
+            }, 300);
         })
 
     // background-image
@@ -55,7 +53,7 @@ const dateTime = document.getElementById('datetime');
 
         if (e.dataTransfer.items) {
             for (let i = 0; i < e.dataTransfer.items.length; i++) {
-                console.log(`type ${ e.dataTransfer.items[i].type } dropped`);
+                console.log(`type ${e.dataTransfer.items[i].type} dropped`);
                 if (e.dataTransfer.items[i].type === 'text/plain') {
                     e.dataTransfer.items[i].getAsString(str => {
                         createNoteWidget(str, [e.x, e.y]);
@@ -114,7 +112,7 @@ const dateTime = document.getElementById('datetime');
 
     { // setAddWidgetMenu
         clipboardBar.addEventListener('mousedown', e => {
-            if (clipArr.length === 0) return; 
+            if (clipArr.length === 0) return;
             const btn = e.currentTarget;
             showMenu(
                 window.LANG['CLIPBOARD_MENU_TITLE'],

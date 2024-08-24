@@ -1,4 +1,4 @@
-const aboveLayer = document.getElementById('above_layer'), blurLayer = document.getElementById('blur_layer'), menu = document.getElementById('menu');
+const aboveLayer = document.getElementById('above_layer'), blurLayer = document.getElementById('blur_layer'), menu = document.getElementById('menu'), widgetLayer = document.getElementById('widget_layer');
 
 let close_menu_set_time_out, menu_after_close_fn;
 
@@ -28,8 +28,7 @@ export function showMenu(title, itemArr, rect, afterShowFn, afterCloseFn) {
     menu.style.top = `${bottom + 6}px`;
 
     menu_after_close_fn = afterCloseFn;
-    aboveLayer.style.pointerEvents = 'auto';
-    blurLayer.style.backdropFilter = 'blur(5px)';
+    popLayer(true);
     aboveLayer.addEventListener('click', closeMenu);
     menu.style.display = 'block';
     // afterShowFn()
@@ -41,8 +40,7 @@ export function showMenu(title, itemArr, rect, afterShowFn, afterCloseFn) {
 }
 
 export function closeMenu() {
-    blurLayer.style.backdropFilter = '';
-    aboveLayer.style.pointerEvents = '';
+    popLayer(false);
     menu.classList.remove('show');
     // afterCloseFn()
     if (menu_after_close_fn) menu_after_close_fn();
@@ -55,4 +53,16 @@ export function closeMenu() {
 
 export function clipMenuItemStr(str, length) {
     return str.length > length ? str.slice(0, length - 1) + '…' : str;
+}
+
+export function popLayer(bool) {
+    if (bool) {
+        aboveLayer.style.pointerEvents = 'auto';
+        widgetLayer.style.transform = 'scale(0.98)';
+        blurLayer.style.backdropFilter = 'blur(5px)';
+    } else {
+        blurLayer.style.backdropFilter = '';
+        widgetLayer.style.transform = 'scale(1)';
+        aboveLayer.style.pointerEvents = '';
+    }
 }

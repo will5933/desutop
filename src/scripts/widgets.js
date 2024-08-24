@@ -22,6 +22,28 @@ if (hasSteam) { // watch and update steamgames state
     setInterval(updateSteamgamesStates, 20000);
 }
 
+// concentrate
+window.setWidgetConcentrate = (widget, bool) => {
+    if (bool) {
+        if (widget.getAttribute('type') === WIDGET_TYPE.note) {
+            const noteContent = widget.querySelector('.note_content');
+            noteContent.textContentCache = noteContent.textContent;
+            noteContent.innerHTML = marked.parse(noteContent.textContent);
+            noteContent.classList.remove('contenteditable');
+            noteContent.classList.add('concentrate');
+            noteContent.removeAttribute('contenteditable');
+        }
+    } else {
+        if (widget.getAttribute('type') === WIDGET_TYPE.note) {
+            const noteContent = widget.querySelector('.note_content');
+            noteContent.textContent = noteContent.textContentCache;
+            noteContent.classList.remove('concentrate');
+            noteContent.classList.add('contenteditable');
+            noteContent.setAttribute('contenteditable', true);
+        }
+    }
+}
+
 // 
 // Rander Stored Widgets
 // Bind event
@@ -107,11 +129,16 @@ function makeNoteWidget(id, a, b) {
     labelP.textContent = a ?? '';
     const contentP = createElementWithAttributes('p', {
         'contenteditable': 'true',
-        'class': 'contenteditable',
+        'class': 'contenteditable note_content',
         'widget-id': id,
+        // 'data': b ?? '',
     });
     contentP['data-key'] = 'b';
     contentP.textContent = b ?? '';
+    // contentP.randerMarked = function() {
+    //     this.innerHTML = marked.parse(this.getAttribute('data'));
+    // };
+    // contentP.randerMarked();
     return [labelP, contentP];
 }
 
