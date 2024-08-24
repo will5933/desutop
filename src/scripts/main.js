@@ -49,7 +49,7 @@ const dateTime = document.getElementById('datetime');
         e.preventDefault();
         e.stopPropagation();
 
-        if (window.is_menu_open) return;
+        if (window.is_menu_open || window.is_concentrating) return;
 
         if (e.dataTransfer.items) {
             for (let i = 0; i < e.dataTransfer.items.length; i++) {

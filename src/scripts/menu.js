@@ -41,6 +41,7 @@ export function showMenu(title, itemArr, rect, afterShowFn, afterCloseFn) {
 
 export function closeMenu() {
     popLayer(false);
+    aboveLayer.removeEventListener('click', closeMenu);
     menu.classList.remove('show');
     // afterCloseFn()
     if (menu_after_close_fn) menu_after_close_fn();
@@ -58,7 +59,7 @@ export function clipMenuItemStr(str, length) {
 export function popLayer(bool) {
     if (bool) {
         aboveLayer.style.pointerEvents = 'auto';
-        widgetLayer.style.transform = 'scale(0.98)';
+        widgetLayer.style.transform = 'scale(0.985)';
         blurLayer.style.backdropFilter = 'blur(5px)';
     } else {
         blurLayer.style.backdropFilter = '';

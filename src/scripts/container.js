@@ -158,31 +158,31 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
         // concentrate
         // 
         const unConcentrate = () => {
+            window.is_concentrating = false;
             aboveLayer.removeEventListener('mousedown', unConcentrate);
-            popLayer(false);
-            widgetLayer.insertBefore(this, null);
             this.classList.remove('concentrate');
+            widgetLayer.insertBefore(this, null);
             if (window.setWidgetConcentrate) window.setWidgetConcentrate(this, false);
-            this.isConcentrated = false;
+            popLayer(false);
         }
         const toConcentrate = () => {
             if (this.isDragging) return;
-            aboveLayer.insertBefore(this, null);
+            window.is_concentrating = true;
             popLayer(true);
             aboveLayer.addEventListener('mousedown', unConcentrate);
             this.classList.add('concentrate');
+            aboveLayer.insertBefore(this, null);
             if (window.setWidgetConcentrate) window.setWidgetConcentrate(this, true);
-            this.isConcentrated = true;
         }
 
         this.addEventListener('mousedown', e => {
             e.stopPropagation();
-            if (!this.isConcentrated) setFront();
+            if (!window.is_concentrating) setFront();
         });
 
         move.addEventListener('mousedown', e => {
             e.stopPropagation();
-            if (this.isConcentrated) {
+            if (window.is_concentrating) {
                 unConcentrate();
             } else {
                 setFront();
@@ -194,7 +194,7 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
 
         // destory self
         destory.addEventListener('click', async () => {
-            if (this.isConcentrated) unConcentrate();
+            if (window.is_concentrating) unConcentrate();
             this.remove();
             await widgets.set('data', (await widgets.get('data')).filter(obj => obj['id'] !== this.getAttribute('widget-id')));
             await widgets.save();
@@ -203,7 +203,6 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
     }
 
     isDragging = false;
-    isConcentrated = false;
 
     async connectedCallback() {
         const setDefaultStyle = () => {
