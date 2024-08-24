@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "Desutop"
-version = "0.3.9"
+version = "0.4.0"
 dependencies = [
  "clipboard-win",
  "dirs 5.0.1",
