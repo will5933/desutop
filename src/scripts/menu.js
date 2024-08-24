@@ -59,8 +59,8 @@ export function clipMenuItemStr(str, length) {
 export function popLayer(bool) {
     if (bool) {
         aboveLayer.style.pointerEvents = 'auto';
-        widgetLayer.style.transform = 'scale(0.985)';
-        blurLayer.style.backdropFilter = 'blur(5px)';
+        widgetLayer.style.transform = 'scale(0.986)';
+        blurLayer.style.backdropFilter = 'blur(3px)';
     } else {
         blurLayer.style.backdropFilter = '';
         widgetLayer.style.transform = 'scale(1)';

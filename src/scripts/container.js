@@ -129,7 +129,7 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
                 const right = parentRect.right - elemRect.right;
                 const bottom = parentRect.bottom - elemRect.bottom;
 
-                const nearEdge = Math.min(left, top, right, bottom) < bigMargin && Math.min(left, top, right, bottom) >= margin;
+                const nearEdge = Math.min(left, top, right, bottom) < bigMargin && Math.min(left, top, right, bottom) >= margin / 2;
 
                 this.style.borderRadius = (Math.min(left, top, right, bottom) < 1 || isBesideRightAngle) ? '0px' : '20px';
 

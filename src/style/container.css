@@ -33,12 +33,10 @@
     left: 0 !important;
     top: 0 !important;
     border-radius: 20px !important;
-
     box-shadow: 0px 8px 24px #00000020;
     border: 0;
     background-color: var(--bg-color-with-alpha-hover);
     backdrop-filter: blur(240px) brightness(120%);
-
     max-width: min(50%, 60em);
     max-height: 100%;
 }

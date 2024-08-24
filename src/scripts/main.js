@@ -39,6 +39,13 @@ const dateTime = document.getElementById('datetime');
     window.reload_listener = await window.__TAURI__.event.listen('language-change', () => location.reload());
 }
 
+{ // windows task bar height
+    document.documentElement.style.setProperty('--windows-task-bar-height', `${window.screen.height - window.screen.availHeight}px`);
+    window.screen.addEventListener('change', (e) => {
+        document.documentElement.style.setProperty('--windows-task-bar-height', `${e.target.height - e.target.availHeight}px`);
+    });
+}
+
 
 { // enable drag & drop
     document.addEventListener('dragover', (e) => {
