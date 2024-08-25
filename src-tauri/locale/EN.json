@@ -42,9 +42,12 @@
     "STEAM_GAME_LASTPLAYED_NOT": "Long time ago",
     "STEAM_GAME_STATE": {
         "4": "Ready",
-        "6": "Queued",
-        "518": "Unscheduled",
+        "6": "Preparing Update",
+        "518": "Not Scheduled",
+        "1026": "Downloading",
         "1030": "<b>Updating</b>",
+        "1538": "Download Paused",
+        "1542": "Update Paused",
         "UNKNOWN": "Unknown"
     },
     "WIDGET_ALREADY_EXISTS": "The widget already exists",
