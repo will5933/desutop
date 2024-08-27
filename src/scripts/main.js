@@ -1,6 +1,6 @@
-import { createElementWithAttributes, initWidgets, createNoteWidget } from './widgets.js';
 // import { WidgetContainer } from "./container.js";
 import { showMenu, closeMenu, clipMenuItemStr } from "./menu.js";
+import { createElementWithAttributes, initWidgets, createNoteWidget } from './widgets.js';
 
 const dateTime = document.getElementById('datetime');
 

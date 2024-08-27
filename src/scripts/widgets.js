@@ -13,36 +13,6 @@ const WIDGET_TYPE = {
 
 const widgetLayer = document.getElementById('widget_layer');
 
-if (hasSteam) { // watch and update steamgames state
-    window.steamgames_state_change_listener = await window.__TAURI__.event.listen('steamgames-state-change', (event) => {
-        clearTimeout(window.steamgames_state_change_settimeout);
-        window.steamgames_state_change_settimeout = setTimeout(() => updateSteamGamesWidget(event.payload), 500);
-    });
-
-    setInterval(updateSteamgamesStates, 20000);
-}
-
-// concentrate
-window.setWidgetConcentrate = (widget, bool) => {
-    if (bool) {
-        if (widget.getAttribute('type') === WIDGET_TYPE.note) {
-            const noteContent = widget.querySelector('.note_content');
-            noteContent.textContentCache = noteContent.textContent;
-            noteContent.innerHTML = marked.parse(noteContent.textContent);
-            noteContent.classList.remove('contenteditable');
-            noteContent.classList.add('concentrate');
-            noteContent.removeAttribute('contenteditable');
-        }
-    } else {
-        if (widget.getAttribute('type') === WIDGET_TYPE.note) {
-            const noteContent = widget.querySelector('.note_content');
-            noteContent.textContent = noteContent.textContentCache;
-            noteContent.classList.remove('concentrate');
-            noteContent.classList.add('contenteditable');
-            noteContent.setAttribute('contenteditable', true);
-        }
-    }
-}
 
 // 
 // Rander Stored Widgets
@@ -62,6 +32,37 @@ export async function initWidgets() {
     }
 
     setAddWidgetMenu();
+
+    if (hasSteam) { // watch and update steamgames state
+        window.steamgames_state_change_listener = await window.__TAURI__.event.listen('steamgames-state-change', (event) => {
+            clearTimeout(window.steamgames_state_change_settimeout);
+            window.steamgames_state_change_settimeout = setTimeout(() => updateSteamGamesWidget(event.payload), 500);
+        });
+    
+        setInterval(updateSteamgamesStates, 20000);
+    }
+
+    // concentrate
+    window.setWidgetConcentrate = function (widget, bool) {
+        if (bool) {
+            if (widget.getAttribute('type') === WIDGET_TYPE.note) {
+                const noteContent = widget.querySelector('.note_content');
+                noteContent.textContentCache = noteContent.textContent;
+                noteContent.innerHTML = marked.parse(noteContent.textContent);
+                noteContent.classList.remove('contenteditable');
+                noteContent.classList.add('concentrate');
+                noteContent.removeAttribute('contenteditable');
+            }
+        } else {
+            if (widget.getAttribute('type') === WIDGET_TYPE.note) {
+                const noteContent = widget.querySelector('.note_content');
+                noteContent.textContent = noteContent.textContentCache;
+                noteContent.classList.remove('concentrate');
+                noteContent.classList.add('contenteditable');
+                noteContent.setAttribute('contenteditable', true);
+            }
+        }
+    }
 }
 
 async function appendWidget(type, id, a, b) {
