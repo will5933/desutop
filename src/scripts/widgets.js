@@ -316,6 +316,10 @@ function setAddWidgetMenu() {
 
 export async function createNoteWidget(content, x_y) {
     const id = make_widgetID();
+
+    // !
+    if (content) content = content.replaceAll('\r\n', '\n');
+
     storeNewWidget({ type: WIDGET_TYPE.note, id: id, a: window.LANG.NOTE.UNTITLED, b: content ?? window.LANG.NOTE.UNTITLED_CONTENT });
     const widgetContainer = await appendWidget(WIDGET_TYPE.note, id, window.LANG.NOTE.UNTITLED, content ?? window.LANG.NOTE.UNTITLED_CONTENT);
 
