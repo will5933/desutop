@@ -26,35 +26,38 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
         }
 
         // drug event
-        let offsetX, offsetY;
         const margin = 8;
         const bigMargin = 16;
 
         // start move
         const onMouseDown = (event) => {
-            // 获取其他组件
-            const allContainers = Array.from(this.parentElement.querySelectorAll('widget-container')).filter(c => c !== this);
+            const parent = this.parentElement;
 
-            offsetX = event.clientX - this.offsetLeft;
-            offsetY = event.clientY - this.offsetTop;
+            // 获取其他组件
+            const allContainers = Array.from(parent.querySelectorAll('widget-container')).filter(c => c !== this);
+
+            const offsetX = event.clientX - this.offsetLeft;
+            const offsetY = event.clientY - this.offsetTop;
 
             this.isDragging = true;
             const onMouseMove = (event) => {
                 if (!this.isDragging) return;
 
                 // 父元素
-                const parentRect = this.parentElement.getBoundingClientRect();
+                const parentRect = parent.getBoundingClientRect();
 
                 // 计算新的位置
                 let newLeft = Math.min(Math.max(0, event.clientX - offsetX), parentRect.width - this.offsetWidth);
                 let newTop = Math.min(Math.max(0, event.clientY - offsetY), parentRect.height - this.offsetHeight);
 
+                const rightX = newLeft + this.offsetWidth, bottomY = newTop + this.offsetHeight;
                 let isBesideRightAngle, adsorbNum = 0;
+                let broHozAlignment, broVerAlignment;
 
+                // bros alignment
                 for (const container of allContainers) {
                     const containerRect = container.getBoundingClientRect();
                     const ctnTop = containerRect.top - parentRect.top, ctnBottom = containerRect.bottom - parentRect.top, ctnLeft = containerRect.left, ctnRight = containerRect.right;
-                    const rightX = newLeft + this.offsetWidth, bottomY = newTop + this.offsetHeight;
 
                     const hozIntersect = isIntersect([newLeft, rightX], [ctnLeft, ctnRight]);
                     const verIntersect = isIntersect([newTop, bottomY], [ctnTop, ctnBottom]);
@@ -68,7 +71,8 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
 
                             if (gap <= 2 * margin) {
                                 adsorbNum++;
-                                isBesideRightAngle = container.style.borderRadius === '0px';
+                                broHozAlignment = true;
+                                isBesideRightAngle = isBesideRightAngle || container.style.borderRadius === '0px';
                                 // bottom - top
                                 if (ctnTop - bottomY >= 0) newTop = ctnTop - this.offsetHeight - margin;
                                 // top - bottom
@@ -93,7 +97,8 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
 
                             if (gap <= 2 * margin) {
                                 adsorbNum++;
-                                isBesideRightAngle = container.style.borderRadius === '0px';
+                                broHozAlignment = true;
+                                isBesideRightAngle = isBesideRightAngle || container.style.borderRadius === '0px';
                                 // right - left
                                 if (ctnLeft - rightX >= 0) newLeft = ctnLeft - this.offsetWidth - margin;
                                 // left - right
@@ -118,27 +123,30 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
                     if (adsorbNum === 4) break;
                 }
 
+                { // parent alignment
+                    const leftGap = newLeft;
+                    const topGap = newTop;
+                    const rightGap = parent.offsetWidth - rightX;
+                    const bottomGap = parent.offsetHeight - bottomY;
+                    const minGap = Math.min(leftGap, topGap, rightGap, bottomGap);
+
+                    this.style.borderRadius = (minGap < 1 || isBesideRightAngle) ? '0px' : '20px';
+
+                    if (minGap < bigMargin && minGap >= margin / 2) {
+                        if (!broHozAlignment) {
+                            if (leftGap < bigMargin) newLeft = margin;
+                            else if (rightGap < bigMargin) newLeft = parentRect.width - this.offsetWidth - margin;
+                        }
+                        if (!broVerAlignment) {
+                            if (topGap < bigMargin) newTop = margin;
+                            else if (bottomGap < bigMargin) newTop = parentRect.height - this.offsetHeight - margin;
+                        }
+                    }
+                }
+
                 // 更新组件的位置
                 this.style.left = `${newLeft}px`;
                 this.style.top = `${newTop}px`;
-
-                // 实时调整 border-radius
-                const elemRect = this.getBoundingClientRect();
-                const left = elemRect.left - parentRect.left;
-                const top = elemRect.top - parentRect.top;
-                const right = parentRect.right - elemRect.right;
-                const bottom = parentRect.bottom - elemRect.bottom;
-
-                const nearEdge = Math.min(left, top, right, bottom) < bigMargin && Math.min(left, top, right, bottom) >= margin / 2;
-
-                this.style.borderRadius = (Math.min(left, top, right, bottom) < 1 || isBesideRightAngle) ? '0px' : '20px';
-
-                if (nearEdge) {
-                    if (left < bigMargin) this.style.left = `${margin}px`;
-                    else if (right < bigMargin) this.style.left = `${parentRect.width - this.offsetWidth - margin}px`;
-                    if (top < bigMargin) this.style.top = `${margin}px`;
-                    else if (bottom < bigMargin) this.style.top = `${parentRect.height - this.offsetHeight - margin}px`;
-                }
             };
 
             const onMouseUp = () => {

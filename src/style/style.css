@@ -1,5 +1,5 @@
 :root {
-    font-family: 'MiSans VF','MiSans','HarmonyOS Sans',Helvetica,"Segoe UI","Segoe",Tahoma,Arial,Verdana,sans-serif;
+    font-family: 'MiSans','MiSans VF','HarmonyOS Sans',Helvetica,"Segoe UI","Segoe",Tahoma,Arial,Verdana,sans-serif;
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
@@ -14,13 +14,12 @@
     -webkit-text-size-adjust: 100%;
 
     --theme-color: #8787f8;
-    --theme-color-with-alpha: #8787f8a0;
-    --bg-color-with-alpha: #ffffff60;
-    --bg-color-with-alpha-hover: #ffffff80;
+    --theme-bg-color: #9999ff;
+    --bg-color-with-alpha: #ffffff75;
+    --bg-color-with-alpha-hover: #fff9;
     --font-color: #404045;
     --border-color: #40404515;
     --shadow-color: #40404520;
-    --bg-color-text-selection: #8787f880;
 }
 
 body {
@@ -63,7 +62,7 @@ svg {
     width: 100%;
     height: calc(100% - var(--windows-task-bar-height));
     padding-bottom: var(--windows-task-bar-height);
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 #widget_layer {
@@ -79,7 +78,6 @@ svg {
     height: 24px;
 
     pointer-events: none;
-    /* backdrop-filter: blur(25px); */
     overflow: hidden;
     z-index: 9;
 }
@@ -127,8 +125,8 @@ svg {
     padding: 0 0.8em;
     font-size: 0.92em;
     font-weight: 500;
-    color: #ffffffd0;
-    text-shadow: 0 0 4px #00000020;
+    color: #fffd;
+    text-shadow: 0 0 4px #0002;
     border-radius: 12px;
 
     display: flex;
@@ -143,9 +141,9 @@ svg {
 .topbar_ele_on {
     /* background-color: #ffffff35; */
     color: #ffffff;
-    text-shadow: 0 0 8px #00000040;
+    text-shadow: 0 0 8px #0004;
     backdrop-filter: blur(20px) brightness(110%);
-    box-shadow: 0 0 6px #00000010;
+    box-shadow: 0 0 6px #0001;
 }
 
 #datetime {

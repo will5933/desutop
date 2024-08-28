@@ -15,7 +15,8 @@
 }
 
 .contenteditable::selection {
-    background-color: var(--bg-color-text-selection);
+    background-color: var(--theme-bg-color);
+    color: #000;
 }
 
 .note_content {
