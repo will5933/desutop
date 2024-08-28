@@ -14,7 +14,7 @@ export function showMenu(title, itemArr, rect, afterShowFn, afterCloseFn) {
     }
 
     clearTimeout(close_menu_set_time_out);
-    const { left, right, top, bottom } = rect;
+    const { left, right, bottom } = rect;
     // menu.style.left = (left + right) / 2 > (document.body.offsetWidth - 124) ?
     //     (`${document.body.offsetWidth - 124}px`) : (`${(left + right) / 2}px`);
     menu.style.left = '';
@@ -30,26 +30,20 @@ export function showMenu(title, itemArr, rect, afterShowFn, afterCloseFn) {
     menu_after_close_fn = afterCloseFn;
     popLayer(true);
     aboveLayer.addEventListener('click', closeMenu);
-    menu.style.display = 'block';
+    menu.removeAttribute('hidden');
     // afterShowFn()
     if (afterShowFn) afterShowFn();
-    setTimeout(() => {
-        menu.classList.add('show');
-        window.is_menu_open = true;
-    });
+    window.is_menu_open = true;
 }
 
 export function closeMenu() {
     popLayer(false);
     aboveLayer.removeEventListener('click', closeMenu);
-    menu.classList.remove('show');
+    menu.setAttribute('hidden', 'hidden');
     // afterCloseFn()
     if (menu_after_close_fn) menu_after_close_fn();
     menu_after_close_fn = null;
-    close_menu_set_time_out = setTimeout(() => {
-        menu.style.display = '';
-        window.is_menu_open = false;
-    }, 300);
+    window.is_menu_open = false;
 }
 
 export function clipMenuItemStr(str, length) {

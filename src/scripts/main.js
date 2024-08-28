@@ -110,10 +110,10 @@ const dateTime = document.getElementById('datetime');
 
     function setClipboardBar(clipArr) {
         clipboardBar.textContent = clipMenuItemStr(clipArr[clipArr.length - 1], 15);
-        clipboardBar.classList.add('topbar_ele_on');
+        clipboardBar.classList.add('on');
         clearTimeout(window.set_clipboard_bar);
         window.set_clipboard_bar = setTimeout(() => {
-            clipboardBar.classList.remove('topbar_ele_on');
+            clipboardBar.classList.remove('on');
         }, 5000);
     }
 
@@ -125,8 +125,8 @@ const dateTime = document.getElementById('datetime');
                 window.LANG['CLIPBOARD_MENU_TITLE'],
                 getItemArr(),
                 btn.getBoundingClientRect(),
-                () => btn.classList.add('topbar_ele_on'),
-                () => btn.classList.remove('topbar_ele_on')
+                () => btn.classList.add('on'),
+                () => btn.classList.remove('on')
             );
         });
 

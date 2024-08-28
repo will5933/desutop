@@ -18,47 +18,42 @@
     justify-content: center;
 
     transition: text-shadow .2s ease, box-shadow .2s ease;
-}
 
-.steamgame_name,
-.steamgame_appid,
-.steamgame_state {
-    white-space: nowrap;
-}
+    .steamgame_name {
+        white-space: nowrap;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1em;
+        line-height: 2em;
+    }
 
-.steamgame_name {
-    text-align: center;
-    font-weight: 600;
-    font-size: 1em;
-    line-height: 2em;
-}
+    .steamgame_state {
+        white-space: nowrap;
+        font-size: 0.8em;
+        line-height: 1.2em;
+    }
 
-.steamgame_state {
-    font-size: 0.8em;
-    line-height: 1.2em;
-}
+    .steamgame_library_hero {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        z-index: -1;
+        opacity: 0;
+        filter: blur(8px);
+        transform: scale(112%);
+        transition: .3s ease;
+    }
 
-.steamgame_library_hero {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    z-index: -1;
-    opacity: 0;
-    filter: blur(8px);
-    transform: scale(112%);
-    transition: .3s ease;
-}
+    &:hover {
+        color: #fff;
+        text-shadow: 0 0 2px black, 0 0 8px black;
+        box-shadow: 0 0 8px #0004 inset;
 
-.steamgameitem:hover {
-    color: #fff;
-    text-shadow: 0 0 2px black, 0 0 8px black;
-    box-shadow: 0 0 8px #0004 inset;
-}
-
-.steamgameitem:hover>.steamgame_library_hero {
-    /* background-color: #ffffffc0; */
-    opacity: 1;
-    filter: blur(0);
-    transform: scale(100%);
+        .steamgame_library_hero {
+            opacity: 1;
+            filter: blur(0);
+            transform: scale(100%);
+        }
+    }
 }

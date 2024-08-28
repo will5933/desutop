@@ -9,7 +9,6 @@
     max-width: min(25%, 30em);
     border: 1px solid #0003;
     outline: 4px solid #fff0;
-    /* caret-color: var(--theme-color); */
     color: var(--font-color);
     background-color: var(--bg-color-with-alpha);
     backdrop-filter: blur(60px) brightness(108%);
@@ -19,20 +18,73 @@
     /* js */
     border-radius: 20px;
     visibility: hidden;
+
+    #label {
+        box-sizing: border-box;
+        width: 100%;
+        text-align: center;
+        height: 2em;
+        line-height: 2em;
+        white-space: nowrap;
+    
+        font-weight: 600;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        text-decoration: underline transparent 0px;
+        transition: text-decoration 0.1s ease;
+
+        &:hover {
+            text-decoration: underline var(--theme-color) 2px;
+        }
+
+        svg {
+            fill: transparent;
+            opacity: 0.35;
+            cursor: none;
+
+            transition: all 0.24s ease;
+
+            &:hover {
+                transform: scale(120%);
+                opacity: 1;
+                fill: var(--theme-color) !important;
+            }
+        }
+    }
+    
+    #content {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 0.88em;
+
+        overflow-y: scroll;
+        height: auto;
+        max-height: 20em;
+    }
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 :host(:hover) {
     background-color: var(--bg-color-with-alpha-hover);
     outline: 4px solid #fff4;
     border: 1px solid #0002;
+
+    svg {
+        fill: currentColor !important;
+    }
 }
 
 :host(.concentrate) {
     position: relative;
     left: 0 !important;
     top: 0 !important;
-    border-radius: 20px !important;
-    box-shadow: 0px 8px 24px #00000020;
+    box-shadow: 0px 8px 24px #0002 !important;
     border: 0;
     background-color: var(--bg-color-with-alpha-hover);
     backdrop-filter: blur(240px) brightness(120%);
@@ -40,66 +92,14 @@
     max-height: 100%;
 
     animation: breath 10s infinite ease;
+
+    & > #content {
+        max-height: 60vh;
+    }
 }
 
 @keyframes breath {
-  0% { outline: 4px solid #fff4; }
-  50% { outline: 8px solid #fff2; }
-  100% { outline: 4px solid #fff4; }
-}
-
-#label {
-    box-sizing: border-box;
-    width: 100%;
-    text-align: center;
-    height: 2em;
-    line-height: 2em;
-    white-space: nowrap;
-
-    font-weight: 600;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    text-decoration: underline transparent 0px;
-    transition: text-decoration 0.1s ease;
-}
-#label:hover {
-    text-decoration: underline var(--theme-color) 2px;
-}
-
-
-svg {
-    fill: transparent;
-    opacity: 0.35;
-    cursor: none;
-
-    transition: all 0.24s ease;
-}
-:host(:hover) svg {
-    fill: currentColor;
-}
-svg:hover {
-    transform: scale(120%);
-    opacity: 1;
-    fill: var(--theme-color) !important;
-}
-
-#content {
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 0.88em;
-
-    overflow-y: scroll;
-    height: auto;
-    max-height: 20em;
-}
-
-:host(.concentrate) > #content {
-    max-height: 60vh;
-}
-
-::-webkit-scrollbar {
-    display: none;
+    0% { outline: 4px solid #fff4; }
+    50% { outline: 8px solid #fff2; }
+    100% { outline: 4px solid #fff4; }
 }

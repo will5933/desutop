@@ -308,8 +308,8 @@ function setAddWidgetMenu() {
             window.LANG['ADD_WIDGET_MENU_TITLE'],
             itemArr,
             btn.getBoundingClientRect(),
-            () => btn.classList.add('topbar_ele_on'),
-            () => btn.classList.remove('topbar_ele_on')
+            () => btn.classList.add('on'),
+            () => btn.classList.remove('on')
         );
     });
 }

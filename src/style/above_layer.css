@@ -14,65 +14,70 @@
 }
 
 #menu {
-    overflow-x: hidden;
-    overflow-y: scroll;
-    display: none;
+    overflow: hidden scroll;
     position: absolute;
+    pointer-events: auto;
     background-color: #ffffff80;
     padding: 4px 2px;
     border: 1.2px solid #0004;
     border-radius: 10px;
-    box-shadow: 0px 0px 12px #00000060;
     z-index: 10;
-
     max-width: 240px;
     max-height: 32vh;
-    
-    opacity: 0;
+
     backdrop-filter: blur(120px);
-    filter: blur(4px);
-    transform: translateY(-10%) scale(0.8);
-    transition: transform 0.3s ease, opacity 0.2s ease, filter 0.2s ease, box-shadow 0.3s ease;
-}
+    transition-property: transform opacity filter display;
+    transition-duration: .26s;
+    transition-timing-function: ease;
+    transition-behavior: allow-discrete;
 
-.menu-item {
-    font-size: 0.84em;
-    color: #000000c0;
-    font-weight: 500;
-
-    padding: 0 0.5em;
-    margin: 0;
-    box-sizing: border-box;
-    border-radius: 8px;
-    white-space: nowrap;
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.menu-item:hover {
-    background-color: var(--theme-bg-color);
-}
-
-.menu-title {
-    font-size: 0.8em;
-    color: #0006;
-    font-weight: 500;
-    padding: 0 6px 2px 6px;
-    margin: 0;
-    border-bottom: 1.2px solid #0003;
-}
-
-.menu-title + .menu-item {
-    margin: 2px 0 0 0;
-}
-
-#menu.show {
-    transform: translateY(0) scale(1);
     opacity: 1;
+    transform: translateY(0) scale(1);
     filter: blur(0);
     box-shadow: 0px 12px 36px #00000040;
 
-    pointer-events: auto;
+    @starting-style {
+        opacity: 0;
+        transform: translateY(-10%) scale(0.8);
+        filter: blur(4px);
+    }
+
+    &[hidden] {
+        opacity: 0;
+        transform: translateY(-20%) scale(0.6);
+        filter: blur(4px);
+    }
+
+    .menu-title {
+        font-size: 0.8em;
+        color: #0006;
+        font-weight: 500;
+        padding: 0 6px 2px 6px;
+        margin: 0;
+        border-bottom: 1.2px solid #0003;
+
+        +.menu-item {
+            margin: 2px 0 0 0;
+        }
+    }
+
+    .menu-item {
+        font-size: 0.84em;
+        color: #000000c0;
+        font-weight: 500;
+
+        padding: 0 0.5em;
+        margin: 0;
+        box-sizing: border-box;
+        border-radius: 8px;
+        white-space: nowrap;
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        &:hover {
+            background-color: var(--theme-bg-color);
+        }
+    }
 }

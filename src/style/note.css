@@ -12,22 +12,22 @@
 
     -webkit-user-modify: read-write-plaintext-only;
     -moz-user-modify: read-write-plaintext-only;
-}
 
-.contenteditable::selection {
-    background-color: var(--theme-bg-color);
-    color: #000;
+    &::selection {
+        background-color: var(--theme-bg-color);
+        color: #000;
+    }
 }
 
 .note_content {
     white-space: wrap;
     word-break: break-all;
     outline: none;
-}
 
-.note_content.concentrate {
-    min-width: 40em;
-    padding: 0 1em;
+    &.concentrate {
+        min-width: 40em;
+        padding: 0 1em;
+    }
 }
 
 .padding_nowarp {

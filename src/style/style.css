@@ -63,13 +63,13 @@ svg {
     height: calc(100% - var(--windows-task-bar-height));
     padding-bottom: var(--windows-task-bar-height);
     /* overflow: hidden; */
-}
 
-#widget_layer {
-    top: 24px;
-    height: calc(100% - 24px - var(--windows-task-bar-height));
-    padding-bottom: 0;
-    transition: opacity .3s ease, transform .3s ease;
+    &#widget_layer {
+        top: 24px;
+        height: calc(100% - 24px - var(--windows-task-bar-height));
+        padding-bottom: 0;
+        transition: opacity .3s ease, transform .3s ease;
+    }
 }
 
 #topbar {
@@ -80,44 +80,49 @@ svg {
     pointer-events: none;
     overflow: hidden;
     z-index: 9;
-}
 
-#topbar_start,
-#topbar_center,
-#topbar_end {
-    position: absolute;
-    width: 35%;
-    height: 100%;
-    top: 0;
+    #topbar_start,
+    #topbar_center,
+    #topbar_end {
+        position: absolute;
+        width: 35%;
+        height: 100%;
+        top: 0;
 
-    padding: 0 0.8em;
-    box-sizing: border-box;
+        padding: 0 0.8em;
+        box-sizing: border-box;
 
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-    overflow: hidden;
-}
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        overflow: hidden;
+    }
 
-#topbar_start {
-    left: 0;
-    justify-content: flex-start;
-}
+    #topbar_start {
+        left: 0;
+        justify-content: flex-start;
+    }
 
-#topbar_end {
-    right: 0;
-    justify-content: flex-end;
-}
+    #topbar_end {
+        right: 0;
+        justify-content: flex-end;
+    }
 
-#topbar_center {
-    width: 30%;
-    left: 35%;
+    #topbar_center {
+        width: 30%;
+        left: 35%;
 
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: center;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: center;
+
+        #datetime {
+            padding: 0 0.8em;
+            font-variant-numeric: tabular-nums;
+        }
+    }
 }
 
 .topbar_ele {
@@ -135,21 +140,14 @@ svg {
     pointer-events: auto;
 
     transition: all 0.3s ease;
-}
 
-.topbar_ele:hover,
-.topbar_ele_on {
-    /* background-color: #ffffff35; */
-    color: #ffffff;
-    text-shadow: 0 0 8px #0004;
-    backdrop-filter: blur(20px) brightness(110%);
-    box-shadow: 0 0 6px #0001;
-}
-
-#datetime {
-    padding: 0 0.8em;
-    border-radius: 12px;
-    font-variant-numeric: tabular-nums;
+    &:hover,
+    .on {
+        color: #ffffff;
+        text-shadow: 0 0 8px #0004;
+        backdrop-filter: blur(20px) brightness(110%);
+        box-shadow: 0 0 6px #0001;
+    }
 }
 
 /* scroll bar */
