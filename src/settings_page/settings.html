@@ -72,8 +72,8 @@
                 </section>
             </div>
 
-            <!-- ######## -->
-            <!-- LANGUAGE -->
+            <!-- ############# -->
+            <!-- LANGUAGE&FONT -->
             <div id="lang" class="content-section">
                 <h2 data-lang="LANGUAGE&FONT">LANGUAGE&FONT</h2>
                 <section>
@@ -84,6 +84,23 @@
                             <option value="sCH.json">简体中文 - sCH</option>
                             <option value="EN.json">English - EN</option>
                             <option value="JP.json">日本語 - JP</option>
+                        </select>
+                    </div>
+                </section>
+                <section>
+                    <h3 data-lang="FONTS">FONTS</h3>
+                    <div class="setting-item">
+                        <label for="display-font-select" data-lang="DISPLAY_FONT">DISPLAY_FONT</label>
+                        <select id="display-font-select" class="dropdown">
+                            <option data-lang="NOTSPECIFIED" value="NOTSPECIFIED">NOTSPECIFIED</option>
+                            <!-- js -->
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label for="display-font-select2" data-lang="DISPLAY_FONT2">DISPLAY_FONT2</label>
+                        <select id="display-font-select2" class="dropdown">
+                            <option data-lang="NOTSPECIFIED" value="NOTSPECIFIED">NOTSPECIFIED</option>
+                            <!-- js -->
                         </select>
                     </div>
                 </section>
@@ -112,9 +129,11 @@
                     window.LANG = JSON.parse(jsonStr);
 
                     document.querySelectorAll('[data-lang]').forEach((e) => {
-                        e.textContent = window.LANG['SETTINGS'][e.getAttribute('data-lang')];
+                        e.textContent = window.LANG['SETTINGS'][e.getAttribute('data-lang')] ?? e.textContent;
                     })
-                })
+                });
+                
+                document.body.style.fontFamily = `"${settingsObj['font_family']}", "${settingsObj['font_family2']}", "Segoe UI",  sans-serif`;
         });
     </script>
 </body>

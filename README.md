@@ -26,19 +26,17 @@ Here is a **Windows** desktop replacement project built with [Tauri](https://git
 
 ### Markdown Support
 
-Double-click the upper left move button of the widget to read in `Markdown`.
-
+Double-click the upper left move button of the widget to read in `Markdown`.  
 双击微件左上移动按钮进行 `Markdown` 阅读。
 
->>>>>> ---
+---
 
 ### Quick Note-taking
 
-Implement a quick note-taking feature by dragging any text content to the desktop.
-
+Implement a quick note-taking feature by dragging any text content to the desktop.  
 通过拖拽任意文字内容到桌面实现快速笔记功能。
 
->>>>>> ---
+---
 
 ### Change Wallpaper
 

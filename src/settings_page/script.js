@@ -15,8 +15,7 @@ const settingStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin');
     });
 }
 
-{
-    // btn
+{ // btn
     const appWindow = new window.__TAURI__.window.Window('settings');
 
     document
@@ -30,8 +29,7 @@ const settingStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin');
         ?.addEventListener('click', appWindow.close);
 }
 
-{
-    // init
+{ // init
     handleHash();
 
     // #sidebar div
@@ -76,13 +74,33 @@ document.querySelectorAll('.ripple-button').forEach(button => {
 // SETTINGS
 // 
 {
-    const language_json_filename = document.getElementById('display-language-select'), set_wallpaper_for_windows = document.getElementById('set-wallpaper-for-system-switch'), auto_start_switch = document.getElementById('auto-start-switch');
+    const language_selector = document.getElementById('display-language-select'),
+        font_selector = document.getElementById('display-font-select'),
+        font_selector2 = document.getElementById('display-font-select2'),
+        set_wallpaper_for_windows = document.getElementById('set-wallpaper-for-system-switch'),
+        auto_start_switch = document.getElementById('auto-start-switch');
 
-    // read
+    // rander
     const dataObj = await settingStore.get('data');
     set_wallpaper_for_windows.checked = dataObj["set_wallpaper_for_windows"];
     auto_start_switch.checked = await window.__TAURI_PLUGIN_AUTOSTART__.isEnabled();
-    language_json_filename.value = dataObj["language_json_filename"];
+    language_selector.value = dataObj["language_json_filename"];
+    {
+        const availableFonts = await window.queryLocalFonts();
+        const fontFamilyArr = [];
+        for (const fontData of availableFonts) {
+            if (!fontFamilyArr.includes(fontData.family)) fontFamilyArr.push(fontData.family);
+        }
+        fontFamilyArr.forEach(fontFamilyName => {
+            const option = document.createElement('option');
+            option.value = fontFamilyName;
+            option.textContent = fontFamilyName;
+            font_selector.appendChild(option);
+            font_selector2.appendChild(option.cloneNode(true));
+        });
+        font_selector.value = dataObj["font_family"] ?? 'NOTSPECIFIED';
+        font_selector2.value = dataObj["font_family2"] ?? 'NOTSPECIFIED';
+    }
 
     // set_wallpaper_for_windows
     set_wallpaper_for_windows.addEventListener('change', () => saveConfig('set_wallpaper_for_windows', set_wallpaper_for_windows.checked));
@@ -91,16 +109,22 @@ document.querySelectorAll('.ripple-button').forEach(button => {
         if (auto_start_switch.checked) await window.__TAURI_PLUGIN_AUTOSTART__.enable();
         else await window.__TAURI_PLUGIN_AUTOSTART__.disable();
     });
-
-
     // language_json_filename
-    language_json_filename.addEventListener('change', () => saveConfig(
+    language_selector.addEventListener('change', () => saveConfig(
         'language_json_filename',
-        language_json_filename.value,
-        async () => {
-            await window.__TAURI__.event.emit('language-change', 0);
-            location.reload();
-        },
+        language_selector.value,
+        refreshAllWindows,
+    ));
+    // font-family
+    font_selector.addEventListener('change', () => saveConfig(
+        'font_family',
+        font_selector.value,
+        refreshAllWindows,
+    ));
+    font_selector2.addEventListener('change', () => saveConfig(
+        'font_family2',
+        font_selector2.value,
+        refreshAllWindows,
     ));
 }
 
@@ -135,3 +159,35 @@ function saveConfig(key, value, afterFn) {
         });
     });
 }
+
+async function refreshAllWindows() {
+    await window.__TAURI__.event.emit('ask-to-refresh', 0);
+    location.reload();
+}
+
+// { // enable drop and save wallpaper
+//     const imageTypes = ['image/webp', 'image/jpeg', 'image/png'];
+
+//     document.addEventListener('dragover', (e) => {
+//         e.preventDefault();
+//         e.stopPropagation();
+//     });
+//     document.addEventListener('drop', (e) => {
+//         e.preventDefault();
+//         e.stopPropagation();
+
+//         console.log(e.dataTransfer);
+
+//         if (e.dataTransfer.items) {
+//             for (let i = 0; i < e.dataTransfer.items.length; i++) {
+//                 if (imageTypes.includes(e.dataTransfer.items[i].type)) {
+//                     console.log(e.dataTransfer.items[i]);
+//                 }
+//                 //  else if (e.dataTransfer.items[i].kind === 'file') {
+//                 //     const file = e.dataTransfer.items[i].getAsFile();
+//                 //     console.log('File:', file.name);
+//                 // }
+//             }
+//         }
+//     });
+// }

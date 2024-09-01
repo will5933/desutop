@@ -90,6 +90,8 @@ async function appendWidget(type, id, a, b) {
         setTimeout(() => {
             widgetContainer.appendChild(labelDiv);
             widgetContainer.appendChild(contentDiv);
+
+            // add event listener
             bindEventListener(widgetContainer);
         }, 10);
 
@@ -132,14 +134,9 @@ function makeNoteWidget(id, a, b) {
         'contenteditable': 'true',
         'class': 'contenteditable note_content',
         'widget-id': id,
-        // 'data': b ?? '',
     });
     contentP['data-key'] = 'b';
     contentP.textContent = b ?? '';
-    // contentP.randerMarked = function() {
-    //     this.innerHTML = marked.parse(this.getAttribute('data'));
-    // };
-    // contentP.randerMarked();
     return [labelP, contentP];
 }
 
@@ -211,7 +208,7 @@ async function makeSteamGamesWidget(steamgamesArr) {
         info.updataState(secondNow);
 
         const libraryHero = window.__TAURI__.core.convertFileSrc(`${steamPath}\\appcache\\librarycache\\${steamgame.appid}_library_hero.jpg`);
-        // test icon
+        // hero cover
         const icon = createElementWithAttributes(
             'img',
             {

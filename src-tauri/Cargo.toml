@@ -1,6 +1,6 @@
 [package]
 name = "Desutop"
-version = "0.4.1"
+version = "0.4.2"
 description = "Desutop"
 authors = ["fanin"]
 edition = "2021"

@@ -1,12 +1,11 @@
 export async function getWallpaperFilesPathArr() {
     const { BaseDirectory, readDir } = window.__TAURI_PLUGIN_FS__;
 
-    const entries = await readDir('wallpapers', { baseDir: BaseDirectory.Resource });
+    const baseDirectoryEntries = await readDir('wallpapers', { baseDir: BaseDirectory.Resource });
     const wallpaperFileArr = [];
 
-    await processEntriesRecursive('wallpapers', entries);
-
-    return wallpaperFileArr;
+    // appdata
+    await processEntriesRecursive('wallpapers', baseDirectoryEntries);
 
     async function processEntriesRecursive(parent, entries) {
         for (const entry of entries) {
@@ -19,4 +18,6 @@ export async function getWallpaperFilesPathArr() {
             }
         }
     }
+
+    return wallpaperFileArr;
 }

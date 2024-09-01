@@ -1,4 +1,3 @@
-// import { WidgetContainer } from "./container.js";
 import { showMenu, closeMenu, clipMenuItemStr } from "./menu.js";
 import { createElementWithAttributes, initWidgets, createNoteWidget } from './widgets.js';
 
@@ -7,8 +6,8 @@ const dateTime = document.getElementById('datetime');
 {
     // locale
     const settingsStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin');
-    const dataObj = await settingsStore.get('data');
-    window.__TAURI__.core.invoke('get_lang_json_string', { "languageJsonFilename": dataObj["language_json_filename"] })
+    const settingsObj = await settingsStore.get('data');
+    window.__TAURI__.core.invoke('get_lang_json_string', { "languageJsonFilename": settingsObj["language_json_filename"] })
         .then((jsonStr) => {
             window.LANG = JSON.parse(jsonStr);
 
@@ -24,9 +23,12 @@ const dateTime = document.getElementById('datetime');
             }, 300);
         })
 
+    // set font-family
+    document.body.style.fontFamily = `"${settingsObj['font_family']}", "${settingsObj['font_family2']}", "Segoe UI",  sans-serif`;
+
     // background-image
     setWallpaper(
-        await window.__TAURI__.path.resolveResource(dataObj['wallpaper_file_path'] ?? 'wallpapers/default.jpg')
+        await window.__TAURI__.path.resolveResource(settingsObj['wallpaper_file_path'] ?? 'wallpapers/default.jpg')
     );
 
     window.wallpaper_change_listener = await window.__TAURI__.event.listen('wallpaper-change', e => setWallpaper(e.payload));
@@ -36,7 +38,7 @@ const dateTime = document.getElementById('datetime');
     }
 
     // reload
-    window.reload_listener = await window.__TAURI__.event.listen('language-change', () => location.reload());
+    window.reload_listener = await window.__TAURI__.event.listen('ask-to-refresh', () => location.reload());
 }
 
 { // windows task bar height

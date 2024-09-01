@@ -5,7 +5,9 @@ use std::{path::PathBuf, thread};
 
 // use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use serde_json::{json, Value};
+
 use tauri::{
+    generate_context, generate_handler,
     menu::{MenuBuilder, MenuItemBuilder},
     tray::TrayIconBuilder,
     AppHandle, Emitter, Listener, Manager, WebviewWindowBuilder,
@@ -35,7 +37,10 @@ fn main() {
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
             show_msg(app, "Desutop is running!");
         }))
-        .invoke_handler(tauri::generate_handler![
+        //
+        // invoke_handler
+        //
+        .invoke_handler(generate_handler![
             get_lang_json_string,
             get_steam_games,
             start_steam_game
@@ -126,8 +131,10 @@ fn main() {
             Ok(())
         });
 
-    app.run(tauri::generate_context!())
-        .expect("error while running")
+    //
+    // run
+    //
+    app.run(generate_context!()).expect("error while running")
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -216,20 +223,6 @@ fn setup_set_system_tray(app: &mut tauri::App, lang_json: Value) -> () {
                 _ => (),
             }
         })
-        // .on_tray_icon_event(|tray, event| {
-        //     if let TrayIconEvent::Click {
-        //         button: MouseButton::Left,
-        //         button_state: MouseButtonState::Up,
-        //         ..
-        //     } = event
-        //     {
-        //         let app = tray.app_handle();
-        //         if let Some(webview_window) = app.get_webview_window("main") {
-        //             let _ = webview_window.show();
-        //             let _ = webview_window.set_focus();
-        //         }
-        //     }
-        // })
         .build(app)
         .unwrap();
 }
@@ -243,8 +236,6 @@ fn setup_set_windows(
     wallpaper_file_path: String,
 ) -> () {
     if let Some(ww) = app.get_webview_window("main") {
-        //  Set ignore cursor events
-        // ww.set_ignore_cursor_events(true).unwrap();
 
         // Get HWND
         if let Ok(hwnd) = ww.hwnd() {
@@ -273,13 +264,17 @@ fn open_settings_windows(app: &AppHandle, lang_json: &Value) -> () {
             .inner_size(800.0, 600.0)
             .min_inner_size(800.0, 500.0)
             .max_inner_size(1200.0, 800.0)
+            // .disable_drag_drop_handler()
             .decorations(false)
             .center()
             .title(lang_json["SETTINGS"]["TITLE_SETTINGS"].as_str().unwrap())
             .build()
             .unwrap();
     } else {
-        app.get_webview_window("settings").unwrap().set_focus().unwrap();
+        app.get_webview_window("settings")
+            .unwrap()
+            .set_focus()
+            .unwrap();
     }
 }
 
