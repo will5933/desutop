@@ -12,7 +12,7 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
         shadow.appendChild(document.getElementById('widget_container_template').content.cloneNode(true));
 
         // get layers / elements
-        const aboveLayer = document.getElementById('above_layer'), blurLayer = document.getElementById('blur_layer'), widgetLayer = document.getElementById('widget_layer'), move = shadow.getElementById('move'), destory = shadow.getElementById('destory');
+        const aboveLayer = document.getElementById('above_layer'), widgetLayer = document.getElementById('widget_layer'), move = shadow.getElementById('move'), destory = shadow.getElementById('destory');
 
         const setFront = () => {
             const oldIndex = this.style.zIndex;
@@ -36,8 +36,8 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
             // 获取其他组件
             const allContainers = Array.from(parent.querySelectorAll('widget-container')).filter(c => c !== this);
 
-            const offsetX = event.clientX - this.offsetLeft;
-            const offsetY = event.clientY - this.offsetTop;
+            const offsetX = event.x - this.offsetLeft;
+            const offsetY = event.y - this.offsetTop;
 
             this.isDragging = true;
             const onMouseMove = (event) => {
@@ -47,8 +47,8 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
                 const parentRect = parent.getBoundingClientRect();
 
                 // 计算新的位置
-                let newLeft = Math.min(Math.max(0, event.clientX - offsetX), parentRect.width - this.offsetWidth);
-                let newTop = Math.min(Math.max(0, event.clientY - offsetY), parentRect.height - this.offsetHeight);
+                let newLeft = Math.min(Math.max(0, event.x - offsetX), parentRect.width - this.offsetWidth);
+                let newTop = Math.min(Math.max(0, event.y - offsetY), parentRect.height - this.offsetHeight);
 
                 const rightX = newLeft + this.offsetWidth, bottomY = newTop + this.offsetHeight;
                 let isBesideRightAngle, adsorbNum = 0;
@@ -90,7 +90,6 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
                                                 : ctnRight - this.offsetWidth;
                                     }
                                 }
-                                // break;
                             }
                         } else {
                             const gap = Math.max(ctnLeft - rightX, newLeft - ctnRight);
@@ -116,7 +115,6 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
                                                 : ctnBottom - this.offsetHeight;
                                     }
                                 }
-                                // break;
                             }
                         }
                     }

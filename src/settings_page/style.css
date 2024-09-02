@@ -1,4 +1,6 @@
 :root {
+    font-family: "Segoe UI", "Segoe", Tahoma, Arial, Verdana, sans-serif;
+
     --theme-color: #7272fb;
     --theme-color-2: #28f;
     --theme-color-withAlpha: #7272fb20;

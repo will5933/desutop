@@ -26,7 +26,7 @@
     max-height: 32vh;
 
     backdrop-filter: blur(120px);
-    transition-property: transform opacity filter display;
+    transition-property: transform, opacity, filter, display;
     transition-duration: .26s;
     transition-timing-function: ease;
     transition-behavior: allow-discrete;

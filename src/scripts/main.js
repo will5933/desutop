@@ -163,6 +163,49 @@ const dateTime = document.getElementById('datetime');
     });
 }
 
+{ // range_selector
+    const widgetLayer = document.getElementById('widget_layer'),
+        rangeSelector = document.getElementById('range_selector');
+    const parentOffsetX = widgetLayer.offsetLeft, 
+        parentOffsetY = widgetLayer.offsetTop;
+
+    widgetLayer.addEventListener('mousedown', (e) => {
+        const startPos = {
+            left: e.x - parentOffsetX,
+            top: e.y - parentOffsetY
+        }
+        rangeSelector.style.left = `${startPos.left}px`;
+        rangeSelector.style.top = `${startPos.top}px`;
+        rangeSelector.removeAttribute('hidden');
+
+        const handleMouseMove = (moveEvent) => {
+            const endPos = {
+                left: moveEvent.x - parentOffsetX,
+                top: moveEvent.y - parentOffsetY
+            }
+            rangeSelector.style.left = `${Math.min(startPos.left, endPos.left)}px`;
+            rangeSelector.style.top = `${Math.min(startPos.top, endPos.top)}px`;
+            rangeSelector.style.width = `${Math.abs(endPos.left - startPos.left)}px`;
+            rangeSelector.style.height = `${Math.abs(endPos.top - startPos.top)}px`;
+        }
+
+        const handleMouseUp = () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+            document.removeEventListener('mouseleave', handleMouseUp);
+            rangeSelector.style.left = '';
+            rangeSelector.style.top = '';
+            rangeSelector.style.width = '';
+            rangeSelector.style.height = '';
+            rangeSelector.setAttribute('hidden', true);
+        }
+
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+        document.addEventListener('mouseleave', handleMouseUp);
+    })
+}
+
 // fn showCurrentDateTime()
 function showCurrentDateTime() {
     const now = new Date();

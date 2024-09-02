@@ -1,6 +1,6 @@
-use dirs::desktop_dir;
 use core::str;
-use std::{ fs, io, path::PathBuf};
+use dirs::desktop_dir;
+use std::{fs, io, path::PathBuf};
 
 // 获取桌面图标
 pub fn _get_desktop_contents() -> Result<Vec<PathBuf>, io::Error> {
