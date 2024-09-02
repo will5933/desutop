@@ -62,7 +62,6 @@ svg {
     width: 100%;
     height: calc(100% - var(--windows-task-bar-height));
     padding-bottom: var(--windows-task-bar-height);
-    /* overflow: hidden; */
 
     &#widget_layer {
         top: 24px;
@@ -78,6 +77,8 @@ svg {
             box-sizing: border-box;
             border: 3px solid var(--range-selector-border);
             z-index: 999;
+
+            pointer-events: none;
         }
     }
 }
