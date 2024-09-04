@@ -4,7 +4,6 @@
     line-height: 24px;
     font-weight: 400;
 
-    color: #ffffff;
     background-color: transparent;
 
     font-synthesis: none;
@@ -15,12 +14,14 @@
 
     --theme-color: #8787f8;
     --theme-bg-color: #9999ff;
-    --bg-color-with-alpha: #ffffff75;
-    --bg-color-with-alpha-hover: #fff9;
+    --widget-bg-color: #ffffff75;
+    --widget-bg-color-hover: #fff9;
+    --widget-bg-color-folding: #ffffff40;
     --font-color: #404045;
+    --font-color-folding: #404045c0;
     --border-color: #40404515;
     --shadow-color: #40404520;
-    --range-selector-border: #fff4;
+    --range-selector: #fff3;
 }
 
 body {
@@ -71,11 +72,10 @@ svg {
 
         & > #range_selector {
             position: absolute;
-            /* background-color: var(--range-selector); */
-            backdrop-filter: brightness(1.2);
+            background-color: var(--range-selector);
             border-radius: 3px;
             box-sizing: border-box;
-            border: 3px solid var(--range-selector-border);
+            border: 3px solid var(--range-selector);
             z-index: 999;
 
             pointer-events: none;

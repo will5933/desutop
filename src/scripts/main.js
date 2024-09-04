@@ -1,5 +1,6 @@
 import { showMenu, closeMenu, clipMenuItemStr } from "./menu.js";
 import { createElementWithAttributes, initWidgets, createNoteWidget } from './widgets.js';
+import { WidgetContainer } from "./container.js";
 
 const dateTime = document.getElementById('datetime');
 
@@ -14,6 +15,8 @@ const dateTime = document.getElementById('datetime');
             // showCurrentDateTime
             showCurrentDateTime();
             setInterval(showCurrentDateTime, 1000);
+
+            customElements.define('widget-container', WidgetContainer);
 
             initWidgets();
 
@@ -47,7 +50,6 @@ const dateTime = document.getElementById('datetime');
         document.documentElement.style.setProperty('--windows-task-bar-height', `${e.target.height - e.target.availHeight}px`);
     });
 }
-
 
 { // enable drag & drop
     document.addEventListener('dragover', (e) => {

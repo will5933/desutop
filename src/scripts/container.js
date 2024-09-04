@@ -1,9 +1,9 @@
 import { popLayer } from "./menu.js";
 
-const widgets = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
-const widgetStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets_styles.bin');
+const widgetDataStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
+const widgetStyleStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets_styles.bin');
 
-customElements.define('widget-container', class WidgetContainer extends HTMLElement {
+export class WidgetContainer extends HTMLElement {
     constructor() {
         super();
 
@@ -12,7 +12,7 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
         shadow.appendChild(document.getElementById('widget_container_template').content.cloneNode(true));
 
         // get layers / elements
-        const aboveLayer = document.getElementById('above_layer'), widgetLayer = document.getElementById('widget_layer'), move = shadow.getElementById('move'), destory = shadow.getElementById('destory');
+        const aboveLayer = document.getElementById('above_layer'), widgetLayer = document.getElementById('widget_layer'), move = shadow.getElementById('move'), fold = shadow.getElementById('fold'), check = shadow.getElementById('check'), destory = shadow.getElementById('destory');
 
         const setFront = () => {
             const oldIndex = this.style.zIndex;
@@ -118,7 +118,6 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
                             }
                         }
                     }
-                    if (adsorbNum === 4) break;
                 }
 
                 { // parent alignment
@@ -153,7 +152,9 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
                 document.removeEventListener('mouseup', onMouseUp);
 
                 // Save Widgets Styles
-                this.saveWidgetsStyles();
+                saveWidgetStyle(
+                    this.getAttribute('widget-id'), this.style.left, this.style.top, this.style.borderRadius, this.style.zIndex, this.folding
+                );
             };
 
             document.addEventListener('mousemove', onMouseMove);
@@ -178,6 +179,8 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
             aboveLayer.addEventListener('mousedown', unConcentrate);
             this.classList.add('concentrate');
             aboveLayer.insertBefore(this, null);
+            // quit fold
+            this.classList.remove('folding');
             if (window.setWidgetConcentrate) window.setWidgetConcentrate(this, true);
         }
 
@@ -187,27 +190,61 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
         });
 
         move.addEventListener('mousedown', e => {
-            e.stopPropagation();
             if (window.is_concentrating) {
                 unConcentrate();
             } else {
-                setFront();
                 onMouseDown(e);
             }
         });
 
         move.addEventListener('dblclick', toConcentrate);
 
+        // 
+        // fold
+        // 
+        fold.addEventListener('click', () => this.folding = !this.folding);
+
+        // 
         // destory self
+        // 
         destory.addEventListener('click', async () => {
             if (window.is_concentrating) unConcentrate();
             this.remove();
-            await widgets.set('data', (await widgets.get('data')).filter(obj => obj['id'] !== this.getAttribute('widget-id')));
-            await widgets.save();
-            this.saveWidgetsStyles();
+            await widgetDataStore.set('data', (await widgetDataStore.get('data')).filter(obj => obj['id'] !== this.getAttribute('widget-id')));
+            await widgetDataStore.save();
+
+            saveAllWidgetsStylesFromDom();
         });
     }
 
+    // folding
+    _isFolding = false;
+
+    get folding() {
+        return this._isFolding;
+    }
+
+    set folding(bool) {
+        if (window.is_concentrating) return;
+        this._isFolding = bool;
+
+        if (bool) {
+            this.classList.add('folding');
+        } else {
+            this.classList.remove('folding');
+        }
+
+        saveWidgetStyle(
+            this.getAttribute('widget-id'),
+            this.style.left,
+            this.style.top,
+            this.style.borderRadius,
+            this.style.zIndex,
+            this.folding
+        );
+    }
+
+    // dragging
     isDragging = false;
 
     async connectedCallback() {
@@ -218,7 +255,7 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
             this.style.zIndex = 998;
         }
 
-        const widgetsObj = await widgetStore.get('data');
+        const widgetsObj = await widgetStyleStore.get('data');
         if (widgetsObj) {
             const styleArr = widgetsObj[this.getAttribute('widget-id')];
             if (styleArr) {
@@ -226,6 +263,7 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
                 this.style.top = styleArr[1];
                 this.style.borderRadius = styleArr[2];
                 this.style.zIndex = styleArr[3];
+                this.folding = styleArr[4];
             } else setDefaultStyle();
         } else setDefaultStyle();
 
@@ -235,17 +273,30 @@ customElements.define('widget-container', class WidgetContainer extends HTMLElem
     disconnectedCallback() {
         this.style.visibility = 'hidden';
     }
+}
 
-    async saveWidgetsStyles() {
-        const widgetsObj = {};
-        for (const c of document.querySelectorAll('widget-container')) {
-            widgetsObj[c.getAttribute('widget-id')] = [c.style.left, c.style.top, c.style.borderRadius, c.style.zIndex];
-        }
+export async function saveWidgetStyle(id, left, top, borderRadius, zIndex, folding) {
+    const widgetsObj = await widgetStyleStore.get('data');
 
-        await widgetStore.set('data', widgetsObj);
-        await widgetStore.save();
+    widgetsObj[id] = [
+        left, top, borderRadius, zIndex, folding
+    ];
+
+    await widgetStyleStore.set('data', widgetsObj);
+    await widgetStyleStore.save();
+}
+
+async function saveAllWidgetsStylesFromDom() {
+    const widgetsObj = {};
+    for (const c of document.querySelectorAll('widget-container')) {
+        widgetsObj[c.getAttribute('widget-id')] = [
+            c.style.left, c.style.top, c.style.borderRadius, c.style.zIndex, c.folding
+        ];
     }
-});
+
+    await widgetStyleStore.set('data', widgetsObj);
+    await widgetStyleStore.save();
+}
 
 function isIntersect([a1, a2], [b1, b2]) {
     return !((a1 < b1 && a2 <= b1) || (a1 >= b2 && a2 > b2));

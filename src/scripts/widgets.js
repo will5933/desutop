@@ -1,4 +1,5 @@
 import { showMenu, closeMenu } from "./menu.js";
+import { saveWidgetStyle } from "./container.js";
 
 const invoke = window.__TAURI__.core.invoke;
 const storedWidgets = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
@@ -38,7 +39,7 @@ export async function initWidgets() {
             clearTimeout(window.steamgames_state_change_settimeout);
             window.steamgames_state_change_settimeout = setTimeout(() => updateSteamGamesWidget(event.payload), 500);
         });
-    
+
         setInterval(updateSteamgamesStates, 20000);
     }
 
@@ -98,11 +99,12 @@ async function appendWidget(type, id, a, b) {
     } else if (type === WIDGET_TYPE.clock) { // clock
         const absoDiv = createElementWithAttributes('div', { 'slot': 'abso' });
         absoDiv.appendChild(makeClockWidget());
-        setTimeout(() => widgetContainer.appendChild(absoDiv), 10);
+        setTimeout(() =>
+            widgetContainer.appendChild(absoDiv)
+            , 10);
     }
 
     widgetLayer.appendChild(widgetContainer);
-    return widgetContainer;
 }
 
 // fn makeClockWidget() -> content
@@ -316,15 +318,16 @@ export async function createNoteWidget(content, x_y) {
 
     // !
     if (content) content = content.replaceAll('\r\n', '\n');
-
+    
+    // store data
     storeNewWidget({ type: WIDGET_TYPE.note, id: id, a: window.LANG.NOTE.UNTITLED, b: content ?? window.LANG.NOTE.UNTITLED_CONTENT });
-    const widgetContainer = await appendWidget(WIDGET_TYPE.note, id, window.LANG.NOTE.UNTITLED, content ?? window.LANG.NOTE.UNTITLED_CONTENT);
-
-    if (x_y) {
-        widgetContainer.style.left = x_y[0] + 'px';
-        widgetContainer.style.top = x_y[1] + 'px';
-        widgetContainer.saveWidgetsStyles();
-    }
+    
+    // store style
+    if (x_y) await saveWidgetStyle(
+        id, `${x_y[0] - widgetLayer.offsetLeft}px`, `${x_y[1] - widgetLayer.offsetTop}px`, '', '999', false
+    );
+    
+    await appendWidget(WIDGET_TYPE.note, id, window.LANG.NOTE.UNTITLED, content ?? window.LANG.NOTE.UNTITLED_CONTENT);
 }
 
 async function createClockWidget() {
@@ -343,8 +346,8 @@ async function createSteamGamesWidget() {
         return;
     }
     const id = make_widgetID();
-    storeNewWidget({ type: WIDGET_TYPE.steamGames, id: id });
-    appendWidget(WIDGET_TYPE.steamGames, id);
+    await storeNewWidget({ type: WIDGET_TYPE.steamGames, id: id });
+    await appendWidget(WIDGET_TYPE.steamGames, id);
 }
 
 async function storeNewWidget(obj) {
