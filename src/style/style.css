@@ -155,7 +155,7 @@ svg {
     transition: all 0.3s ease;
 
     &:hover,
-    .on {
+    &.on {
         color: #ffffff;
         text-shadow: 0 0 8px #0004;
         backdrop-filter: blur(20px) brightness(110%);
