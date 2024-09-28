@@ -25,7 +25,7 @@
     max-width: 240px;
     max-height: 32vh;
 
-    backdrop-filter: blur(120px);
+    backdrop-filter: blur(120px) brightness(118%);
     transition-property: transform, opacity, filter, display;
     transition-duration: .26s;
     transition-timing-function: ease;

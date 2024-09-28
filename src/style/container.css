@@ -11,7 +11,7 @@
     outline: 4px solid #fff0;
     color: var(--font-color);
     background-color: var(--widget-bg-color);
-    backdrop-filter: blur(60px) brightness(108%);
+    backdrop-filter: blur(60px) brightness(118%);
     box-shadow: 0 4px 20px var(--shadow-color);
     padding: 0.2em 0.8em 0.8em 0.8em;
     transition: box-shadow .4s ease, padding .4s ease, max-height .3s ease, background-color .4s ease, outline .3s ease, color .3s ease;
