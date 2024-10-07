@@ -25,8 +25,9 @@ fn main() {
     use steamgames::*;
 
     let app = tauri::Builder::default()
-        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_store::Builder::new().build())
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_dialog::init())
@@ -49,7 +50,7 @@ fn main() {
         // setup
         //
         .setup(|app: &mut tauri::App| {
-            let settings_config: SettingsConfig = setup_get_settings(app.app_handle().clone());
+            let settings_config: SettingsConfig = setup_get_settings(app.app_handle());
 
             // setup: fn set_windows
             setup_set_windows(
@@ -67,13 +68,22 @@ fn main() {
             // setup: fn set_system_tray
             setup_set_system_tray(app, lang_json);
 
-            // listen
-            let _ = app.listen("wallpaper-change", move |event| {
-                let string: String =
-                    serde_json::from_str(event.payload()).expect("Wallpaper path error");
-                let mut x: PathBuf = PathBuf::from(string);
-                setwindow::set_windows_wallpaper(&mut x);
-            });
+            {
+                // listen events
+                // wallpaper-change
+                let _ = app.listen("wallpaper-change", move |event| {
+                    let string: String =
+                        serde_json::from_str(event.payload()).unwrap();
+                    let mut x: PathBuf = PathBuf::from(string);
+                    setwindow::set_windows_wallpaper(&mut x);
+                });
+
+                // open-desktop-folder
+                let _ = app.listen("open-folders", |event| {
+                    let command: String = serde_json::from_str(event.payload()).unwrap();
+                    open_folders(command);
+                });
+            }
 
             // steam games info watcher
             if let Ok(mut library_path_vec) = extract_library_paths() {
@@ -145,9 +155,11 @@ struct SettingsConfig {
     steam_path: String,
 }
 
-fn setup_get_settings(handle: AppHandle) -> SettingsConfig {
+// 创建/读取 设置json
+fn setup_get_settings(handle: &AppHandle) -> SettingsConfig {
     use tauri_plugin_store::StoreBuilder;
-    let mut store = StoreBuilder::new("settings.bin").build(handle);
+
+    let store = StoreBuilder::new(handle, "settings.bin").build();
 
     if let Ok(()) = store.load() {
         if let Some(raw_json_string) = store.get("data") {
@@ -159,17 +171,15 @@ fn setup_get_settings(handle: AppHandle) -> SettingsConfig {
         //
         // init
         //
-        let init_setting: SettingsConfig = SettingsConfig {
+        let init_settings: SettingsConfig = SettingsConfig {
             set_wallpaper_for_windows: true,
-            language_json_filename: String::from("EN.json"),
-            wallpaper_file_path: String::from("wallpapers/default.webp"),
-            steam_path: steamgames::get_steam_install_path().unwrap_or(String::from("NOTFOUND")),
+            language_json_filename: "EN.json".to_string(),
+            wallpaper_file_path: "wallpapers/default.webp".to_string(),
+            steam_path: steamgames::get_steam_install_path().unwrap_or("NOTFOUND".to_string()),
         };
-        store
-            .insert(String::from("data"), json!(init_setting))
-            .expect("Failed to init settings");
+        store.set("data", json!(init_settings));
         store.save().expect("Failed to save settings");
-        init_setting
+        init_settings
     }
 }
 
@@ -184,7 +194,7 @@ fn start_listen_clipboard<F: Fn() -> ()>(handle_fn: F) -> thread::JoinHandle<()>
             cache = new_data;
         }
 
-        thread::sleep(std::time::Duration::from_millis(300));
+        thread::sleep(std::time::Duration::from_millis(350));
     }
 }
 
@@ -236,7 +246,6 @@ fn setup_set_windows(
     wallpaper_file_path: String,
 ) -> () {
     if let Some(ww) = app.get_webview_window("main") {
-
         // Get HWND
         if let Ok(hwnd) = ww.hwnd() {
             // set_wallpaper()
@@ -287,4 +296,21 @@ fn show_msg(app: &AppHandle, msg: &str) {
         .kind(MessageDialogKind::Error)
         .title("Warning")
         .blocking_show();
+}
+
+fn open_folders(command: String) {
+    use std::os::windows::process::CommandExt;
+    use std::process::{Command, ExitStatus, Stdio};
+
+    let status: ExitStatus = Command::new("powershell")
+        .arg(command)
+        .creation_flags(0x08000000)
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .expect("Failed to open folder");
+
+    if !status.success() {
+        eprintln!("Failed to open folder");
+    }
 }

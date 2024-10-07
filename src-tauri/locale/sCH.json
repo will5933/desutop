@@ -47,8 +47,9 @@
         "4": "准备就绪",
         "6": "准备更新",
         "518": "没有安排",
-        "1026": "正在下载",
+        "1026": "<b>正在下载</b>",
         "1030": "<b>正在更新</b>",
+        "1062": "<b>正在验证</b>",
         "1538": "下载暂停",
         "1542": "更新暂停",
         "UNKNOWN": "未知状态"
@@ -56,6 +57,15 @@
     "WIDGET_ALREADY_EXISTS": "该组件已存在",
     "ADD_WIDGET_MENU_TITLE": "添加新的组件",
     "CLIPBOARD_MENU_TITLE": "剪贴板",
+    "OPEN_FOLDER_MENU_TITLE": "打开",
+    "FOLDERS": {
+        "DESKTOP": "桌面",
+        "DOCUMENTS": "文档",
+        "PICTURES": "图片",
+        "MUSIC": "音乐",
+        "VIDEOS": "视频",
+        "RECYCLEBIN": "回收站"
+    },
     "WIDGETS": {
         "NOTE": "笔记",
         "STEAMGAMES": "Steam 游戏",

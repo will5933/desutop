@@ -21,6 +21,7 @@
     "core:menu:default",
     "core:tray:default",
     "shell:allow-open",
+    "store:default",
     "store:allow-get",
     "store:allow-set",
     "store:allow-save",

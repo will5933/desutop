@@ -47,8 +47,9 @@
         "4": "準備完了",
         "6": "更新準備中",
         "518": "未予定",
-        "1026": "ダウンロード中",
+        "1026": "<b>ダウンロード中</b>",
         "1030": "<b>更新中</b>",
+        "1062": "<b>検証中</b>",
         "1538": "ダウンロード停止",
         "1542": "更新停止",
         "UNKNOWN": "不明"
@@ -56,6 +57,15 @@
     "WIDGET_ALREADY_EXISTS": "このウィジェットは既に存在します",
     "ADD_WIDGET_MENU_TITLE": "ウィジェット追加",
     "CLIPBOARD_MENU_TITLE": "クリップボード",
+    "OPEN_FOLDER_MENU_TITLE": "開く",
+    "FOLDERS": {
+        "DESKTOP": "デスクトップ",
+        "DOCUMENTS": "ドキュメント",
+        "PICTURES": "画像",
+        "MUSIC": "音楽",
+        "VIDEOS": "動画",
+        "RECYCLEBIN": "ごみ箱"
+    },
     "WIDGETS": {
         "NOTE": "メモ",
         "STEAMGAMES": "Steamゲーム",

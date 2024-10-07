@@ -21,7 +21,7 @@
         "UNTITLED": "Untitled",
         "UNTITLED_CONTENT": "To be edited"
     },
-    "QUIT": "quit",
+    "QUIT": "Quit",
     "SETTINGS": {
         "SETTINGS": "Settings",
         "TITLE_SETTINGS": "Settings - Desutop",
@@ -47,8 +47,9 @@
         "4": "Ready",
         "6": "Preparing Update",
         "518": "Not Scheduled",
-        "1026": "Downloading",
+        "1026": "<b>Downloading</b>",
         "1030": "<b>Updating</b>",
+        "1062": "<b>Verifying</b>",
         "1538": "Download Paused",
         "1542": "Update Paused",
         "UNKNOWN": "Unknown"
@@ -56,6 +57,15 @@
     "WIDGET_ALREADY_EXISTS": "The widget already exists",
     "ADD_WIDGET_MENU_TITLE": "Add New Widget",
     "CLIPBOARD_MENU_TITLE": "Clipboard",
+    "OPEN_FOLDER_MENU_TITLE": "Open",
+    "FOLDERS": {
+        "DESKTOP": "Desktop",
+        "DOCUMENTS": "Documents",
+        "PICTURES": "Pictures",
+        "MUSIC": "Music",
+        "VIDEOS": "Videos",
+        "RECYCLEBIN": "Recycle Bin"
+    },
     "WIDGETS": {
         "NOTE": "Note",
         "STEAMGAMES": "Steam Games",

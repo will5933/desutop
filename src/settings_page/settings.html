@@ -118,24 +118,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        (new window.__TAURI_PLUGIN_STORE__.Store('settings.bin')).get('data').then((settingsObj) => {
-            window.__TAURI__.core.invoke(
-                'get_lang_json_string',
-                { "languageJsonFilename": settingsObj["language_json_filename"] }
-            )
-                .then((jsonStr) => {
-                    window.LANG = JSON.parse(jsonStr);
-
-                    document.querySelectorAll('[data-lang]').forEach((e) => {
-                        e.textContent = window.LANG['SETTINGS'][e.getAttribute('data-lang')] ?? e.textContent;
-                    })
-                });
-                
-                document.body.style.fontFamily = `"${settingsObj['font_family']}", "${settingsObj['font_family2']}", "Segoe UI",  sans-serif`;
-        });
-    </script>
 </body>
 
 </html>

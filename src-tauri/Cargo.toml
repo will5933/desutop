@@ -1,44 +1,44 @@
 [package]
 name = "Desutop"
-version = "0.4.5"
+version = "0.4.6"
 description = "Desutop"
 authors = ["fanin"]
 edition = "2021"
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0-rc", features = [
+tauri = { version = "2", features = [
     'tray-icon',
     'image-ico',
     'image-png',
     'protocol-asset',
 ] }
-tauri-plugin-shell = "2.0.0-rc"
+tauri-plugin-shell = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-store = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-dirs = "5.0.1"
-regex = "1.10.5"
-lazy_static = "1.5.0"
-tauri-plugin-store = "2.0.0-rc"
-rayon = "1.10.0"
-tauri-plugin-dialog = "2.0.0-rc"
-tauri-plugin-fs = "2.0.0-rc"
-notify = { version = "6.1.1", features = ["serde"] }
-clipboard-win = "5.4.0"
-tauri-plugin-clipboard-manager = "2.0.0-rc"
+regex = "1"
+lazy_static = "1"
+rayon = "1"
+notify = { version = "6", features = ["serde"] }
+clipboard-win = "5"
+# dirs = "5"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
 
 [target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
-tauri-plugin-autostart = "2.0.0-rc"
-tauri-plugin-single-instance = "2.0.0-rc"
+tauri-plugin-autostart = "2"
+tauri-plugin-single-instance = "2"
 
 [dependencies.windows]
-version = "0.58.0"
+version = "0"
 features = [
     "Data_Xml_Dom",
     "Win32_Foundation",

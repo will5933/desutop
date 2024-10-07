@@ -1,7 +1,12 @@
 import { popLayer } from "./menu.js";
 
-const widgetDataStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
-const widgetStyleStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets_styles.bin');
+const { createStore } = window.__TAURI__.store;
+
+const widgetDataStore = await createStore('widgets.bin');
+const widgetStyleStore = await createStore('widgets_styles.bin');
+
+// const widgetDataStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
+// const widgetStyleStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets_styles.bin');
 
 export class WidgetContainer extends HTMLElement {
     constructor() {

@@ -2,12 +2,16 @@ import { showMenu, closeMenu, clipMenuItemStr } from "./menu.js";
 import { createElementWithAttributes, initWidgets, createNoteWidget } from './widgets.js';
 import { WidgetContainer } from "./container.js";
 
+const { createStore } = window.__TAURI__.store;
+const { listen, emit } = window.__TAURI__.event;
+
 const dateTime = document.getElementById('datetime');
 
 {
     // locale
-    const settingsStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin');
+    const settingsStore = await createStore('settings.bin');
     const settingsObj = await settingsStore.get('data');
+
     window.__TAURI__.core.invoke('get_lang_json_string', { "languageJsonFilename": settingsObj["language_json_filename"] })
         .then((jsonStr) => {
             window.LANG = JSON.parse(jsonStr);
@@ -27,21 +31,21 @@ const dateTime = document.getElementById('datetime');
         })
 
     // set font-family
-    document.body.style.fontFamily = `"${settingsObj['font_family']}", "${settingsObj['font_family2']}", "Segoe UI",  sans-serif`;
+    document.body.style.fontFamily = `"${settingsObj['font_family']}","${settingsObj['font_family2']}","Segoe UI",sans-serif`;
 
     // background-image
     setWallpaper(
         await window.__TAURI__.path.resolveResource(settingsObj['wallpaper_file_path'] ?? 'wallpapers/default.jpg')
     );
 
-    window.wallpaper_change_listener = await window.__TAURI__.event.listen('wallpaper-change', e => setWallpaper(e.payload));
+    window.wallpaper_change_listener = await listen('wallpaper-change', e => setWallpaper(e.payload));
 
     function setWallpaper(absolutePath) {
         document.getElementById('screen').style.backgroundImage = `url('${window.__TAURI__.core.convertFileSrc(absolutePath)}')`;
     }
 
     // reload
-    window.reload_listener = await window.__TAURI__.event.listen('ask-to-refresh', () => location.reload());
+    window.reload_listener = await listen('ask-to-refresh', () => location.reload());
 }
 
 { // windows task bar height
@@ -79,9 +83,10 @@ const dateTime = document.getElementById('datetime');
     });
 }
 
-{
+{ // clipboard
     const { writeText, readText } = window.__TAURI_PLUGIN_CLIPBOARD_MANAGER__;
-    const clipboardStore = new window.__TAURI_PLUGIN_STORE__.Store('clipboard.bin');
+    const clipboardStore = await createStore('clipboard.bin');
+    // const clipboardStore = new window.__TAURI_PLUGIN_STORE__.Store('clipboard.bin');
     const clipboardBar = document.getElementById('clipboard_bar');
     const clipArr = (await clipboardStore.get('data')) ?? [];
     if (clipArr.length > 0) setClipboardBar(clipArr);
@@ -165,10 +170,41 @@ const dateTime = document.getElementById('datetime');
     });
 }
 
+{ // open desktop folder
+    const names = window.LANG['FOLDERS'];
+    const menuArr = [
+        [names['DESKTOP'], 'explorer shell:Desktop'],
+        [names['DOCUMENTS'], 'explorer shell:Personal'],
+        [names['PICTURES'], 'explorer shell:My Pictures'],
+        [names['MUSIC'], 'explorer shell:My Music'],
+        [names['VIDEOS'], 'explorer shell:My Video'],
+        [names['RECYCLEBIN'], 'explorer shell:RecycleBinFolder'],
+    ].map(subArr => {
+        const ele = createElementWithAttributes('p', { 'class': 'menu-item' });
+        ele.textContent = subArr[0];
+        ele.addEventListener('click', async () => {
+            closeMenu();
+            emit('open-folders', subArr[1]);
+        });
+        return ele;
+    })
+
+    document.getElementById('openfolders_btn').addEventListener('click', e => {
+        const btn = e.currentTarget;
+        showMenu(
+            window.LANG['OPEN_FOLDER_MENU_TITLE'],
+            menuArr,
+            btn.getBoundingClientRect(),
+            () => btn.classList.add('on'),
+            () => btn.classList.remove('on')
+        );
+    });
+}
+
 { // range_selector
     const widgetLayer = document.getElementById('widget_layer'),
         rangeSelector = document.getElementById('range_selector');
-    const parentOffsetX = widgetLayer.offsetLeft, 
+    const parentOffsetX = widgetLayer.offsetLeft,
         parentOffsetY = widgetLayer.offsetTop;
 
     widgetLayer.addEventListener('mousedown', (e) => {

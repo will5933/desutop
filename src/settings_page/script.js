@@ -1,5 +1,31 @@
 import { getWallpaperFilesPathArr } from "../wallpaper.js";
-const settingStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin');
+
+// const settingStore = new window.__TAURI_PLUGIN_STORE__.Store('settings.bin');
+// 
+const { convertFileSrc } = window.__TAURI__.core;
+const { resolveResource } = window.__TAURI__.path;
+const { createStore } = window.__TAURI__.store;
+const { emit } = window.__TAURI__.event
+
+const settingStore = await createStore('settings.bin');
+// 
+
+// locale
+settingStore.get('data').then((settingsObj) => {
+    const eventData = { "languageJsonFilename": settingsObj["language_json_filename"] };
+    window.__TAURI__.core.invoke('get_lang_json_string', eventData)
+        .then((jsonStr) => {
+            window.LANG = JSON.parse(jsonStr);
+
+            document.querySelectorAll('[data-lang]').forEach((e) => {
+                e.textContent = window.LANG['SETTINGS'][e.getAttribute('data-lang')] ?? e.textContent;
+            })
+        });
+
+    // set font-family
+    document.body.style.fontFamily = `"${settingsObj['font_family']}","${settingsObj['font_family2']}","Segoe UI",sans-serif`;
+});
+
 
 { // prevent keys
     document.addEventListener('contextmenu', e => e.preventDefault());
@@ -144,7 +170,7 @@ function saveConfig(key, value, afterFn) {
 {
     const eleArr = [];
     for (const filepath of await getWallpaperFilesPathArr()) {
-        const assetUrl = window.__TAURI__.core.convertFileSrc(await window.__TAURI__.path.resolveResource(filepath));
+        const assetUrl = convertFileSrc(await resolveResource(filepath));
         eleArr.push(`<img class="wallpaper-image" src="${assetUrl}" title="${filepath}">`);
     }
     document.getElementById('wallpaper-box').innerHTML = eleArr.join('');
@@ -152,16 +178,16 @@ function saveConfig(key, value, afterFn) {
     document.querySelectorAll('img.wallpaper-image').forEach(ele => {
         ele.addEventListener('click', async () => {
             saveConfig('wallpaper_file_path', ele.getAttribute('title'));
-            window.__TAURI__.event.emit(
+            emit(
                 'wallpaper-change',
-                await window.__TAURI__.path.resolveResource(ele.getAttribute('title')),
+                await resolveResource(ele.getAttribute('title')),
             );
         });
     });
 }
 
 async function refreshAllWindows() {
-    await window.__TAURI__.event.emit('ask-to-refresh', 0);
+    await emit('ask-to-refresh', 0);
     location.reload();
 }
 

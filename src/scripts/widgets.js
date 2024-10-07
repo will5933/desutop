@@ -1,9 +1,15 @@
 import { showMenu, closeMenu } from "./menu.js";
 import { saveWidgetStyle } from "./container.js";
 
-const invoke = window.__TAURI__.core.invoke;
-const storedWidgets = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
-const steamPath = (await (new window.__TAURI_PLUGIN_STORE__.Store('settings.bin')).get('data'))['steam_path'];
+const { invoke, convertFileSrc } = window.__TAURI__.core;
+const { createStore } = window.__TAURI__.store;
+const { listen } = window.__TAURI__.event;
+
+const storedWidgets = await createStore('widgets.bin');
+// const widgetStyleStore = await createStore('widgets_styles.bin', { autoSave: true });
+// const storedWidgets = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
+const steamPath = (await (await createStore('settings.bin')).get('data'))['steam_path'];
+// const steamPath = (await (new window.__TAURI_PLUGIN_STORE__.Store('settings.bin')).get('data'))['steam_path'];
 const hasSteam = steamPath !== 'NOTFOUND';
 
 const WIDGET_TYPE = {
@@ -35,7 +41,7 @@ export async function initWidgets() {
     setAddWidgetMenu();
 
     if (hasSteam) { // watch and update steamgames state
-        window.steamgames_state_change_listener = await window.__TAURI__.event.listen('steamgames-state-change', (event) => {
+        window.steamgames_state_change_listener = await listen('steamgames-state-change', (event) => {
             clearTimeout(window.steamgames_state_change_settimeout);
             window.steamgames_state_change_settimeout = setTimeout(() => updateSteamGamesWidget(event.payload), 500);
         });
@@ -209,7 +215,7 @@ async function makeSteamGamesWidget(steamgamesArr) {
         }
         info.updataState(secondNow);
 
-        const libraryHero = window.__TAURI__.core.convertFileSrc(`${steamPath}\\appcache\\librarycache\\${steamgame.appid}_library_hero.jpg`);
+        const libraryHero = convertFileSrc(`${steamPath}\\appcache\\librarycache\\${steamgame.appid}_library_hero.jpg`);
         // hero cover
         const icon = createElementWithAttributes(
             'img',
@@ -318,15 +324,15 @@ export async function createNoteWidget(content, x_y) {
 
     // !
     if (content) content = content.replaceAll('\r\n', '\n');
-    
+
     // store data
     storeNewWidget({ type: WIDGET_TYPE.note, id: id, a: window.LANG.NOTE.UNTITLED, b: content ?? window.LANG.NOTE.UNTITLED_CONTENT });
-    
+
     // store style
     if (x_y) await saveWidgetStyle(
         id, `${x_y[0] - widgetLayer.offsetLeft}px`, `${x_y[1] - widgetLayer.offsetTop}px`, '', '999', false
     );
-    
+
     await appendWidget(WIDGET_TYPE.note, id, window.LANG.NOTE.UNTITLED, content ?? window.LANG.NOTE.UNTITLED_CONTENT);
 }
 

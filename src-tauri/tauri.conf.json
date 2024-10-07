@@ -1,6 +1,6 @@
 {
   "productName": "Desutop",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "identifier": "com.desutop.tauri",
   "build": {
     "frontendDist": "../src"
