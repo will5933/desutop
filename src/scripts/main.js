@@ -174,6 +174,7 @@ const dateTime = document.getElementById('datetime');
     const names = window.LANG['FOLDERS'];
     const menuArr = [
         [names['DESKTOP'], 'explorer shell:Desktop'],
+        [names['DOWNLOADS'], 'explorer shell:Downloads'],
         [names['DOCUMENTS'], 'explorer shell:Personal'],
         [names['PICTURES'], 'explorer shell:My Pictures'],
         [names['MUSIC'], 'explorer shell:My Music'],

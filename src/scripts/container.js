@@ -5,8 +5,6 @@ const { createStore } = window.__TAURI__.store;
 const widgetDataStore = await createStore('widgets.bin');
 const widgetStyleStore = await createStore('widgets_styles.bin');
 
-// const widgetDataStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets.bin');
-// const widgetStyleStore = new window.__TAURI_PLUGIN_STORE__.Store('widgets_styles.bin');
 
 export class WidgetContainer extends HTMLElement {
     constructor() {
@@ -17,7 +15,8 @@ export class WidgetContainer extends HTMLElement {
         shadow.appendChild(document.getElementById('widget_container_template').content.cloneNode(true));
 
         // get layers / elements
-        const aboveLayer = document.getElementById('above_layer'), widgetLayer = document.getElementById('widget_layer'), move = shadow.getElementById('move'), fold = shadow.getElementById('fold'), check = shadow.getElementById('check'), destory = shadow.getElementById('destory');
+        const aboveLayer = document.getElementById('above_layer'), widgetLayer = document.getElementById('widget_layer'), move = shadow.getElementById('move'), fold = shadow.getElementById('fold'), destory = shadow.getElementById('destory');
+        // const locked = shadow.getElementById('locked'), unlocked = shadow.getElementById('unlocked');
 
         const setFront = () => {
             const oldIndex = this.style.zIndex;
@@ -210,6 +209,20 @@ export class WidgetContainer extends HTMLElement {
         fold.addEventListener('click', () => this.folding = !this.folding);
 
         // 
+        // locked & unlocked
+        // 
+        // locked.addEventListener('click', () => {
+        //     locked.removeAttribute('hidden');
+        //     unlocked.setAttribute('hidden', 'hidden');
+        //     this._isLocked = false;
+        // });
+        // unlocked.addEventListener('click', () => {
+        //     unlocked.removeAttribute('hidden');
+        //     locked.setAttribute('hidden', 'hidden');
+        //     this._isLocked = true;
+        // });
+
+        // 
         // destory self
         // 
         destory.addEventListener('click', async () => {
@@ -222,8 +235,8 @@ export class WidgetContainer extends HTMLElement {
         });
     }
 
-    // folding
     _isFolding = false;
+    // _isLocked = false;
 
     get folding() {
         return this._isFolding;

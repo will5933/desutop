@@ -1,6 +1,6 @@
 [package]
 name = "Desutop"
-version = "0.4.6"
+version = "0.4.7"
 description = "Desutop"
 authors = ["fanin"]
 edition = "2021"
@@ -9,12 +9,7 @@ edition = "2021"
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [
-    'tray-icon',
-    'image-ico',
-    'image-png',
-    'protocol-asset',
-] }
+tauri = { version = "2.0.4", features = ["tray-icon", "image-ico", "image-png", "protocol-asset"] }
 tauri-plugin-shell = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"

@@ -60,6 +60,7 @@
     "OPEN_FOLDER_MENU_TITLE": "Open",
     "FOLDERS": {
         "DESKTOP": "Desktop",
+        "DOWNLOADS": "Downloads",
         "DOCUMENTS": "Documents",
         "PICTURES": "Pictures",
         "MUSIC": "Music",
